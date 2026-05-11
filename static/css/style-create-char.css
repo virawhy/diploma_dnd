@@ -1,0 +1,763 @@
+body {
+    background-color: black;
+}
+
+
+
+.create-char-top {
+    width: 100%;
+    height: 907px;
+    background: url("../img/backgroud-create-char-1.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.header{
+  position: relative;
+  z-index: 2;
+}
+
+.create-char-top-container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.create-char-caption-main{
+  position: absolute;
+}
+
+.create-char-caption {
+    position: relative;
+    top: 120px;
+    font-family: 'Oswald';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 50px;
+    line-height: 22px;
+    padding-top: 103px;
+    text-align: center;
+    letter-spacing: 1px;
+    line-height: 1.45;
+    color: #FFFFFF;
+    opacity: 0;
+}
+
+.create-char-question {
+    margin-top: 213px;
+    font-family: 'Oswald';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 50px;
+    margin-left: -120px;
+    /* identical to box height, or 50% */
+
+    color: #FFFFFF;
+    opacity: 0;
+}
+
+.create-char-input-container {
+    width: 80%;
+    max-width: 847px;
+    margin-top: 72px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.char-input-text {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 20px;
+    /* identical to box height, or 133% */
+    margin-bottom: 7px;
+
+    color: #FFFFFF;
+}
+
+.name-input {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 20px;
+    /* identical to box height, or 133% */
+    background: #000000;
+    border: 1px solid #EEEEEE;
+    border-radius: 5px;
+    width: 266px;
+    height: 30px;
+    padding-left: 8px;
+    transition: 0.3s;
+    color: white;
+}
+
+.name-input:focus {
+    transition: 0.3s;
+    background: #EEEEEE;
+    color: black;
+}
+
+.name-input::placeholder {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 20px;
+    /* identical to box height, or 133% */
+    color: #ffffff;
+    transition: 0.3s;
+}
+
+.name-input:focus::placeholder {
+    font-size: 10px;
+    color: #000000;
+    transform: translateY(-10px);
+    transition: all 0.3s;
+}
+
+.input-level {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 20px;
+    /* identical to box height, or 133% */
+    background: #000000;
+    border: 1px solid #EEEEEE;
+    border-radius: 5px;
+    width: 64px;
+    height: 30px;
+    padding-left: 8px;
+    transition: 0.3s;
+    color: white;
+}
+
+.input-level:focus {
+    transition: 0.3s;
+    background: #EEEEEE;
+    color: black;
+}
+
+
+.char-select {
+    background: #FFFFFF;
+    border: 1px solid #EEEEEE;
+    border-radius: 5px;
+    width: 176px;
+    height: 30px;
+    cursor: pointer;
+    transition: 0.4s;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 20px;
+    /* identical to box height, or 133% */
+    color: #000000;
+
+}
+
+.char-select-option {
+    background: #FFFFFF;
+    border: 1px solid #EEEEEE;
+    border-radius: 5px;
+    width: 176px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.more-margin {
+    margin-bottom: 9px;
+}
+
+/* Тестовий селект */
+.list-choice {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 20px;
+    width: 176px;
+    margin: 0 auto;
+    position: relative;
+    cursor: pointer;
+}
+
+.list-choice input[type="radio"] {
+    position: absolute;
+    left: -9999px;
+}
+
+.list-choice-title {
+    width: 100%;
+    display: block;
+    background: black;
+    text-align: center;
+    padding: 0.55em 1em;
+    box-sizing: border-box;
+    color: #FFF;
+    text-shadow: 0 1px 0 #CACACA;
+    border-radius: 0.2em;
+}
+
+.list-choice:hover .list-choice-title {
+    border-radius: 0.2em 0.2em 0 0;
+}
+
+.list-choice-objects label:nth-last-of-type(1) span {
+    border-radius: 0 0 0.2em 0.2em;
+}
+
+.list-choice input[type="radio"]+span {
+    color: #FFF;
+    background: black;
+    padding: 0.55em 1em;
+    display: block;
+    text-align: center;
+    box-sizing: border-box;
+    cursor: pointer;
+    width: 100%;
+}
+
+.list-choice-objects {
+    position: absolute;
+    top: 0;
+    padding-top: 2.1em;
+    box-sizing: border-box;
+    width: 100%;
+    overflow: hidden;
+    max-height: 0;
+    transition: all 250ms ease;
+}
+
+.list-choice:hover .list-choice-objects input[type="radio"]+span {
+    position: relative;
+    top: 0;
+    transition: all 250ms ease-in-out;
+}
+
+.list-choice:hover input[type="radio"]+span:hover {
+    background: #B41616;
+}
+
+.list-choice:hover input[type="radio"]:checked+span:hover {
+    background: #B41616;
+}
+
+.list-choice input[type="radio"]:checked+span {
+    background: #B41616;
+    position: absolute;
+    top: 0em;
+    border-radius: 0.2em;
+}
+
+.list-choice:hover input[type="radio"]:checked+span {
+    border-radius: 0;
+}
+
+.list-choice:hover .list-choice-objects label:nth-last-of-type(1) input[type="radio"]:checked+span {
+    border-radius: 0 0 0.2em 0.2em;
+}
+
+.list-choice:hover .list-choice-objects {
+    max-height: 540px;
+}
+
+/* Тестовий селект */
+
+.random-stats-text {
+    margin-bottom: 15px;
+    margin-top: 25px;
+    font-family: 'Oswald';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 50px;
+    /* identical to box height, or 50% */
+
+    color: #FFFFFF;
+}
+
+.random-stats-container {
+    width: 417px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.random-stats-container input {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 20px;
+    width: 48px;
+    height: 30px;
+    border: 1px solid #EEEEEE;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.random-stats-button{
+    height: 34px;
+    width: 163px !important;
+    background: #B41616;
+    border-radius: 5px;
+    font-family: 'Poppins';
+font-style: normal;
+font-weight: 700;
+font-size: 14px;
+line-height: 32px;
+border: 1px solid #000000;
+/* identical to box height, or 150% */
+transition: 0.4s;
+text-align: center;
+cursor: pointer;
+color: #FFFFFF;
+margin-top: 20px;
+}
+.random-stats-button:hover{
+    border: 1px solid  #B41616;
+    background: #000000;
+    transition: 0.4s;
+}
+.random-stats-container input:focus{
+    outline: 0;
+}
+.center-button{
+    width: 417px;
+    display: flex;
+    justify-content: center;
+}
+
+.create-char-stats{
+    height: 788px;
+    padding-top: 49px;
+}
+
+.create-char-stats-caption{
+    font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 70px;
+  color: #FFFFFF;
+  margin-left: -120px;
+  opacity: 0;
+}
+
+.create-char-stats-caption2{
+padding-top: 163px;
+  font-family: 'Oswald';
+font-style: normal;
+font-weight: 400;
+font-size: 40px;
+line-height: 70px;
+color: #FFFFFF;
+margin-left: -120px;
+opacity: 0;
+}
+
+.create-char-stats-container{
+    margin-top: 50px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.create-char-stats-element{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.create-char-stats-text{
+    font-family: 'Roboto';
+font-style: normal;
+font-weight: 400;
+font-size: 15px;
+line-height: 55px;
+/* identical to box height, or 367% */
+text-align: center;
+letter-spacing: 1.65px;
+
+color: #FFFFFF;
+}
+.center-input{
+    margin: 0 auto;
+    margin-top: 32px;
+}
+
+
+.create-char-bot{
+    width: 100%;
+    background: url("../img/background-create-char-2.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.less-width{
+    width: 200px;
+}
+.create-char-start-container{
+    display: flex;
+    flex-wrap: wrap;
+}
+.create-char-start-container-element{
+    margin-right: 33px;
+}
+.create-char-start-prof-text{
+    margin-bottom: 7px;
+    margin-top: 78px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 20px;
+    /* identical to box height, or 133% */
+    
+    
+    color: #FFFFFF;
+}
+
+.create-char-start-prof{
+  margin-left: 50px;
+}
+
+.test {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    width: 275px;
+    height: 189px;
+    margin-left: -10px;
+
+  }
+  
+  .test-column, .test-column {
+    flex-basis: 49%;
+    padding-left: 10px;
+  }
+  
+  .test-column label {
+    display: block;
+  }
+  
+  /* для стилізації checkbox */
+  .test-column input[type="checkbox"] {
+    display: none;
+  }
+  
+  .test-column input[type="checkbox"] + label {
+    position: relative;
+    padding-left: 40px;
+    cursor: pointer;
+    font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 40px;
+  /* identical to box height, or 133% */
+  white-space: nowrap;
+  transition: 0.3s;
+  color: #FFFFFF;
+  }
+  
+  .test-column input[type="checkbox"] + label span {
+    margin-top: 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 25px;
+    height: 25px;
+    border: 2px solid #ff0000;
+    
+  }
+  
+  .test-column input[type="checkbox"]:checked + label span:before {
+    content: "\2714";
+    position: absolute;
+    top: 30%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    color: #666;
+    transform: scale(3.5);
+    font-size: 10px;
+    line-height: 1;
+    color: #ff0000;
+    
+  }
+  .test-column input[type="checkbox"]:hover + label{
+    color: #ff0000;
+    transition: 0.3s;
+  }
+
+
+
+.some-margin{
+  margin-left: 10px;
+}
+
+
+  .test-column-1, .test-column {
+    flex-basis: 49%;
+  }
+  
+  .test-column-1 label {
+    display: block;
+  }
+  
+  /* для стилізації checkbox */
+  .test-column-1 input[type="checkbox"] {
+    display: none;
+  }
+  
+  .test-column-1 input[type="checkbox"] + label {
+    position: relative;
+    padding-left: 40px;
+    cursor: pointer;
+    font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 40px;
+  /* identical to box height, or 133% */
+  white-space: nowrap;
+  transition: 0.3s;
+  color: #FFFFFF;
+  }
+  
+  .test-column-1 input[type="checkbox"] + label span {
+    margin-top: 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 25px;
+    height: 25px;
+    border: 2px solid #ff0000;
+    
+  }
+  
+  .test-column-1 input[type="checkbox"]:checked + label span:before {
+    content: "\2714";
+    position: absolute;
+    top: 30%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    color: #666;
+    transform: scale(3.5);
+    font-size: 10px;
+    line-height: 1;
+    color: #ff0000;
+    
+  }
+  .test-column-1 input[type="checkbox"]:hover + label{
+    color: #ff0000;
+    transition: 0.3s;
+  }
+
+
+
+
+
+  .test-column-2, .test-column {
+    flex-basis: 49%;
+  }
+  
+  .test-column-2 label {
+    display: block;
+  }
+  
+  /* для стилізації checkbox */
+  .test-column-2 input[type="checkbox"] {
+    display: none;
+  }
+  
+  .test-column-2 input[type="checkbox"] + label {
+    position: relative;
+    padding-left: 40px;
+    cursor: pointer;
+    font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 40px;
+  /* identical to box height, or 133% */
+  white-space: nowrap;
+  transition: 0.3s;
+  color: #FFFFFF;
+  }
+  
+  .test-column-2 input[type="checkbox"] + label span {
+    margin-top: 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 25px;
+    height: 25px;
+    border: 2px solid #ff0000;
+    
+  }
+  
+  .test-column-2 input[type="checkbox"]:checked + label span:before {
+    content: "\2714";
+    position: absolute;
+    top: 30%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    color: #666;
+    transform: scale(3.5);
+    font-size: 10px;
+    line-height: 1;
+    color: #ff0000;
+    
+  }
+  .test-column-2 input[type="checkbox"]:hover + label{
+    color: #ff0000;
+    transition: 0.3s;
+  }
+  
+
+
+
+
+  .test-column-3, .test-column {
+    flex-basis: 49%;
+  }
+  
+  .test-column-3 label {
+    display: block;
+  }
+  
+  /* для стилізації checkbox */
+  .test-column-3 input[type="checkbox"] {
+    display: none;
+  }
+  
+  .test-column-3 input[type="checkbox"] + label {
+    position: relative;
+    padding-left: 40px;
+    cursor: pointer;
+    font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 40px;
+  /* identical to box height, or 133% */
+  white-space: nowrap;
+  transition: 0.3s;
+  color: #FFFFFF;
+  }
+  
+  .test-column-3 input[type="checkbox"] + label span {
+    margin-top: 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 25px;
+    height: 25px;
+    border: 2px solid #ff0000;
+    
+  }
+  
+  .test-column-3 input[type="checkbox"]:checked + label span:before {
+    content: "\2714";
+    position: absolute;
+    top: 30%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    color: #666;
+    transform: scale(3.5);
+    font-size: 10px;
+    line-height: 1;
+    color: #ff0000;
+    
+  }
+  .test-column-3 input[type="checkbox"]:hover + label{
+    color: #ff0000;
+    transition: 0.3s;
+  }
+
+
+
+
+  .less-width{
+    width: 200px;
+}
+.submit-button-flex{
+    margin: 0 auto;
+    width: 1200px;
+    height: 150px;
+    position: relative;
+}
+.submit-button{
+    right: 14%;
+    position: absolute;
+    height: 60px;
+    width: 225px !important;
+    background: #B41616;
+    border-radius: 5px;
+    font-family: 'Poppins';
+font-style: normal;
+font-weight: 700;
+font-size: 14px;
+line-height: 21px;
+border: 1px solid #000000;
+/* identical to box height, or 150% */
+transition: 0.4s;
+text-align: center;
+cursor: pointer;
+color: #FFFFFF;
+margin-top: 20px;
+}
+.submit-button:hover{
+    border: 1px solid  #B41616;
+    background: #000000;
+    transition: 0.4s;
+}
+.submit-button input:focus{
+    outline: 0;
+}
+
+
+@media (max-width: 732px) {
+  .create-char-caption{
+    padding-top: 55px;
+    white-space: nowrap;
+  }
+  .create-char-question{
+    margin-top: 55px;
+  }
+  .create-char-input-container{
+    margin-top: 55px;
+  }
+  .char-input-text{
+    margin-top: 10px;
+  }
+  .random-stats-text{
+    margin-top: 10px;
+  }
+  .create-char-start-container{
+    flex-wrap: wrap;
+  }
+  .create-char-stats-caption2{
+    padding-top: 55px;
+  }
+  .create-char-bot{
+    height: 1510px;
+  }
+  .create-char-start-prof-text{
+    margin-top: 30px;
+  }
+  .submit-button{
+    right: 0;
+    left: 35vw;
+    margin-top: -120px;
+  }
+}

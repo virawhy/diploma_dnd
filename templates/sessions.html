@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ігрові сесії - D&D Companion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='img/DnD-ico.ico')}}">
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style-reset.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/header-footer-style.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style-scrollbar.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style-campaigns.css')}}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body{
+            background: url('{{ url_for("static", filename="img/vtt-background.jpg") }}') !important;
+            font-family: 'Roboto', sans-serif;
+        }
+        .sessions-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgb(34, 34, 34);
+            min-height: 100vh;
+        }
+        
+        .sessions-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #fff;
+        }
+        
+        .sessions-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .create-session-form {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .create-session-form h2 {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #fff;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .btn-create {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(238, 90, 36, 0.3);
+        }
+        
+        .btn-create:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(238, 90, 36, 0.4);
+        }
+        
+        .sessions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .session-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .session-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .session-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #ee5a24, #feca57);
+        }
+        
+        .session-title {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .session-description {
+            color: #ccc;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .session-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .session-campaign {
+            color: #feca57;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .session-date {
+            color: #888;
+            font-size: 0.8rem;
+        }
+        
+        .no-sessions {
+            text-align: center;
+            color: #ccc;
+            font-size: 1.2rem;
+            margin-top: 50px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+        }
+        
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        
+        .flash-message {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .flash-success {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+        }
+        
+        .flash-error {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+        
+        /* Стилі для кнопки видалення */
+        .delete-session-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .delete-session-btn:hover {
+            background-color: rgba(231, 76, 60, 0.5);
+            transform: scale(1.1);
+        }
+        
+        .session-content {
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        /* Стилі для модального вікна */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .modal-content {
+            background: rgba(30, 30, 30, 0.95);
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            width: 50%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            position: relative;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #fff;
+            text-decoration: none;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .modal-buttons button {
+            margin-left: 10px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .cancel-btn {
+            background-color: transparent;
+            color: #ccc;
+            border: 1px solid #555;
+        }
+        
+        .cancel-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .confirm-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+        }
+        
+        .confirm-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .form-group input, .form-group textarea{
+            color: black;
+        }
+        
+        @media (max-width: 820px) {
+            .sessions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sessions-container {
+                padding: 15px;
+            }
+            
+            .create-session-form {
+                padding: 20px;
+            }
+            
+            .modal-content {
+                width: 90%;
+                margin: 30% auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    
+    <div class="sessions-container">
+        <div class="sessions-header">
+            <h1>Ігрові сесії</h1>
+            <p>Керуйте своїми ігровими сесіями та створюйте нові пригоди</p>
+        </div>
+        
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Форма створення нової сесії -->
+        <div class="create-session-form">
+            <h2>Створити нову сесію</h2>
+            <form action="/create_session" method="POST">
+                <div class="form-group">
+                    <label for="session_name">Назва сесії:</label>
+                    <input type="text" id="session_name" name="session_name" required placeholder="Введіть назву сесії">
+                </div>
+                
+                <div class="form-group">
+                    <label for="session_description">Опис сесії:</label>
+                    <textarea id="session_description" name="session_description" required placeholder="Опишіть що буде відбуватися в цій сесії"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="campaign_id">Кампанія:</label>
+                    <select id="campaign_id" name="campaign_id" required>
+                        <option value="">Оберіть кампанію</option>
+                        {% for campaign in campaigns %}
+                            <option value="{{ campaign.id_campaign }}">{{ campaign.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn-create">Створити сесію</button>
+            </form>
+        </div>
+        
+        <!-- Список існуючих сесій -->
+        {% if sessions %}
+            <div class="sessions-grid">
+                {% for session in sessions %}
+                    <div class="session-card">
+                        <div class="session-content" onclick="window.location.href='/session/{{ session.id_session }}'">
+                            <div class="session-title">{{ session.name }}</div>
+                            <div class="session-description">{{ session.description }}</div>
+                            <div class="session-meta">
+                                <div class="session-campaign">{{ session.campaign.name }}</div>
+                                <div class="session-date">{{ session.created_date.strftime('%d.%m.%Y') }}</div>
+                            </div>
+                        </div>
+                        <button class="delete-session-btn" data-id="{{ session.id_session }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-sessions">
+                <h3>У вас поки немає ігрових сесій</h3>
+                <p>Створіть свою першу сесію, щоб почати грати!</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Модальне вікно для підтвердження видалення сесії -->
+    <div id="deleteSessionModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Видалення сесії</h2>
+            <p>Ви впевнені, що хочете видалити цю сесію? Ця дія також видалить всі збережені дані сесії.</p>
+            <div class="modal-buttons">
+                <button class="cancel-btn">Скасувати</button>
+                <button id="confirmDelete" class="confirm-btn">Видалити</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Автоматично приховувати flash повідомлення через 5 секунд
+        setTimeout(function() {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(function(message) {
+                message.style.opacity = '0';
+                message.style.transition = 'opacity 0.5s ease';
+                setTimeout(function() {
+                    message.remove();
+                }, 500);
+            });
+        }, 5000);
+        
+        // Обробка видалення сесії
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteModal = document.getElementById('deleteSessionModal');
+            const closeBtns = document.getElementsByClassName('close');
+            const cancelBtns = document.getElementsByClassName('cancel-btn');
+            const deleteBtns = document.getElementsByClassName('delete-session-btn');
+            let sessionToDelete = null;
+            
+            // Відкриття модального вікна видалення сесії
+            Array.from(deleteBtns).forEach(btn => {
+                btn.onclick = function(event) {
+                    event.stopPropagation(); // Зупиняємо подальше поширення події
+                    sessionToDelete = btn.dataset.id;
+                    deleteModal.style.display = 'block';
+                }
+            });
+            
+            // Закриття модального вікна при кліку на хрестик
+            Array.from(closeBtns).forEach(btn => {
+                btn.onclick = function() {
+                    deleteModal.style.display = 'none';
+                }
+            });
+            
+            // Закриття модального вікна при кліку на кнопку скасування
+            Array.from(cancelBtns).forEach(btn => {
+                btn.onclick = function() {
+                    deleteModal.style.display = 'none';
+                }
+            });
+            
+            // Закриття модального вікна при кліку поза ним
+            window.onclick = function(event) {
+                if (event.target == deleteModal) {
+                    deleteModal.style.display = 'none';
+                }
+            }
+            
+            // Підтвердження видалення сесії
+            document.getElementById('confirmDelete').onclick = async function() {
+                if (sessionToDelete) {
+                    try {
+                        const response = await fetch(`/delete_session/${sessionToDelete}`, {
+                            method: 'POST'
+                        });
+                        if (response.ok) {
+                            location.reload();
+                        } else {
+                            alert('Помилка при видаленні сесії');
+                        }
+                    } catch (error) {
+                        console.error('Помилка:', error);
+                        alert('Помилка при видаленні сесії');
+                    }
+                }
+                deleteModal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

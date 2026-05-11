@@ -1,0 +1,24 @@
+.selection-box {
+    position: fixed;
+    border: 2px dashed #4CAF50;
+    background-color: rgba(76, 175, 80, 0.1);
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.sprite-item {
+    cursor: pointer;
+    padding: 5px;
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+.sprite-item.selected {
+    border-color: #4CAF50;
+    background-color: rgba(76, 175, 80, 0.1);
+}
+
+.grid-cell.selected-cell {
+    border: 2px solid #4CAF50;
+    background-color: rgba(76, 175, 80, 0.2);
+}

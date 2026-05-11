@@ -1,0 +1,88 @@
+.center_field {
+    margin-top: 60px;
+    position: absolute;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+}
+
+.center_field * {
+    position: relative;
+    font-family: Trebuchet MS;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 5px 15px;
+}
+
+.center_field br {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+.bottom_field {
+    position: absolute;
+    text-align: center;
+    bottom: 5px;
+    width: inherit;
+    padding: 0px;
+}
+
+#label {
+    font-size: 32pt;
+    word-spacing: 0.5em;
+    padding: 5px 15px;
+    color: #ffffff;
+    top: 45%;
+    border-radius: 30px;
+}
+
+#labelhelp {
+    font-size: 13pt;
+    padding: 5px 15px;
+    color: #ffffff;
+    bottom: 100px;
+    border-radius: 15px;
+}
+
+#set {
+    text-align: center;
+    font-size: 26pt;
+    border: none;
+    color: #ffffff;
+    background:linear-gradient(0deg, rgba(0, 0, 0, 0.37));
+    border-radius: 45px;
+    top: 60%;
+}
+
+#sethelp {
+    font-size: 14pt;
+    color: #ffffff;
+    margin-left: 20%;
+    margin-right: 20%;
+    background:linear-gradient(0deg, rgba(0, 0, 0, 0.37));
+    border-radius: 45px;
+    top: 25%;
+}
+
+#selector_div button {
+    font-size: 20pt;
+    color: rgba(255, 255, 255, 0.945);
+    background-color: rgba(0, 0, 0, 0.534);
+    cursor: pointer;
+    border: 1px solid;
+    border-color: rgba(0, 0, 0, 0.37);
+    border-radius: 10px;
+    width: 5em;
+    top: 62%;
+}
+
+.dice_place {
+    position: absolute;
+    border: solid black 1px;
+}
+
+body{
+    background-color: black;
+}
+
+header {
+    background-color: rgba(0,0,0,0.534);
+}

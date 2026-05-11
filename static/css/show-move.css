@@ -1,0 +1,25 @@
+.show-down-delay{
+    opacity: 1 !important;
+    transform: translateY(-120px) !important;
+    transition: opacity 1s, transform 1s;
+    transition-delay: 0.6s;
+}
+
+  .show-down {
+    opacity: 1 !important;
+    transform: translateY(-120px) !important;
+    transition: opacity 1s, transform 1s !important;
+  }
+  
+  .show-left {
+    opacity: 1 !important;
+    transform: translateX(120px) !important;
+    transition: opacity 1s, transform 1s;
+  }
+  
+  .show-right {
+    opacity: 1 !important;
+    transform: translateX(-120px) !important;
+    transition: opacity 1s, transform 1s;
+    pointer-events: auto;
+}

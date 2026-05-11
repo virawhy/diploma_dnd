@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Кампанія: Темна Вежа</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #333;
+      margin: 2rem 2rem 0;
+    }
+
+    .tab-button {
+      background: none;
+      border: none;
+      color: #aaa;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .tab-button.active {
+      color: #4aa3f0;
+      border-color: #4aa3f0;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 2rem;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .entry-form {
+      background-color: #2b2b2b;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      border: 1px solid #444;
+    }
+
+    .entry-form form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .entry-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .entry-item {
+      background-color: #1e1e1e;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #444;
+    }
+
+    .entry-item h3 {
+      margin: 0 0 0.5rem;
+      color: #4aa3f0;
+    }
+
+    input[type="text"],
+    textarea,
+    input[type="date"] {
+      background-color: #1e1e1e;
+      border: 1px solid #555;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Кампанія: Темна Вежа</h1>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-button active" data-tab="npc">НПС</button>
+    <button class="tab-button" data-tab="players">Персонажі</button>
+    <button class="tab-button" data-tab="events">Події</button>
+    <button class="tab-button" data-tab="locations">Місця</button>
+  </div>
+
+  <main>
+    <!-- Tab: NPC -->
+    <section id="npc" class="tab-content active">
+      <div class="entry-form">
+        <h2>Додати НПС</h2>
+        <form>
+          <input type="text" placeholder="Ім'я">
+          <textarea placeholder="Опис"></textarea>
+          <button type="submit" class="primary">Зберегти</button>
+        </form>
+      </div>
+      <div class="entry-list">
+        <div class="entry-item">
+          <h3>Сіріус</h3>
+          <p>Темний маг, який охороняє вхід у вежу.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab: Players -->
+    <section id="players" class="tab-content">
+      <div class="entry-form">
+        <h2>Додати персонажа гравця</h2>
+        <form>
+          <input type="text" placeholder="Ім'я">
+          <textarea placeholder="Опис або клас персонажа"></textarea>
+          <button type="submit" class="primary">Зберегти</button>
+        </form>
+      </div>
+      <div class="entry-list">
+        <div class="entry-item">
+          <h3>Айлін</h3>
+          <p>Ельфійська лучниця, головний слідопит загону.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab: Events -->
+    <section id="events" class="tab-content">
+      <div class="entry-form">
+        <h2>Додати подію</h2>
+        <form>
+          <input type="text" placeholder="Назва">
+          <textarea placeholder="Опис події"></textarea>
+          <input type="date">
+          <button type="submit" class="primary">Зберегти</button>
+        </form>
+      </div>
+      <div class="entry-list">
+        <div class="entry-item">
+          <h3>Напад вовкулак</h3>
+          <p>Гравці потрапляють у засідку під час ночівлі в лісі.</p>
+          <small>Дата: 2025-04-15</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab: Locations -->
+    <section id="locations" class="tab-content">
+      <div class="entry-form">
+        <h2>Додати місце</h2>
+        <form>
+          <input type="text" placeholder="Назва">
+          <textarea placeholder="Опис місця"></textarea>
+          <button type="submit" class="primary">Зберегти</button>
+        </form>
+      </div>
+      <div class="entry-list">
+        <div class="entry-item">
+          <h3>Зачарований ліс</h3>
+          <p>Небезпечне місце, повне ілюзій і таємниць.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const buttons = document.querySelectorAll('.tab-button');
+    const tabs = document.querySelectorAll('.tab-content');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        tabs.forEach(tab => tab.classList.remove('active'));
+
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

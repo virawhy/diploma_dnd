@@ -1,0 +1,133 @@
+main{
+    background: url("../img/background-bestiary.png");
+    width: 100%;
+    min-height: 1500px;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-family: 'Roboto', sans-serif;
+}
+.knowledge-container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0rem auto;
+    padding: 2rem 1rem;
+    min-height: calc(100vh - 200px);
+}
+
+.knowledge-sidebar {
+    width: 250px;
+    padding: 1rem;
+    background: #2c2f33;
+    border-radius: 8px;
+    margin-right: 2rem;
+}
+
+.knowledge-content {
+    flex: 1;
+    padding: 2rem;
+    background: #2c2f33;
+    border-radius: 8px;
+}
+
+.sidebar-section {
+    margin-bottom: 1.5rem;
+}
+
+.sidebar-title {
+    font-size: 1.2rem;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #4a4a4a;
+}
+
+.sidebar-list {
+    list-style: none;
+}
+
+.sidebar-item {
+    padding: 0.5rem 0;
+}
+
+.sidebar-link {
+    color: #b9bbbe;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.sidebar-link:hover {
+    color: #ffffff;
+}
+
+.content-section {
+    margin-bottom: 2rem;
+}
+
+.content-title {
+    font-size: 1.8rem;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #4a4a4a;
+}
+
+.content-subtitle {
+    font-size: 1.4rem;
+    color: #ffffff;
+    margin: 1.5rem 0 1rem;
+}
+
+.content-text {
+    color: #b9bbbe;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.content-list {
+    list-style: disc;
+    margin-left: 1.5rem;
+    color: #b9bbbe;
+}
+
+.content-list-item {
+    margin: 0.5rem 0;
+}
+
+.stat-block {
+    background: #36393f;
+    padding: 1rem;
+    border-radius: 4px;
+    margin: 1rem 0;
+}
+
+.stat-title {
+    font-size: 1.2rem;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    color: #b9bbbe;
+    font-family: monospace;
+}
+
+.tag {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: #7289da;
+    color: #ffffff;
+    border-radius: 4px;
+    margin: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.description {
+    background: #36393f;
+    padding: 1rem;
+    border-radius: 4px;
+    margin: 1rem 0;
+    color: #b9bbbe;
+    line-height: 1.6;
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кампанії</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header-footer-style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style-campaigns.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'header.html' %}
+    <main class="campaigns-container">
+        <div class="campaigns-header">
+            <h1>Мої кампанії</h1>
+            <button id="createCampaignBtn" class="create-campaign-btn">Створити кампанію</button>
+        </div>
+
+        <div class="campaigns-section">
+            <div class="campaigns-grid">
+                {% for campaign in owned_campaigns %}
+                <div class="campaign-card">
+                    <h3>{{ campaign.name }}</h3>
+                    <p>{{ campaign.description }}</p>
+                    <div class="campaign-actions">
+                        <a href="/campaign/{{ campaign.id_campaign }}" class="view-campaign-btn">Переглянути</a>
+                        <button class="delete-campaign-btn" data-id="{{ campaign.id_campaign }}">Видалити</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="campaigns-section bg-black">
+            <h2>Запрошення та участь</h2>
+            <div class="campaigns-grid">
+                {% for membership in campaign_memberships %}
+                <div class="campaign-card {% if membership.status == 'invited' %}invited{% endif %}">
+                    <h3>{{ membership.campaign.name }}</h3>
+                    <p>{{ membership.campaign.description }}</p>
+                    {% if membership.status == 'invited' %}
+                    <div class="invitation-actions">
+                        <button class="accept-invite-btn" data-id="{{ membership.id_campaign_member }}">Прийняти</button>
+                        <button class="decline-invite-btn" data-id="{{ membership.id_campaign_member }}">Відхилити</button>
+                    </div>
+                    {% else %}
+                    <a href="/campaign/{{ membership.campaign.id_campaign }}" class="view-campaign-btn">Переглянути</a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Модальне вікно створення кампанії -->
+    <div id="createCampaignModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Створення нової кампанії</h2>
+            <form id="createCampaignForm">
+                <div class="form-group">
+                    <label for="campaignName">Назва кампанії:</label>
+                    <input type="text" id="campaignName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="campaignDescription">Опис кампанії:</label>
+                    <textarea id="campaignDescription" name="description" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">Створити</button>
+                    <button type="button" class="cancel-btn">Скасувати</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальне вікно підтвердження видалення -->
+    <div id="deleteCampaignModal" class="modal">
+        <div class="modal-content">
+            <h2>Підтвердження видалення</h2>
+            <p>Ви впевнені, що хочете видалити цю кампанію?</p>
+            <div class="form-actions">
+                <button id="confirmDelete" class="delete-btn">Видалити</button>
+                <button class="cancel-btn">Скасувати</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script-campaigns.js') }}"></script>
+</body>
+</html>

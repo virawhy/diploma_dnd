@@ -1,0 +1,90 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <meta name="keywords" content="DnD, dungeons and dragons, roleplay, dice, roller, 3D, RPG" />
+    <meta name="description" content="An Interactive, Online 3D Dice Roller" />
+
+    <title>Дайси</title>
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='img/DnD-ico.ico')}}">
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/header-footer-style.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style-reset.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/show-move.css')}}">
+
+
+    <style type="text/css">
+        @import "../static/css/main.css";
+    </style>
+    <style type="text/css">
+        @import "../static/css/dice.css";
+    </style>
+
+    <!-- New Path -->
+    <script>
+        document.documentElement.style.overflow = 'hidden';
+        document.addEventListener('scroll', function (e) {
+            e.preventDefault();
+            window.scroll(0, 0);
+        });
+    </script>
+
+
+
+ <!--   <script async defer data-website-id="d7fa3c92-093e-431d-b7b3-1ada0da53156"
+        src="https://umami.matteas.nz/umami.js"></script>-->
+</head>
+<style>
+    header{
+        background-color: rgba(0, 0, 0, 0.575) !important;
+    }
+</style>
+<body style="margin: 0">
+    <div style="position: fixed; width: 100%;">
+        {% include 'header.html' %}
+    </div>
+    <main>
+        <div id="info_div" style="display: none">
+            <div class="center_field">
+                <span id="label"></span>
+            </div>
+            <div class="center_field">
+                <div class="bottom_field">
+                    <span id="labelhelp">Натисніть, щоб почати вибір кубиків заново або натисніть та потягніть мишу, щоб
+                        перекинути кубики</span>
+                </div>
+            </div>
+        </div>
+        <div id="selector_div" style="display: none">
+            <div class="center_field">
+                <div id="sethelp">
+                    Виберіть набір кубиків, клацнувши на кубик або за допомогою введення з клавіатури, </br>
+                    потім зимітуйте кидання кубиків натиснувши та потягнувши мишу по екрану, </br>
+                    а потім відпустивши її або натисніть кнопку кинути.
+                </div>
+            </div>
+            <div class="center_field">
+                <input type="text" id="set" value="6d6"></input><br />
+                <button id="clear">Онулити</button>
+                <button style="margin-left: 0.6em" id="throw">Кинути</button>
+            </div>
+        </div>
+        <div id="canvas"></div>
+    </main>
+    <!-- <script src="{{url_for('static', filename='js/script-header.js')}}"></script> -->
+    <script src="../static/js/libs/three.min.js"></script>
+    <script src="../static/js/libs/cannon.min.js"></script>
+    <script src="../static/js/script-header.js"></script>
+
+    <script type="text/javascript" src="../static/js/teal.js"></script>
+    <script type="text/javascript" src="../static/js/dice.js"></script>
+    <script type="text/javascript" src="../static/js/main.js"></script>
+    <script type="text/javascript" defer="defer">
+        dice_initialize(document.body);
+    </script>
+
+</body>
+
+</html>

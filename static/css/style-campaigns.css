@@ -1,0 +1,330 @@
+body {
+    background: url('../img/campaigns-bg.jpg') no-repeat center center fixed !important;
+    background-size: cover !important;
+    min-height: 100vh;
+    font-family: 'Roboto', sans-serif;
+}
+
+.campaigns-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    color: #fff;
+}
+
+.campaigns-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.campaigns-header h1 {
+    font-size: 2.5em;
+    color: #ff3333;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.create-campaign-btn {
+    background: linear-gradient(45deg, #8b0000, #ff3333);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(139, 0, 0, 0.3);
+}
+
+.create-campaign-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(139, 0, 0, 0.4);
+    background: linear-gradient(45deg, #ff3333, #8b0000);
+}
+
+.campaigns-section {
+    margin-bottom: 50px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.0);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.bg-black {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+.campaigns-section:first-child{
+    border-radius: 0px 0px 15px 15px;
+}
+
+.campaigns-section h2 {
+    color: #ff3333;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.campaigns-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.campaign-card {
+    background: linear-gradient(135deg, rgba(20, 20, 20, 0.9), rgba(40, 40, 40, 0.9));
+    border: 2px solid #8b0000;
+    border-radius: 12px;
+    padding: 25px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.campaign-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(139, 0, 0, 0.3);
+    border-color: #ff3333;
+}
+
+.campaign-card h3 {
+    color: #ff3333;
+    font-size: 1.4em;
+    margin-bottom: 15px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.campaign-card p {
+    margin-bottom: 25px;
+    color: #ddd;
+    line-height: 1.6;
+}
+
+.campaign-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.view-campaign-btn {
+    background: linear-gradient(45deg, #4a4a4a, #5a5a5a);
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+}
+
+.view-campaign-btn:hover {
+    background: linear-gradient(45deg, #5a5a5a, #6a6a6a);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.delete-campaign-btn {
+    background: transparent;
+    color: #ff3333;
+    border: 2px solid #ff3333;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.delete-campaign-btn:hover {
+    background: #ff3333;
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 51, 51, 0.3);
+}
+
+.invited {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, rgba(20, 20, 20, 0.9), rgba(40, 40, 40, 0.9));
+}
+
+.invitation-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.accept-invite-btn {
+    background: linear-gradient(45deg, #006400, #008000);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0, 100, 0, 0.2);
+}
+
+.accept-invite-btn:hover {
+    background: linear-gradient(45deg, #008000, #009900);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 100, 0, 0.3);
+}
+
+.decline-invite-btn {
+    background: linear-gradient(45deg, #8b0000, #a00000);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(139, 0, 0, 0.2);
+}
+
+.decline-invite-btn:hover {
+    background: linear-gradient(45deg, #a00000, #b00000);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+}
+
+/* Адаптивний дизайн */
+@media (max-width: 768px) {
+    .campaigns-container {
+        margin: 20px auto;
+    }
+
+    .campaigns-header {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .campaigns-header h1 {
+        font-size: 2em;
+    }
+
+    .campaigns-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .campaign-actions {
+        flex-direction: column;
+    }
+
+    .view-campaign-btn,
+    .delete-campaign-btn,
+    .accept-invite-btn,
+    .decline-invite-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Модальне вікно */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #1a1a1a;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #8b0000;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+    position: relative;
+    color: white;
+}
+
+.close {
+    color: #8b0000;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #a00000;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ccc;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #4a4a4a;
+    border-radius: 4px;
+    background-color: #2a2a2a;
+    color: white;
+}
+
+.form-group textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.submit-btn {
+    background-color: #8b0000;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background-color: #a00000;
+}
+
+.cancel-btn {
+    background-color: #4a4a4a;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background-color: #5a5a5a;
+}
+
+.delete-btn {
+    background-color: #8b0000;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background-color: #a00000;
+}

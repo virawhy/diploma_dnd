@@ -1,0 +1,50 @@
+{
+  "sessions": [
+    {
+      "id": "session_001",
+      "name": "Приклад сесії",
+      "current_turn": 1,
+      "last_saved": "2024-01-20T12:00:00Z",
+      "dimensions": {
+        "width": 20,
+        "height": 20
+      },
+      "objects": [
+        {
+          "id": "obj_001",
+          "position": {
+            "x": 5,
+            "y": 5
+          },
+          "dimensions": {
+            "width": 2,
+            "height": 2
+          },
+          "health": 100
+        }
+      ],
+      "npcs": [
+        {
+          "id": "npc_001",
+          "bestiary_ref": "adult-black-dragon",
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "current_health": 195
+        }
+      ],
+      "characters": [
+        {
+          "id": "char_001",
+          "character_id": 1,
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "current_health": 45
+        }
+      ]
+    }
+  ]
+}

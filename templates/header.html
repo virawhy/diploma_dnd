@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header-footer-style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style-reset.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/DnD-ico.ico') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header>
+
+        <div class="header-frame">
+            <div class="header-logo"><a href="/"><img src="{{url_for('static', filename='img/logo.png')}}"></a></div>
+            <div class="header-nav">
+                <a href="{{ url_for('knowledge_rules') }}"><p class="header-nav-element">Посібник</p></a>
+
+                <a href="{{ url_for('dice') }}"><p class="header-nav-element">Дайси</p></a>
+                
+
+
+
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('campaigns') }}"><p class="header-nav-element">Кампанії</p></a>
+                <a href="{{ url_for('sessions') }}"><p class="header-nav-element">Сесії</p></a>
+                <a href="{{ url_for('charlist') }}"><p class="header-nav-element">Персонажі</p></a>
+                <a href="{{ url_for('logout') }}"><p class="header-nav-element">Вихід</p></a>
+
+
+                {% else %}
+                    <a href="{{ url_for('auth') }}"><p class="header-nav-element">Вхід</p></a>
+                    <a href="{{ url_for('registration') }}"><p class="header-nav-element">Реєстрація</p></a>
+                {% endif %}
+                
+            </div>
+            <input type="checkbox" id="burger-toggle">
+            <label for="burger-toggle"  class="burger-container">
+                <div class="burger-line"></div>
+                <div class="burger-line"></div>
+                <div class="burger-line"></div>
+            </label>
+            <nav class="nav-menu">
+                <ul>
+                  <li><a href="{{ url_for('knowledge_rules') }}">База знань</a></li>
+                  <li><a href="{{ url_for('dice') }}">Дайси</a></li>
+                  {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('charlist') }}">Персонажі</a></li>
+                    <li><a href="{{ url_for('campaigns') }}">Кампанії</a></li>
+                    <li><a href="{{ url_for('sessions') }}">Сесії</a></li>
+                    <li><a href="{{ url_for('logout') }}">Вихід</a></li>
+                  {% else %}
+                    <li><a href="{{ url_for('auth') }}">Вхід</a></li>
+                    <li><a href="{{ url_for('registration') }}">Реєстрація</a></li>
+                  {% endif %}
+                
+                </ul>
+            </nav>
+        </div>
+    </header>
+    {% block content %}{% endblock %}
+</body>
+</html>

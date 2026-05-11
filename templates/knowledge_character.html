@@ -1,0 +1,97 @@
+{% extends "knowledge_base.html" %}
+
+{% block sidebar %}
+<div class="sidebar-section">
+    <h3 class="sidebar-title">Характеристики</h3>
+    <ul class="sidebar-list">
+        {% for score in character.ability_scores %}
+        <li class="sidebar-item">
+            <a href="#ability-{{ score.short_name|lower }}" class="sidebar-link">{{ score.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="sidebar-section">
+    <h3 class="sidebar-title">Стани</h3>
+    <ul class="sidebar-list">
+        {% for condition in character.conditions %}
+        <li class="sidebar-item">
+            <a href="#condition-{{ condition.name|lower }}" class="sidebar-link">{{ condition.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="sidebar-section">
+    <h3 class="sidebar-title">Типи шкоди</h3>
+    <ul class="sidebar-list">
+        {% for damage in character.damage_types %}
+        <li class="sidebar-item">
+            <a href="#damage-{{ damage.name|lower }}" class="sidebar-link">{{ damage.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="sidebar-section">
+    <h3 class="sidebar-title">Володіння</h3>
+    <ul class="sidebar-list">
+        {% for prof in character.proficiencies %}
+        <li class="sidebar-item">
+            <a href="#prof-{{ prof.name|lower }}" class="sidebar-link">{{ prof.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="content-section">
+    <h1 class="content-title">Характеристики</h1>
+    {% for score in character.ability_scores %}
+    <div id="ability-{{ score.short_name|lower }}" class="stat-block">
+        <h2 class="stat-title">{{ score.name }} ({{ score.short_name }})</h2>
+        <div class="content-text">{{ score.desc|markdown }}</div>
+        {% if score.skills %}
+        <div class="content-text">
+            <strong>Навички:</strong>
+            {% for skill in score.skills %}
+            <span class="tag">{{ skill }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<div class="content-section">
+    <h1 class="content-title">Стани</h1>
+    {% for condition in character.conditions %}
+    <div id="condition-{{ condition.name|lower }}" class="description">
+        <h2 class="content-subtitle">{{ condition.name }}</h2>
+        <div class="content-text">{{ condition.desc|markdown }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="content-section">
+    <h1 class="content-title">Типи шкоди</h1>
+    {% for damage in character.damage_types %}
+    <div id="damage-{{ damage.name|lower }}" class="description">
+        <h2 class="content-subtitle">{{ damage.name }}</h2>
+        <div class="content-text">{{ damage.desc|markdown }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="content-section">
+    <h1 class="content-title">Володіння</h1>
+    {% for prof in character.proficiencies %}
+    <div id="prof-{{ prof.name|lower }}" class="stat-block">
+        <h2 class="stat-title">{{ prof.name }}</h2>
+        <div class="stat-value">Тип: {{ prof.type }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %} 

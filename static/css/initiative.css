@@ -1,0 +1,198 @@
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    background-color: #1a1a1a;
+    margin: 15% auto;
+    padding: 25px;
+    border: 2px solid #cc0000;
+    width: 350px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(204, 0, 0, 0.5), 0 0 40px rgba(0, 0, 0, 0.3);
+    color: #ecf0f1;
+    position: relative;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #cc0000;
+    font-size: 24px;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+.close-button:hover {
+    color: #ff0000;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+}
+
+.initiative-dialog h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #cc0000;
+    text-align: center;
+    font-size: 24px;
+    text-shadow: 0 0 5px rgba(204, 0, 0, 0.3);
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+.initiative-roll-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+    align-items: center;
+}
+
+#initiativeBonus {
+    padding: 12px;
+    background-color: #2c2c2c;
+    border: 1px solid #444;
+    border-radius: 6px;
+    font-size: 16px;
+    color: #ecf0f1;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    width: 80px;
+    text-align: center;
+}
+
+#initiativeBonus:focus {
+    border-color: #cc0000;
+    outline: none;
+    box-shadow: 0 0 5px rgba(204, 0, 0, 0.5);
+}
+
+#rollInitiative {
+    padding: 12px;
+    background-color: #cc0000;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    position: relative;
+    overflow: hidden;
+    width: 80%;
+    max-width: 250px;
+}
+
+#rollInitiative:hover {
+    background-color: #ff0000;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    transform: translateY(-2px);
+}
+
+#rollInitiative:active {
+    transform: translateY(1px);
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+}
+
+.initiative-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    margin: 8px 0;
+    background-color: #2c2c2c;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-left: 3px solid #cc0000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.initiative-item:hover {
+    background-color: #333;
+    transform: translateX(3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.initiative-sprite {
+    width: 45px;
+    height: 45px;
+    margin-right: 12px;
+    position: relative;
+}
+
+.initiative-sprite img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #cc0000;
+    box-shadow: 0 0 5px rgba(204, 0, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+.initiative-item:hover .initiative-sprite img {
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+}
+
+.initiative-info {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.initiative-name {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #ecf0f1;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.initiative-character-info {
+    display: block;
+    font-size: 12px;
+    color: #cc9900;
+    margin-bottom: 6px;
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.initiative-stats {
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+    color: #aaa;
+    flex-wrap: wrap;
+}
+
+.initiative-hp {
+    color: #2ecc71;
+}
+
+.initiative-ac {
+    color: #3498db;
+}
+
+.initiative-value {
+    color: #e74c3c;
+    font-weight: bold;
+}

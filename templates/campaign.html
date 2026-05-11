@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='img/DnD-ico.ico')}}">
+  <title>Кампанія</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style-reset.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/header-footer-style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style-scrollbar.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style-campaign.css') }}">
+</head>
+<body>
+  <div id="progressbar"></div>
+
+  <header>
+    <div class="header-frame">
+      <div class="header-logo"><a href="/"><img src="{{url_for('static', filename='img/logo.png')}}"></a></div>
+      <div class="header-nav">
+        <a href="{{ url_for('knowledge_rules') }}"><p class="header-nav-element">Посібник</p></a>
+        <a href="/dice.html"><p class="header-nav-element">Дайси</p></a>
+
+        {% if current_user.is_authenticated %}
+        <a href="/campaigns"><p class="header-nav-element">Кампанії</p></a>
+        <a href="/sessions"><p class="header-nav-element">Сесії</p></a>
+        <a href="/charlist.html"><p class="header-nav-element">Персонажі</p></a>
+        <a href="/logout"><p class="header-nav-element">Вихід</p></a>
+        {% else %}
+        <a href="/auth.html"><p class="header-nav-element">Вхід</p></a>
+        <a href="/registration.html"><p class="header-nav-element">Реєстрація</p></a>
+        {% endif %}
+      </div>
+      <input type="checkbox" id="burger-toggle">
+      <label for="burger-toggle" class="burger-container">
+        <div class="burger-line"></div>
+        <div class="burger-line"></div>
+        <div class="burger-line"></div>
+      </label>
+      <nav class="nav-menu">
+        <ul>
+          <li><a href="{{ url_for('knowledge_rules') }}">Посібник</a></li>
+          <li><a href="/dice.html">Дайси</a></li>
+          {% if current_user.is_authenticated %}
+          <li><a href="/charlist.html">Персонажі</a></li>
+          <li><a href="/campaigns">Кампанії</a></li>
+          <li><a href="/sessions">Сесії</a></li>
+          <li><a href="/logout">Вихід</a></li>
+          {% else %}
+          <li><a href="/auth.html">Вхід</a></li>
+          <li><a href="/registration.html">Реєстрація</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+  
+  <main class="main-content">
+    <div class="campaign-header">
+      <h1>{{ campaign.name }}</h1>
+      <div class="campaign-description">{{ campaign.description }}</div>
+    </div>
+
+    <div class="search-container">
+      <input type="text" id="searchInput" class="search-input" placeholder="Пошук...">
+      <button id="searchButton" class="search-button">Пошук</button>
+    </div>
+
+    <div class="tab-container">
+      <div class="tab-buttons">
+        <button class="tab-button active" data-tab="npcs">NPCs</button>
+        <button class="tab-button" data-tab="players">Гравці</button>
+        <button class="tab-button" data-tab="events">Події</button>
+        <button class="tab-button" data-tab="locations">Локації</button>
+      </div>
+    </div>
+
+    <div class="tab-content-container">
+      <!-- Tab: NPC -->
+      <section id="npcs" class="tab-content active">
+        {% if is_owner %}
+        <div class="entry-form">
+          <h2>Додати НПС</h2>
+          <form id="npc-form">
+            <input type="text" name="name" placeholder="Ім'я" required>
+            <textarea name="description" placeholder="Опис" required></textarea>
+            <button type="submit" class="primary-btn">Зберегти</button>
+          </form>
+        </div>
+        {% endif %}
+        <div class="entry-list" id="npc-list">
+          {% for npc in npcs %}
+          <div class="entry-item" data-id="{{ npc.id_npc }}">
+            {% if is_owner %}
+            <div class="entry-actions">
+              <button class="edit-btn">Редагувати</button>
+              <button class="delete-btn">Видалити</button>
+            </div>
+            {% endif %}
+            <h3>{{ npc.name }}</h3>
+            <p>{{ npc.description }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <!-- Tab: Players -->
+      <section id="players" class="tab-content">
+        {% if is_owner %}
+        <button id="add-character-btn" class="primary-btn">Додати персонажа</button>
+        {% endif %}
+        <div class="entry-list" id="player-list">
+          {% for character in characters %}
+          <div class="entry-item" data-id="{{ character.id_character }}">
+            <div class="entry-actions">
+              <a href="{{ url_for('character', id_class_f=character.id_character) }}" class="view-btn">Переглянути</a>
+              {% if is_owner %}
+              <button class="delete-character-btn">Видалити</button>
+              {% endif %}
+            </div>
+            <h3>{{ character.name }}</h3>
+            <p>{{ character.racial_group.racial_group }} - {{ character.class_name.class_name }} (Рівень {{ character.level }})</p>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <!-- Modal for adding character -->
+      <div id="add-character-modal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2>Додати персонажа</h2>
+          <div class="modal-step" id="user-select-step">
+            <input type="text" id="username-input" placeholder="Введіть логін користувача">
+            <button id="find-user-btn" class="primary-btn">Підтвердити</button>
+          </div>
+          <div class="modal-step" id="character-select-step" style="display: none;">
+            <h3>Виберіть персонажа:</h3>
+            <div id="character-list"></div>
+            <button id="add-selected-character-btn" class="primary-btn">Підтвердити</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirmation Modal -->
+      <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+          <h2>Підтвердження</h2>
+          <p>Ви впевнені, що хочете видалити цього персонажа з кампанії?</p>
+          <div class="modal-actions">
+            <button id="confirm-yes" class="primary-btn">Так</button>
+            <button id="confirm-no" class="secondary-btn">Ні</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Events -->
+      <section id="events" class="tab-content">
+        {% if is_owner %}
+        <div class="entry-form">
+          <h2>Додати подію</h2>
+          <form id="event-form">
+            <input type="text" name="name" placeholder="Назва" required>
+            <textarea name="description" placeholder="Опис події" required></textarea>
+            <input type="date" name="date" required>
+            <button type="submit" class="primary-btn">Зберегти</button>
+          </form>
+        </div>
+        {% endif %}
+        <div class="entry-list" id="event-list">
+          {% for event in events %}
+          <div class="entry-item" data-id="{{ event.id_event }}">
+            {% if is_owner %}
+            <div class="entry-actions">
+              <button class="edit-btn">Редагувати</button>
+              <button class="delete-btn">Видалити</button>
+            </div>
+            {% endif %}
+            <h3>{{ event.name }}</h3>
+            <p>{{ event.description }}</p>
+            <small>Дата: {{ event.date }}</small>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <!-- Tab: Locations -->
+      <section id="locations" class="tab-content">
+        {% if is_owner %}
+        <div class="entry-form">
+          <h2>Додати місце</h2>
+          <form id="location-form">
+            <input type="text" name="name" placeholder="Назва" required>
+            <textarea name="description" placeholder="Опис місця" required></textarea>
+            <button type="submit" class="primary-btn">Зберегти</button>
+          </form>
+        </div>
+        {% endif %}
+        <div class="entry-list" id="location-list">
+          {% for location in locations %}
+          <div class="entry-item" data-id="{{ location.id_location }}">
+            {% if is_owner %}
+            <div class="entry-actions">
+              <button class="edit-btn">Редагувати</button>
+              <button class="delete-btn">Видалити</button>
+            </div>
+            {% endif %}
+            <h3>{{ location.name }}</h3>
+            <p>{{ location.description }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Modal for Edit Form -->
+    <div class="modal" id="edit-modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Редагувати запис</h2>
+        <form id="edit-form">
+          <input type="text" name="name" placeholder="Назва" required>
+          <textarea name="description" placeholder="Опис" required></textarea>
+          <input type="date" name="date" style="display: none;">
+          <button type="submit" class="primary-btn">Зберегти</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal for Delete Confirmation -->
+    <div class="modal" id="delete-modal">
+      <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Підтвердження видалення</h2>
+      <p>Ви впевнені, що хочете видалити цей запис?</p>
+      <button class="primary-btn" id="confirm-delete">Видалити</button>
+    </div>
+  </div>
+
+  <!-- Modal for Edit -->
+  <div class="modal" id="edit-modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Редагувати запис</h2>
+      <form id="edit-form">
+        <input type="text" name="name" placeholder="Назва" required>
+        <textarea name="description" placeholder="Опис" required></textarea>
+        <input type="date" name="date" style="display: none;">
+        <button type="submit" class="primary-btn">Зберегти зміни</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const campaignId = "{{ campaign.id_campaign }}";
+  </script>
+  <script src="{{ url_for('static', filename='js/script-campaign.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/script-scrollbar.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/script-header.js') }}"></script>
+</body>
+</html>

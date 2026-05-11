@@ -1,0 +1,522 @@
+/* Основний контейнер */
+.encounter-container {
+    display: flex;
+    height: calc(100vh - 80px);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Стилі для кнопок приховування сайдбарів */
+.sidebar-toggle {
+    position: absolute;
+    background: #cc0000;
+    color: white;
+    border: none;
+    cursor: pointer;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+    background: #ff0000;
+}
+
+.left-toggle, .right-toggle {
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 60px;
+}
+
+.left-toggle {
+    left: 300px; /* Початкова позиція - ширина лівого сайдбара */
+    border-radius: 0 4px 4px 0;
+}
+
+.right-toggle {
+    right: 300px; /* Початкова позиція - ширина правого сайдбара */
+    border-radius: 4px 0 0 4px;
+}
+
+.bottom-toggle {
+    bottom: 60px; /* Початкова позиція - висота нижнього бару */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 24px;
+    border-radius: 4px 4px 0 0;
+}
+
+/* Стилі для прихованих сайдбарів */
+.left-sidebar.hidden {
+    margin-left: -300px;
+}
+
+.right-sidebar.hidden {
+    margin-right: -300px;
+}
+
+.bottom-bar.hidden {
+    bottom: -60px;
+}
+
+.left-toggle.sidebar-hidden {
+    left: 0;
+}
+
+.right-toggle.sidebar-hidden {
+    right: 0;
+}
+
+.bottom-toggle.sidebar-hidden {
+    bottom: 0;
+}
+
+/* Стилі для сайдбарів */
+.left-sidebar,
+.right-sidebar {
+    width: 300px;
+    background-color: #1a1a1a;
+    color: #ecf0f1;
+    padding: 15px;
+    overflow-y: auto; /* Додаємо можливість скролінгу по вертикалі */
+    max-height: calc(100vh - 80px); /* Обмежуємо висоту сайдбарів */
+    transition: margin 0.3s ease;
+}
+
+/* Стилі для нижнього бару */
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: #1a1a1a;
+    color: #ecf0f1;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 90;
+    transition: bottom 0.3s ease;
+    gap: 10px;
+}
+
+/* Стилі для груп кнопок в нижньому барі */
+.bottom-bar-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Стилі для кнопок в нижньому барі */
+.bottom-bar-button {
+    background: #1a1a1a;
+    border: solid 2px #cc0000;
+    color: #ecf0f1;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.bottom-bar-button:hover {
+    background: #cc0000;
+}
+
+.bottom-bar-button.active {
+    background: #ff0000;
+}
+
+/* Вкладки в лівому сайдбарі */
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 10px;
+    background: #1a1a1a;
+    border: solid 2px #cc0000;
+    color: #ecf0f1;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.tab-button:hover {
+    background: #cc0000;
+}
+
+.tab-button.active {
+    background: #ff0000;
+}
+
+.tab-content {
+    display: none;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.tab-content.active {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+    align-content: flex-start;
+    max-height: calc(100vh - 200px); /* Обмежуємо висоту вмісту вкладок */
+    overflow-y: auto; /* Додаємо можливість скролінгу */
+}
+
+.sprite-item {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.sprite-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.sprite-item .sprite-name {
+    font-size: 12px;
+    color: #ecf0f1;
+    margin-top: 5px;
+    text-align: center;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Стилі для інформаційної панелі токена */
+.token-info {
+    background: #34495e;
+    padding: 15px;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 0;
+}
+
+.token-info h4 {
+    color: #ecf0f1;
+    margin: 10px 0;
+    text-align: center;
+}
+
+/* Стилі для панелі характеристик */
+.token-stats-panel {
+    background: #000000;
+    padding: 15px;
+    border-radius: 0 0 8px 8px;
+    margin-bottom: 20px;
+    max-height: 300px; /* Обмежуємо висоту панелі характеристик */
+    overflow-y: auto; /* Додаємо можливість скролінгу */
+}
+
+.stats {
+    margin: 15px 0;
+}
+
+.stat-item {
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-item label {
+    color: #bdc3c7;
+}
+
+.hp-container, .max-hp-container, .ac-container, .speed-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.hp-value, .max-hp-value, .ac-value, .speed-value {
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+.hp-button, .max-hp-button, .ac-button, .speed-button {
+    background: #db3434;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.hp-button:hover, .max-hp-button:hover, .ac-button:hover, .speed-button:hover {
+    background: #a70404;
+}
+
+.action-buttons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.attack-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.attack-btn:hover {
+    background: #c0392b;
+}
+
+.action-buttons .attack-btn {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.action-buttons .remove-token-btn {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Ігрове поле */
+.game-field {
+    flex: 1;
+    background: #ecf0f1;
+    position: relative;
+    overflow: hidden;
+}
+
+.grid-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: grid;
+    background: #fff;
+    cursor: move;
+}
+
+.grid-cell {
+    border: 1px solid #bdc3c7;
+    width: 50px;
+    height: 50px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.grid-cell .sprite {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.grid-cell .sprite[data-type="background"] {
+    z-index: 1;
+}
+
+.grid-cell .sprite:not([data-type="background"]) {
+    z-index: 2;
+}
+
+/* Правий сайдбар */
+.selected-info,
+.initiative-tracker {
+    background: #000000;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.selected-info h3,
+.initiative-tracker h3 {
+    margin-bottom: 15px;
+    color: #ffffff;
+}
+
+#initiative-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px; /* Обмежуємо висоту списку ініціативи */
+    overflow-y: auto; /* Додаємо можливість скролінгу */
+    overflow-x: hidden;
+}
+
+.initiative-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: rgba(32, 32, 32, 0.9);
+    border-radius: 5px;
+}
+
+.initiative-item img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+/* Стилі для скролбарів */
+.left-sidebar::-webkit-scrollbar,
+.right-sidebar::-webkit-scrollbar,
+.tab-content::-webkit-scrollbar,
+#initiative-list::-webkit-scrollbar,
+.token-stats-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.left-sidebar::-webkit-scrollbar-track,
+.right-sidebar::-webkit-scrollbar-track,
+.tab-content::-webkit-scrollbar-track,
+#initiative-list::-webkit-scrollbar-track,
+.token-stats-panel::-webkit-scrollbar-track {
+    background: #2c2c2c;
+    border-radius: 4px;
+}
+
+.left-sidebar::-webkit-scrollbar-thumb,
+.right-sidebar::-webkit-scrollbar-thumb,
+.tab-content::-webkit-scrollbar-thumb,
+#initiative-list::-webkit-scrollbar-thumb,
+.token-stats-panel::-webkit-scrollbar-thumb {
+    background: #cc0000;
+    border-radius: 4px;
+}
+
+.left-sidebar::-webkit-scrollbar-thumb:hover,
+.right-sidebar::-webkit-scrollbar-thumb:hover,
+.tab-content::-webkit-scrollbar-thumb:hover,
+#initiative-list::-webkit-scrollbar-thumb:hover,
+.token-stats-panel::-webkit-scrollbar-thumb:hover {
+    background: #ff0000;
+}
+
+/* Модальне вікно */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #1f1f1f;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.modal-content h2 {
+    color: #ecf0f1;
+    margin-bottom: 20px;
+}
+
+.grid-size-inputs {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.grid-size-inputs input {
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    width: 100px;
+}
+
+#createGrid {
+    padding: 10px 20px;
+    background: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#createGrid:hover {
+    background: #2980b9;
+}
+
+.sprite-preview{
+    display: flex;
+    justify-content: center;
+}
+
+.token-preview{
+    display: flex;
+    justify-content: center;   
+    align-items: center;
+    flex-direction: column;
+}
+
+#rollInitiative{
+    background: #1a1a1a;
+    border: solid 2px #cc0000;
+    color: #ecf0f1;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    margin: 25px;
+}
+
+#rollInitiative:hover{
+    background: #920101;
+}
+
+.close-button{
+    color: #ecf0f1;
+    font-size: 25px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.close-button :hover{
+    color: #383838;
+}

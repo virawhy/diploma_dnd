@@ -1,0 +1,118 @@
+header{
+    position: relative;
+    z-index: 2;
+}
+.charlist-container {
+    width: 100%;
+    min-height: 900px;
+    background-image: url("../img/charlist-background.jpg");
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+}
+
+.charlist-itself {
+    padding-top: 109px;
+    padding-bottom: 49px;
+}
+
+.charlist-element {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 140px;
+    background: rgba(1, 0, 0, 0.75);
+    border: 1px solid #FFFFFF;
+    border-radius: 40px;
+    margin-bottom: 60px;
+    padding-left: 38px;
+    padding-right: 64px;
+    cursor: pointer;
+    transition:0.3s !important;
+}
+.charlist-element:hover{
+    box-shadow: 0px 0px 25px -1px rgba(255,255,255,1);
+    transition:0.3s !important;
+}
+.charlist-element:hover img{
+    transition:0.3s !important;
+    transform: scale(1.4);
+}
+.charlist-element img {
+    transition:0.3s !important;
+    width: 90px;
+    height: 90px;
+    margin-top: 27px;
+}
+.badge-container{
+    position: relative;
+}
+.charlist-text p {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 20px;
+    text-align: center;
+    color: #FFFFFF;
+}
+
+.charlist-text-interval{
+    margin-top: 35px;
+    margin-bottom: 17px;
+}
+
+.charlist-new{
+    gap: 6%;
+}
+
+.charlist-new img{
+    width: 45px;
+    height: 40px;
+    margin-top: 50px;
+    margin-right: 70px;
+    border: 0px solid rgba(255, 255, 255, 1);
+}
+
+.charlist-new p{
+    margin-left: 70px;
+    margin-top: 60px;
+    white-space: nowrap;
+}
+.charlist-new:hover .charlist img{
+    border: 1px solid rgba(255, 255, 255, 1);
+}
+
+@media (max-width: 732px) {
+    
+    .charlist-container{
+        max-width: 732px;
+    }
+
+    .charlist-element{
+        gap: 5%;
+    }
+    .charlist-element:last-child{
+        gap: 10%;
+    }
+
+    .charlist-element img{
+        max-width: 90px ;
+        height: 90px ;
+    }
+
+    .charlist-text p{
+        font-size: 14px;
+    }
+
+    .charlist-new img{
+        height: 30%;
+    }
+
+    .charlist-new p{
+        white-space: nowrap;
+    }
+}

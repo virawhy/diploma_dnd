@@ -1,0 +1,348 @@
+header{
+    position: relative;
+    z-index:2;
+}
+body{
+    background: black;
+}
+.poster {
+    width: 100%;
+    height: 725px;
+    align-items: center;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("../img/poster-meche.jpg");
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation-name: float;
+    animation-duration: 10s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}
+
+.poster-bot {
+    margin: 0 auto;
+    display: flex;
+    margin-top:300px;
+    width: 730px;
+    justify-content: center;
+    opacity: 0;
+}
+
+.poster-bot p {
+    font-family: 'PT Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 150%;
+
+    text-align: center;
+    text-transform: uppercase;
+
+    color: #FFFFFF;
+}
+
+.poster-big {
+    padding-top: 360px;
+    display: flex;
+    justify-content: center;
+    height: 206px;
+    opacity: 0;
+}
+
+.poster-big p {
+    font-family: 'Roboto';
+    text-align: center;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 80px;
+    line-height: 120px;
+    color: #FFFFFF;
+}
+
+.show-down{
+    opacity: 1 !important;
+    transform: translateY(-120px) !important;
+    transition: opacity 1s, transform 1s;
+}
+
+.show-down-delay{
+    opacity: 1 !important;
+    transform: translateY(-120px) !important;
+    transition: opacity 1s, transform 1s;
+    transition-delay: 0.6s;
+}
+.show-left {
+    opacity: 1 !important;
+    transition: opacity 2.5s, transform 2.5s;
+  } 
+.show-right {
+    opacity: 1 !important;
+    transition: opacity 1s, transform 1s;
+  }
+  
+  .banner-content{
+    opacity: 0;
+    margin-left: -120px;
+} 
+.merche-dice{
+    padding-top: 68px;
+    padding-bottom: 19px;
+    display: flex;
+    justify-content: center;
+}
+.dice-container{
+    width: 1200px;
+    height: 575px;
+}
+.banner-product{
+    display: flex;
+    justify-content: space-between;
+}
+.product-container{
+    width: 707px;
+    height: 575px;
+    background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(../img/star-background.jpg);
+    border-radius: 25px;
+}
+.head-flex{
+    display: flex;
+    justify-content: center;
+}
+.product-head{
+    position: relative;
+    margin-top: 43px;
+    margin-bottom: 35px;
+}
+.product-head p{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 45px;
+    color: #FFFFFF;
+}
+.product-head::before{
+    content: '';
+    position: absolute;
+    width: 0px;
+    height: 1px;
+    top: 60px;
+    right: -50px;
+    background-color: #FFFFFF;
+    transform: translate(-50%, 0%);
+    transition: 0.3s;
+}
+.product-container:hover .product-head::before{
+    width: 120px;
+}
+.product-element-list{
+    display: flex;
+    justify-content: left;
+    height: 343px;
+}
+.product-element{
+    margin-right: 14px;
+}
+.product-element-reverse{
+    margin-right: 0px;
+    margin-left: 14px;
+}
+.product-element-list-reverse{
+    justify-content: left;
+}
+.product-pic-frame{
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    padding: 34px 19px;
+    width: 219px;
+    height: 246px;
+}
+
+.product-pic-frame-special{
+    position: relative;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    padding: 34px 19px;
+    width: 219px;
+    height: 246px;
+}
+.product-pic-frame-special img{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.product-type p{
+    margin-top: 14px;
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 24px;
+    color: #FFFFFF;
+}
+.product-name p{
+    margin-top: 6px;
+    font-family: 'Playfair Display';
+font-style: normal;
+font-weight: 400;
+font-size: 15px;
+line-height: 20px;
+color: #FFFFFF;
+}
+.product-price{
+    margin-top: 7px;
+    font-family: 'Playfair Display';
+font-style: normal;
+font-weight: 400;
+font-size: 15px;
+line-height: 20px;
+
+color: #FFFFFF;
+}
+.buy-button{
+    margin-top: 12.5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #FF0000;
+    width: 141px;
+    height: 34px;
+    transition: background-color 0.3s ease;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.buy-button:hover {
+    background-color: #990000;
+}
+
+.buy-button p{
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 21px;
+    text-align: center;
+    color: #FFFFFF;
+}
+.banner{
+    padding: 50px 72px 34px 42px;
+    height: 575px;
+    width: 476px;;
+    
+}
+
+.banner-img1{
+    border-radius: 25px;
+    background:linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0 0 0 / 55%)), url(../img/background-dice-1.png);
+}
+
+.banner-img2{
+    border-radius: 25px;
+    background:linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0 0 0 / 55%)), url(../img/background-dice-2.png);
+}
+
+.banner-img3{
+    border-radius: 25px;
+    background:linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0 0 0 / 55%)), url(../img/background-dice-3.png);
+}
+
+.banner-head p{
+    font-family: 'Roboto';
+font-style: normal;
+font-weight: 700;
+font-size: 70px;
+line-height: 105px;
+/* identical to box height */
+
+color: #FFFFFF;
+}
+
+.banner-text p{
+    padding-right: 50px;
+    margin-top: 75px;
+    font-family: 'Roboto';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height */
+
+color: #FFFFFF;
+}
+
+.banner-button{
+    margin-top: 140px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 160px;
+    height: 56px;
+    background: rgba(0, 0, 0, 0.699);
+    border-radius: 5px;
+    border: 3px solid #FF0202;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.banner-button-special{
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 160px;
+    height: 56px;
+    background: rgba(0, 0, 0, 0.699);
+    border-radius: 5px;
+    border: 3px solid #FF0202;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.banner-button p{
+    font-family: 'Roboto';
+font-style: normal;
+font-weight: 700;
+font-size: 14px;
+line-height: 21px;
+/* identical to box height, or 150% */
+
+text-align: center;
+
+color: #FFFFFF;
+}
+
+.banner-button-special p{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 21px;
+    /* identical to box height, or 150% */
+    
+    text-align: center;
+    
+    color: #FFFFFF;
+}
+
+.banner-button:hover{
+    box-shadow: 0 0 10px 0 #FF0202 inset, 0 0 20px 2px #FF0202;
+    transition: 0.3s;
+}
+
+.banner-button-special:hover{
+    box-shadow: 0 0 10px 0 #FF0202 inset, 0 0 20px 2px #FF0202;
+    transition: 0.3s;
+}
+
+.line{
+    width: 100%;
+    height: 0px;
+    border: 1px solid #ffffff;
+}
+
+

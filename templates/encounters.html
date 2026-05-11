@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='img/DnD-ico.ico')}}">
+    <title>Сутички</title>
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style-reset.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/header-footer-style.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style-scrollbar.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/encounters.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/initiative.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/selection.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/atack.css')}}">
+</head>
+<body>
+    <div id="progressbar"></div>
+
+    <header>
+
+        <div class="header-frame">
+            <div class="header-logo"><a href="/"><img src="{{url_for('static', filename='img/logo.png')}}"></a></div>
+            <div class="header-nav">
+                <a href="{{ url_for('knowledge_rules') }}"><p class="header-nav-element">Посібник</p></a>
+
+                <a href="/dice.html"><p class="header-nav-element">Дайси</p></a>
+                
+
+
+
+                {% if current_user.is_authenticated %}
+                <a href="/campaigns"><p class="header-nav-element">Кампанії</p></a>
+                <a href="/sessions"><p class="header-nav-element">Сесії</p></a>
+                <a href="/charlist.html"><p class="header-nav-element">Персонажі</p></a>
+                <a href="/logout"><p class="header-nav-element">Вихід</p></a>
+
+
+                {% else %}
+                    <a href="/auth.html"><p class="header-nav-element">Вхід</p></a>
+                    <a href="/registration.html"><p class="header-nav-element">Реєстрація</p></a>
+                {% endif %}
+                
+            </div>
+            <input type="checkbox" id="burger-toggle">
+            <label for="burger-toggle"  class="burger-container">
+                <div class="burger-line"></div>
+                <div class="burger-line"></div>
+                <div class="burger-line"></div>
+            </label>
+            <nav class="nav-menu">
+                <ul>
+                  <li><a href="{{ url_for('knowledge_rules') }}">База знань</a></li>
+                  <li><a href="/dice.html">Дайси</a></li>
+                  <li><a href="/merche.html">Мерч</a></li>
+                  {% if current_user.is_authenticated %}
+                    <li><a href="/charlist.html">Персонажі</a></li>
+                    <li><a href="/campaigns">Кампанії</a></li>
+                    <li><a href="/sessions">Сесії</a></li>
+                    <li><a href="/logout">Вихід</a></li>
+                  {% else %}
+                    <li><a href="/auth.html">Вхід</a></li>
+                    <li><a href="/registration.html">Реєстрація</a></li>
+                  {% endif %}
+                
+                </ul>
+            </nav>
+        </div>
+
+    </header>
+
+    <main class="encounter-container">
+        <!-- Кнопки для приховування/відображення сайдбарів -->
+        <button class="sidebar-toggle left-toggle" id="leftSidebarToggle">◀</button>
+        <button class="sidebar-toggle right-toggle" id="rightSidebarToggle">▶</button>
+        <!-- Лівий сайдбар -->
+        <aside class="left-sidebar">
+            <div class="tabs">
+                <button class="tab-button active" data-tab="tokens">Токени</button>
+                <button class="tab-button" data-tab="objects">Об'єкти</button>
+                <button class="tab-button" data-tab="environment">Оточення</button>
+            </div>
+            <div class="tab-content active" id="tokens-content">
+                <!-- Тут будуть токени -->
+            </div>
+            <div class="tab-content" id="objects-content">
+                <!-- Тут будуть об'єкти -->
+            </div>
+            <div class="tab-content" id="environment-content">
+                <!-- Тут буде оточення -->
+            </div>
+        </aside>
+
+        <!-- Ігрове поле -->
+        <div class="game-field">
+            <div class="grid-container" id="gridContainer">
+                <!-- Сітка буде генеруватися через JavaScript -->
+            </div>
+        </div>
+
+        <!-- Правий сайдбар -->
+        <aside class="right-sidebar">
+            <div class="selected-info">
+                <h3>Вибраний елемент</h3>
+                <div id="selected-content">
+                    <div class="token-info">
+                        <div class="sprite-preview"></div>
+                        <h4 class="token-name"></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="token-stats-panel">
+                <div class="stats">
+                    <div class="stat-item">
+                        <label>Здоров'я:</label>
+                        <div class="hp-container">
+                            <span class="hp-value">7</span>
+                            <button class="hp-button minus">-</button>
+                            <button class="hp-button plus">+</button>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <label>Макс. здоров'я:</label>
+                        <div class="max-hp-container">
+                            <span class="max-hp-value">20</span>
+                            <button class="max-hp-button minus">-</button>
+                            <button class="max-hp-button plus">+</button>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <label>Клас броні:</label>
+                        <div class="ac-container">
+                            <span class="ac-value">12</span>
+                            <button class="ac-button minus">-</button>
+                            <button class="ac-button plus">+</button>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <label>Швидкість:</label>
+                        <div class="speed-container">
+                            <span class="speed-value">30</span>
+                            <button class="speed-button minus">-</button>
+                            <button class="speed-button plus">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="attack-btn primary-button">Атакувати</button>
+                    <button class="remove-token-btn primary-button">Видалити токен</button>
+                </div>
+            </div>
+            <div class="initiative-tracker">
+                <h3>Перебіг ініціативи</h3>
+                <div id="initiative-list">
+                    <!-- Тут буде список ініціативи -->
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Нижній бар з кнопками -->    
+    <div class="bottom-bar" id="bottomBar">
+        <div class="bottom-bar-group">
+            <button class="bottom-bar-button" id="normalModeBtn">Звичайний режим</button>
+            <button class="bottom-bar-button" id="multiSelectBtn">Множинне заповнення</button>
+        </div>
+        <div class="bottom-bar-group">
+            <button class="bottom-bar-button" id="undoButton">Скасувати зміни</button>
+        </div>
+        <div class="bottom-bar-group">
+            <button class="bottom-bar-button" id="saveSessionBtn">Зберегти сесію</button>
+        </div>
+    </div>
+    <button class="sidebar-toggle bottom-toggle" id="bottomBarToggle">▲</button>
+
+    <!-- Модальне вікно для розмірності поля -->
+    <div class="modal" id="gridSizeModal">
+        <div class="modal-content">
+            <h2>Введіть розмірність поля</h2>
+            <div class="grid-size-inputs">
+                <input type="number" id="gridWidth" placeholder="Ширина" min="1" max="100">
+                <input type="number" id="gridHeight" placeholder="Висота" min="1" max="100">
+            </div>
+            <button id="createGrid">Створити поле</button>
+        </div>
+    </div>
+
+    <script type="module" src="{{url_for('static', filename='js/encounters/index.js')}}"></script>
+</body>
+</html>

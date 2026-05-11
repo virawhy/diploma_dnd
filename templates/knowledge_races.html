@@ -1,0 +1,122 @@
+{% extends "knowledge_base.html" %}
+
+{% block sidebar %}
+<div class="sidebar-section">
+    <h3 class="sidebar-title">Раси</h3>
+    <ul class="sidebar-list">
+        {% for race in races.races %}
+        <li class="sidebar-item">
+            <a href="#race-{{ race.name|lower }}" class="sidebar-link">{{ race.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="sidebar-section">
+    <h3 class="sidebar-title">Передісторії</h3>
+    <ul class="sidebar-list">
+        {% for bg in races.backgrounds %}
+        <li class="sidebar-item">
+            <a href="#bg-{{ bg.name|lower }}" class="sidebar-link">{{ bg.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="sidebar-section">
+    <h3 class="sidebar-title">Мови</h3>
+    <ul class="sidebar-list">
+        {% for lang in races.languages %}
+        <li class="sidebar-item">
+            <a href="#lang-{{ lang.name|lower }}" class="sidebar-link">{{ lang.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="content-section">
+    <h1 class="content-title">Раси</h1>
+    {% for race in races.races %}
+    <div id="race-{{ race.name|lower }}" class="stat-block">
+        <h2 class="stat-title">{{ race.name }}</h2>
+        <div class="content-text">
+            <strong>Швидкість:</strong> {{ race.speed }}
+        </div>
+        {% if race.ability_bonuses %}
+        <div class="content-text">
+            <strong>Бонуси до характеристик:</strong>
+            {% for bonus in race.ability_bonuses %}
+            <span class="tag">{{ bonus.ability_score }} +{{ bonus.bonus }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="content-text">
+            <strong>Вік:</strong> {{ race.age }}
+        </div>
+        <div class="content-text">
+            <strong>Світогляд:</strong> {{ race.alignment }}
+        </div>
+        <div class="content-text">
+            <strong>Розмір:</strong> {{ race.size }}
+        </div>
+        <div class="content-text">
+            <strong>Опис розміру:</strong> {{ race.size_description }}
+        </div>
+        {% if race.languages %}
+        <div class="content-text">
+            <strong>Мови:</strong>
+            {% for lang in race.languages %}
+            <span class="tag">{{ lang }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<div class="content-section">
+    <h1 class="content-title">Передісторії</h1>
+    {% for bg in races.backgrounds %}
+    <div id="bg-{{ bg.name|lower }}" class="description">
+        <h2 class="content-subtitle">{{ bg.name }}</h2>
+        <div class="content-text">
+            <strong>Особливість:</strong> {{ bg.feature.name }}
+        </div>
+        <div class="content-text">{{ bg.feature.desc|markdown }}</div>
+        {% if bg.starting_proficiencies %}
+        <div class="content-text">
+            <strong>Початкові володіння:</strong>
+            {% for prof in bg.starting_proficiencies %}
+            <span class="tag">{{ prof }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<div class="content-section">
+    <h1 class="content-title">Мови</h1>
+    {% for lang in races.languages %}
+    <div id="lang-{{ lang.name|lower }}" class="stat-block">
+        <h2 class="stat-title">{{ lang.name }}</h2>
+        <div class="content-text">
+            <strong>Тип:</strong> {{ lang.type }}
+        </div>
+        <div class="content-text">
+            <strong>Письмо:</strong> {{ lang.script }}
+        </div>
+        {% if lang.typical_speakers %}
+        <div class="content-text">
+            <strong>Типові носії:</strong>
+            {% for speaker in lang.typical_speakers %}
+            <span class="tag">{{ speaker }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %} 

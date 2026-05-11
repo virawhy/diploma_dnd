@@ -1,0 +1,47 @@
+{% extends "knowledge_base.html" %}
+
+{% block sidebar %}
+<div class="sidebar-section">
+    <h3 class="sidebar-title">Базові правила</h3>
+    <ul class="sidebar-list">
+        {% for rule in rules.basic_rules %}
+        <li class="sidebar-item">
+            <a href="#basic-{{ rule.name|lower }}" class="sidebar-link">{{ rule.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="sidebar-section">
+    <h3 class="sidebar-title">Ігрові механіки</h3>
+    <ul class="sidebar-list">
+        {% for rule in rules.game_mechanics %}
+        <li class="sidebar-item">
+            <a href="#mechanics-{{ rule.name|lower }}" class="sidebar-link">{{ rule.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="content-section">
+    <h1 class="content-title">Базові правила</h1>
+    {% for rule in rules.basic_rules %}
+    <div id="basic-{{ rule.name|lower }}" class="description">
+        <h2 class="content-subtitle">{{ rule.name }}</h2>
+        <div class="content-text">{{ rule.desc|markdown|safe }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="content-section">
+    <h1 class="content-title">Ігрові механіки</h1>
+    {% for rule in rules.game_mechanics %}
+    <div id="mechanics-{{ rule.name|lower }}" class="description">
+        <h2 class="content-subtitle">{{ rule.name }}</h2>
+        <div class="content-text">{{ rule.desc|markdown|safe }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %} 

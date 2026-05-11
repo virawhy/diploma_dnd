@@ -1,0 +1,50 @@
+{
+  "session_id": 1,
+  "grid_width": 12,
+  "grid_height": 12,
+  "tokens": [
+    {
+      "x": 2,
+      "y": 2,
+      "src": "http://127.0.0.1:5000/static/sprites/objects/%D0%94%D0%B7%D0%B5%D1%80%D0%BA%D0%B0%D0%BB%D0%BE.png",
+      "alt": "Дзеркало.png",
+      "health": 7,
+      "maxHealth": 20,
+      "ac": 12,
+      "speed": 30,
+      "isBackground": false
+    },
+    {
+      "x": 7,
+      "y": 4,
+      "src": "http://127.0.0.1:5000/static/sprites/tokens/%D0%95%D0%BB%D1%8C%D1%84%20%D0%BF%D0%B0%D0%BB%D0%B0%D0%B4%D1%96%D0%BD.png",
+      "alt": "Ельф паладін.png",
+      "health": 7,
+      "maxHealth": 20,
+      "ac": 12,
+      "speed": 30,
+      "isBackground": false
+    },
+    {
+      "x": 3,
+      "y": 6,
+      "src": "http://127.0.0.1:5000/static/sprites/objects/%D0%9B%D1%96%D0%B6%D0%BA%D0%BE.png",
+      "alt": "Ліжко.png",
+      "health": 7,
+      "maxHealth": 20,
+      "ac": 12,
+      "speed": 30,
+      "isBackground": false
+    }
+  ],
+  "initiative_list": [
+    {
+      "id": "Ельф паладін.png-http://127.0.0.1:5000/static/sprites/tokens/%D0%95%D0%BB%D1%8C%D1%84%20%D0%BF%D0%B0%D0%BB%D0%B0%D0%B4%D1%96%D0%BD.png",
+      "name": "Ельф паладін",
+      "sprite": "http://127.0.0.1:5000/static/sprites/tokens/%D0%95%D0%BB%D1%8C%D1%84%20%D0%BF%D0%B0%D0%BB%D0%B0%D0%B4%D1%96%D0%BD.png",
+      "hp": 7,
+      "initiative": 1
+    }
+  ],
+  "saved_at": "2025-06-03T16:30:32.645175"
+}
