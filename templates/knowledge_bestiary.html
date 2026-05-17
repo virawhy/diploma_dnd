@@ -1,0 +1,48 @@
+{% extends "knowledge_base.html" %}
+
+{% block sidebar %}
+<div class="sidebar-section">
+    <h3 class="sidebar-title">Бестіарій</h3>
+    <ul class="sidebar-list">
+        {% if bestiary and bestiary.monsters %}
+        {% for monster in bestiary.monsters[:40] %}
+        <li class="sidebar-item">
+            <a href="#monster-{{ loop.index }}" class="sidebar-link">{{ monster.name }}</a>
+        </li>
+        {% endfor %}
+        {% endif %}
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="content-section">
+    <h1 class="content-title">Бестіарій</h1>
+    {% if bestiary and bestiary.monsters %}
+        {% for monster in bestiary.monsters %}
+        <div id="monster-{{ loop.index }}" class="description">
+            <h2 class="content-subtitle">{{ monster.name }}</h2>
+            <div class="stat-block">
+                <p><strong>Тип:</strong> {{ monster.type or "-" }}</p>
+                <p><strong>Розмір:</strong> {{ monster.size or "-" }}</p>
+                <p><strong>Клас обладунку:</strong> {{ monster.armor_class[0].value if monster.armor_class else "-" }}</p>
+                <p><strong>Здоров'я:</strong> {{ monster.hit_points or "-" }}</p>
+                <p><strong>Рейтинг небезпеки:</strong> {{ monster.challenge_rating or "-" }}</p>
+            </div>
+            {% if monster.special_abilities %}
+            <div class="content-text">
+                <strong>Особливості:</strong>
+                {% for ability in monster.special_abilities[:3] %}
+                    <p>{{ ability.name }}: {{ ability.desc }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="description">
+            <p>Дані бестіарію не знайдено.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,3 +1,12 @@
 /venv
+/dnd-env
 /.idea
 /.vscode
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+instance/*.db
+flask_session/
+session_saves/
+*.rar

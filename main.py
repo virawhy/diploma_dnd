@@ -3,32 +3,45 @@ from flask import Flask, Blueprint, render_template, url_for, send_file, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_user, login_required, current_user, UserMixin, LoginManager, logout_user
 from flask_session import Session
+from werkzeug.exceptions import HTTPException
 import json
 from markdown import markdown
 import os
+import secrets
+from hmac import compare_digest
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 import subprocess
 from sqlalchemy.orm import DeclarativeBase
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+KNOWLEDGE_JSON_DIR = os.path.join(BASE_DIR, 'static', 'json', 'knowledge_json')
+MUTATING_METHODS = ('POST', 'PUT', 'PATCH', 'DELETE')
+
+
 class Base(DeclarativeBase):
     pass
 
 app = Flask(__name__, static_folder='static')
-app.config['SECRET_KEY'] = 'thisismysecretkeydonotstealit'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dnd.db'
+secret_key = os.environ.get('SECRET_KEY')
+if os.environ.get('FLASK_ENV') == 'production' and not secret_key:
+    raise RuntimeError('SECRET_KEY must be set in production')
+
+app.config['SECRET_KEY'] = secret_key or secrets.token_hex(32)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///dnd.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Налаштування сесій для забезпечення окремих сесій для кожного користувача
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_USE_SIGNER'] = False  # Вимикаємо підписування сесій
+app.config['SESSION_USE_SIGNER'] = True
 # Вимикаємо безпечні cookie для розробки (в продакшені має бути True)
-app.config['SESSION_COOKIE_SECURE'] = False
+app.config['SESSION_COOKIE_SECURE'] = os.environ.get('FLASK_ENV') == 'production'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['SESSION_FILE_DIR'] = os.path.join(os.path.dirname(__file__), 'flask_session')
+app.config['SESSION_FILE_DIR'] = os.path.join(BASE_DIR, 'flask_session')
+app.config['SESSION_SAVE_DIR'] = os.path.join(BASE_DIR, 'session_saves')
 
 # Створюємо директорію для зберігання сесій, якщо вона не існує
 os.makedirs(app.config['SESSION_FILE_DIR'], exist_ok=True)
@@ -41,7 +54,7 @@ scheduler = BackgroundScheduler()
 
 # Функція для запуску скрипта create_knowledge_json
 def run_create_knowledge_json():
-    script_path = os.path.join(os.path.dirname(__file__), 'scripts', 'create_knowledge_json.py')
+    script_path = os.path.join(BASE_DIR, 'scripts', 'create_knowledge_json.py')
     subprocess.run(['python', script_path], check=True)
 
 # Додаємо завдання до планувальника (щосереди о 21:00)
@@ -53,8 +66,92 @@ scheduler.add_job(
     replace_existing=True
 )
 
-# Запускаємо планувальник
-scheduler.start()
+# Start scheduled jobs only for the process that explicitly owns background work.
+if os.environ.get('ENABLE_SCHEDULER') == '1':
+    scheduler.start()
+
+
+def get_csrf_token():
+    token = session.get('_csrf_token')
+    if not token:
+        token = secrets.token_urlsafe(32)
+        session['_csrf_token'] = token
+    return token
+
+
+@app.context_processor
+def inject_csrf_token():
+    return {'csrf_token': get_csrf_token}
+
+
+@app.before_request
+def protect_against_csrf():
+    if request.method not in MUTATING_METHODS:
+        return
+
+    expected_token = session.get('_csrf_token')
+    provided_token = (
+        request.headers.get('X-CSRFToken')
+        or request.headers.get('X-CSRF-TOKEN')
+        or request.form.get('_csrf_token')
+    )
+
+    if not expected_token or not provided_token or not compare_digest(expected_token, provided_token):
+        abort(400, description='Invalid CSRF token')
+
+
+@app.after_request
+def add_csrf_helper(response):
+    content_type = response.headers.get('Content-Type', '')
+    if response.direct_passthrough or 'text/html' not in content_type.lower():
+        return response
+
+    html = response.get_data(as_text=True)
+    if '</head>' not in html:
+        return response
+
+    token = get_csrf_token()
+    csrf_markup = f'''
+    <meta name="csrf-token" content="{token}">
+    <script>
+    (function() {{
+        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (!token) return;
+
+        const mutatingMethods = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+        const originalFetch = window.fetch;
+        window.fetch = function(resource, options) {{
+            options = options || {{}};
+            const method = (options.method || 'GET').toUpperCase();
+            const url = typeof resource === 'string' ? resource : resource.url;
+            const sameOrigin = !url || url.startsWith('/') || url.startsWith(window.location.origin);
+
+            if (sameOrigin && mutatingMethods.has(method)) {{
+                const headers = new Headers(options.headers || {{}});
+                headers.set('X-CSRFToken', token);
+                options.headers = headers;
+            }}
+
+            return originalFetch.call(this, resource, options);
+        }};
+
+        document.addEventListener('DOMContentLoaded', function() {{
+            document.querySelectorAll('form').forEach(function(form) {{
+                const method = (form.getAttribute('method') || 'GET').toUpperCase();
+                if (!mutatingMethods.has(method) || form.querySelector('input[name="_csrf_token"]')) return;
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = '_csrf_token';
+                input.value = token;
+                form.appendChild(input);
+            }});
+        }});
+    }})();
+    </script>
+    '''
+    response.set_data(html.replace('</head>', csrf_markup + '\n</head>', 1))
+    return response
 
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
@@ -222,13 +319,40 @@ def load_user(id_user):
     return User.query.get(int(id_user))
 
 
+def current_username():
+    return current_user.username if current_user.is_authenticated else None
+
+
+def get_owned_game_session_or_404(session_id):
+    game_session = GameSession.query.get_or_404(session_id)
+    if game_session.id_user != current_user.id_user:
+        abort(403)
+    return game_session
+
+
+def session_save_path(session_id):
+    return os.path.join(app.config['SESSION_SAVE_DIR'], f"session_{session_id}.json")
+
+
+def current_user_owns_campaign(campaign):
+    return campaign.id_user == current_user.id_user
+
+
+def current_user_is_campaign_member(campaign):
+    return any(member.id_user == current_user.id_user and member.status == 'member' for member in campaign.members)
+
+
+def current_user_can_view_campaign(campaign):
+    return current_user_owns_campaign(campaign) or current_user_is_campaign_member(campaign)
+
+
 def all_monsters():
-    f = open("./static/json/monsters.json")
-    data = json.load(f)
+    file_path = os.path.join(BASE_DIR, 'static', 'json', 'monsters.json')
+    with open(file_path, encoding='utf-8') as f:
+        data = json.load(f)
     monsters = {}
     for i in data.get('results'):
         monsters[i['name']] = [i['url'][13:], i['index']]
-    f.close()
     return monsters
 
 
@@ -338,25 +462,13 @@ def detail_bestiary(monsters_name):
                 monster_properties["image"] = data["image"]
             except (IndexError, KeyError):
                 monster_properties["image"] = ""
-    if current_user.is_authenticated:
-        name = current_user.username
-    else:
-        name = None
-    return render_template("bestiary.html", dict_monster_prop=monster_properties, monsters=monsters1, name=name)
+    return render_template("bestiary.html", dict_monster_prop=monster_properties, monsters=monsters1, name=current_username())
 
 
 
 @app.route("/", methods=("POST", "GET"))
 def index():
-    if current_user.is_authenticated:
-        name = current_user.username
-    else:
-        name = None
-    if request.method == "GET":
-        text_name = request.form.get('text_name')
-        email = request.form.get('email')
-        text_area = request.form.get('text_area')
-    return render_template('index.html', name=name)
+    return render_template('index.html', name=current_username())
 
 #--------------
 
@@ -366,11 +478,7 @@ def index():
 
 @app.route("/merche.html")
 def merche():
-    if current_user.is_authenticated:
-        name = current_user.username
-    else:
-        name = None
-    return render_template("merche.html", name = name)
+    return render_template("merche.html", name=current_username())
 
 @app.route("/sessions")
 @login_required
@@ -411,13 +519,8 @@ def create_session():
 @app.route("/session/<int:session_id>")
 @login_required
 def session_detail(session_id):
-    session = GameSession.query.get_or_404(session_id)
-    
-    # Перевіряємо чи користувач має доступ до сесії
-    if session.id_user != current_user.id_user:
-        abort(403)
-    
-    return render_template("encounters.html", session=session)
+    game_session = get_owned_game_session_or_404(session_id)
+    return render_template("encounters.html", session=game_session)
 
 @app.route("/encounters.html")
 @login_required
@@ -451,6 +554,8 @@ def update_grid():
         data = request.get_json()
         # Тут буде логіка збереження стану сітки
         return jsonify({"status": "success"})
+    except HTTPException:
+        raise
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -470,6 +575,8 @@ def manage_tokens():
         else:
             # Логіка видалення токена
             return jsonify({"status": "success"})
+    except HTTPException:
+        raise
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -485,6 +592,8 @@ def manage_initiative():
         else:
             # Логіка отримання поточного порядку ініціативи
             return jsonify({"initiative_order": []})
+    except HTTPException:
+        raise
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -493,17 +602,12 @@ def manage_initiative():
 @login_required
 def save_session(session_id):
     try:
-        session = GameSession.query.get_or_404(session_id)
-        
-        # Перевіряємо чи користувач має доступ до сесії
-        if session.id_user != current_user.id_user:
-            abort(403)
-        
+        game_session = get_owned_game_session_or_404(session_id)
         data = request.get_json()
         
         # Створюємо структуру для збереження
         save_data = {
-            "session_id": session_id,
+            "session_id": game_session.id_session,
             "grid_width": data.get("grid_width"),
             "grid_height": data.get("grid_height"),
             "tokens": data.get("tokens", []),
@@ -512,11 +616,14 @@ def save_session(session_id):
         }
         
         # Зберігаємо у JSON файл
-        save_path = os.path.join("session_saves", f"session_{session_id}.json")
+        os.makedirs(app.config['SESSION_SAVE_DIR'], exist_ok=True)
+        save_path = session_save_path(session_id)
         with open(save_path, 'w', encoding='utf-8') as f:
             json.dump(save_data, f, ensure_ascii=False, indent=2)
         
         return jsonify({"status": "success", "message": "Сесію збережено"})
+    except HTTPException:
+        raise
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -525,13 +632,8 @@ def save_session(session_id):
 @login_required
 def load_session(session_id):
     try:
-        session = GameSession.query.get_or_404(session_id)
-        
-        # Перевіряємо чи користувач має доступ до сесії
-        if session.id_user != current_user.id_user:
-            abort(403)
-        
-        save_path = os.path.join("session_saves", f"session_{session_id}.json")
+        get_owned_game_session_or_404(session_id)
+        save_path = session_save_path(session_id)
         
         if not os.path.exists(save_path):
             return jsonify({"has_save": False})
@@ -543,6 +645,8 @@ def load_session(session_id):
             "has_save": True,
             "data": save_data
         })
+    except HTTPException:
+        raise
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -551,41 +655,34 @@ def load_session(session_id):
 @login_required
 def get_session_info(session_id):
     try:
-        session = GameSession.query.get_or_404(session_id)
-        
-        # Перевіряємо чи користувач має доступ до сесії
-        if session.id_user != current_user.id_user:
-            abort(403)
-        
+        game_session = get_owned_game_session_or_404(session_id)
         session_info = {
-            "id": session.id_session,
-            "name": session.name,
-            "description": session.description,
-            "created_date": session.created_date.isoformat(),
-            "campaign_id": session.id_campaign,
-            "user_id": session.id_user
+            "id": game_session.id_session,
+            "name": game_session.name,
+            "description": game_session.description,
+            "created_date": game_session.created_date.isoformat(),
+            "campaign_id": game_session.id_campaign,
+            "user_id": game_session.id_user
         }
         
         return jsonify(session_info)
+    except HTTPException:
+        raise
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 @app.route("/delete_session/<int:session_id>", methods=["POST"])
 @login_required
 def delete_session(session_id):
-    session = GameSession.query.get_or_404(session_id)
-    
-    # Перевіряємо чи користувач має доступ до сесії
-    if session.id_user != current_user.id_user:
-        abort(403)
+    game_session = get_owned_game_session_or_404(session_id)
     
     # Видаляємо файл збереження сесії, якщо він існує
-    save_path = os.path.join("session_saves", f"session_{session_id}.json")
+    save_path = session_save_path(session_id)
     if os.path.exists(save_path):
         os.remove(save_path)
     
     # Видаляємо сесію з бази даних
-    db.session.delete(session)
+    db.session.delete(game_session)
     db.session.commit()
     
     flash('Сесію успішно видалено!', 'success')
@@ -597,7 +694,7 @@ def campaign(campaign_id):
     campaign = Campaign.query.get_or_404(campaign_id)
     
     # Перевірка чи користувач має доступ до кампанії
-    if campaign.id_user != current_user.id_user and not any(member.id_user == current_user.id_user and member.status == 'member' for member in campaign.members):
+    if not current_user_can_view_campaign(campaign):
         abort(403)
     
     # Отримуємо персонажів гравців
@@ -650,7 +747,7 @@ def create_npc(campaign_id):
     app.logger.info(f'Створення NPC для кампанії {campaign_id}')
     try:
         campaign = Campaign.query.get_or_404(campaign_id)
-        if campaign.id_user != current_user.id_user:
+        if not current_user_owns_campaign(campaign):
             app.logger.warning(f'Спроба несанкціонованого доступу до кампанії {campaign_id}')
             abort(403)
         
@@ -665,6 +762,8 @@ def create_npc(campaign_id):
         db.session.commit()
         app.logger.info(f'NPC успішно створено з id {npc.id_npc}')
         return {'id': npc.id_npc, 'name': npc.name, 'description': npc.description}
+    except HTTPException:
+        raise
     except Exception as e:
         app.logger.error(f'Помилка при створенні NPC: {str(e)}')
         db.session.rollback()
@@ -674,7 +773,7 @@ def create_npc(campaign_id):
 @login_required
 def manage_npc(npc_id):
     npc = NPC.query.get_or_404(npc_id)
-    if npc.campaign.id_user != current_user.id_user:
+    if not current_user_owns_campaign(npc.campaign):
         abort(403)
     
     if request.method == 'DELETE':
@@ -695,7 +794,7 @@ def create_event(campaign_id):
     app.logger.info(f'Створення події для кампанії {campaign_id}')
     try:
         campaign = Campaign.query.get_or_404(campaign_id)
-        if campaign.id_user != current_user.id_user:
+        if not current_user_owns_campaign(campaign):
             app.logger.warning(f'Спроба несанкціонованого доступу до кампанії {campaign_id}')
             abort(403)
         
@@ -714,6 +813,8 @@ def create_event(campaign_id):
         db.session.commit()
         app.logger.info(f'Подію успішно створено з id {event.id_event}')
         return {'id': event.id_event, 'name': event.name, 'description': event.description, 'date': event.date}
+    except HTTPException:
+        raise
     except Exception as e:
         app.logger.error(f'Помилка при створенні події: {str(e)}')
         db.session.rollback()
@@ -723,7 +824,7 @@ def create_event(campaign_id):
 @login_required
 def manage_event(event_id):
     event = Event.query.get_or_404(event_id)
-    if event.campaign.id_user != current_user.id_user:
+    if not current_user_owns_campaign(event.campaign):
         abort(403)
     
     if request.method == 'DELETE':
@@ -746,7 +847,7 @@ def create_location(campaign_id):
     app.logger.info(f'Створення локації для кампанії {campaign_id}')
     campaign = Campaign.query.get_or_404(campaign_id)
     
-    if campaign.id_user != current_user.id_user:
+    if not current_user_owns_campaign(campaign):
         app.logger.warning(f'Спроба несанкціонованого доступу до кампанії {campaign_id}')
         abort(403)
     
@@ -776,7 +877,7 @@ def create_location(campaign_id):
 @login_required
 def manage_location(location_id):
     location = Location.query.get_or_404(location_id)
-    if location.campaign.id_user != current_user.id_user:
+    if not current_user_owns_campaign(location.campaign):
         abort(403)
     
     if request.method == 'DELETE':
@@ -796,7 +897,7 @@ def invite_to_campaign(campaign_id):
     app.logger.info(f'Спроба надіслати запрошення до кампанії {campaign_id}')
     campaign = Campaign.query.get_or_404(campaign_id)
     
-    if campaign.id_user != current_user.id_user:
+    if not current_user_owns_campaign(campaign):
         app.logger.warning(f'Спроба несанкціонованого доступу до кампанії {campaign_id}')
         abort(403)
     
@@ -833,45 +934,6 @@ def invite_to_campaign(campaign_id):
         app.logger.info(f'Запрошення успішно надіслано користувачу {invited_username}')
         return {'message': 'Запрошення надіслано успішно'}, 200
         
-    except Exception as e:
-        app.logger.error(f'Помилка при надсиланні запрошення: {str(e)}')
-        db.session.rollback()
-        return {'error': 'Помилка при надсиланні запрошення'}, 500
-
-@app.route('/api/campaign/<int:campaign_id>/invite', methods=['POST'])
-@login_required
-def send_campaign_invite(campaign_id):
-    app.logger.info(f'Спроба надіслати запрошення до кампанії {campaign_id}')
-    
-    campaign = Campaign.query.get_or_404(campaign_id)
-    if campaign.id_user != current_user.id_user:
-        app.logger.warning(f'Спроба несанкціонованого доступу до кампанії {campaign_id}')
-        abort(403)
-    
-    data = request.get_json()
-    if not data or 'user_id' not in data or 'character_id' not in data:
-        return {'error': 'Не вказано користувача або персонажа'}, 400
-    
-    # Перевірка чи користувач вже є учасником кампанії
-    existing_member = CampaignMember.query.filter_by(
-        id_campaign=campaign_id,
-        id_user=data['user_id']
-    ).first()
-    
-    if existing_member:
-        return {'error': 'Користувач вже є учасником кампанії'}, 400
-    
-    try:
-        member = CampaignMember(
-            id_campaign=campaign_id,
-            id_user=data['user_id'],
-            id_character=data['character_id'],
-            status='invited'
-        )
-        db.session.add(member)
-        db.session.commit()
-        app.logger.info(f'Запрошення до кампанії {campaign_id} надіслано')
-        return {'message': 'Запрошення надіслано'}, 201
     except Exception as e:
         app.logger.error(f'Помилка при надсиланні запрошення: {str(e)}')
         db.session.rollback()
@@ -947,7 +1009,7 @@ def get_campaign_members(campaign_id):
     
     # Перевіряємо доступ до кампанії
     campaign = Campaign.query.get_or_404(campaign_id)
-    if campaign.id_user != current_user.id_user and not any(member.id_user == current_user.id_user and member.status == 'member' for member in campaign.members):
+    if not current_user_can_view_campaign(campaign):
         app.logger.warning(f'Спроба несанкціонованого доступу до кампанії {campaign_id}')
         abort(403)
     
@@ -981,7 +1043,7 @@ def get_user_characters(campaign_id, username):
     
     # Перевіряємо доступ до кампанії
     campaign = Campaign.query.get_or_404(campaign_id)
-    if campaign.id_user != current_user.id_user and not any(member.id_user == current_user.id_user and member.status == 'member' for member in campaign.members):
+    if not current_user_can_view_campaign(campaign):
         app.logger.warning(f'Спроба несанкціонованого доступу до кампанії {campaign_id}')
         abort(403)
     
@@ -1032,10 +1094,11 @@ def manage_campaign_character(campaign_id, character_id):
     character = Character.query.get_or_404(character_id)
     
     # Перевіряємо чи користувач є власником кампанії
-    is_campaign_owner = campaign.id_user == current_user.id_user
+    is_campaign_owner = current_user_owns_campaign(campaign)
     
     # Перевіряємо чи користувач є учасником кампанії
-    is_campaign_member = any(member.id_user == current_user.id_user and member.status == 'member' for member in campaign.members)
+    is_campaign_member = current_user_is_campaign_member(campaign)
+    is_character_owner = character.id_user == current_user.id_user
     
     # Перевіряємо чи користувач має право керувати персонажем
     if not is_campaign_owner and not is_campaign_member:
@@ -1043,6 +1106,9 @@ def manage_campaign_character(campaign_id, character_id):
         abort(403)
     
     if request.method == 'DELETE':
+        if not is_campaign_owner and not is_character_owner:
+            abort(403)
+
         # Видаляємо персонажа з кампанії
         campaign_character = CampaignCharacter.query.filter_by(
             id_campaign=campaign_id,
@@ -1067,6 +1133,9 @@ def manage_campaign_character(campaign_id, character_id):
             return jsonify({'message': 'Error removing character from campaign'}), 500
     
     # Додавання персонажа до кампанії (POST метод)
+    if not is_campaign_owner and not is_character_owner:
+        abort(403)
+
     # Перевіряємо чи персонаж вже не є учасником іншої кампанії
     existing_campaign = CampaignCharacter.query.filter_by(id_character=character_id).first()
     if existing_campaign:
@@ -1142,7 +1211,7 @@ def create_campaign():
 def delete_campaign(campaign_id):
     campaign = Campaign.query.get_or_404(campaign_id)
     
-    if campaign.id_user != current_user.id_user:
+    if not current_user_owns_campaign(campaign):
         abort(403)
     
     # Видаляємо всі пов'язані записи
@@ -1291,11 +1360,7 @@ def create_char():
 
 @app.route("/dice.html")
 def dice():
-    if current_user.is_authenticated:
-        name = current_user.username
-    else:
-        name = None
-    return render_template("dice.html", name = name)
+    return render_template("dice.html", name=current_username())
 
 
 # Маршрут для відображення та оновлення інформації про персонажа
@@ -1575,15 +1640,18 @@ def registration():
 #------------Бот--------------------------
 
 def load_json_data(filename):
+    file_path = os.path.join(KNOWLEDGE_JSON_DIR, filename)
     try:
-        file_path = os.path.join('static', 'json', 'knowledge_json', filename)
-        print(f"Trying to load file from: {file_path}")
         with open(file_path, 'r', encoding='utf-8') as file:
-            data = json.load(file)
-            print(f"Successfully loaded data from {filename}")
-            return data
+            return json.load(file)
+    except FileNotFoundError:
+        current_app.logger.warning("Knowledge JSON not found: %s", file_path)
+        return None
+    except json.JSONDecodeError:
+        current_app.logger.exception("Knowledge JSON is invalid: %s", file_path)
+        return None
     except Exception as e:
-        print(f"Error loading {filename}: {str(e)}")
+        current_app.logger.exception("Error loading knowledge JSON %s: %s", filename, e)
         return None
 
 @app.template_filter('markdown')
@@ -1595,39 +1663,28 @@ def markdown_filter(text):
 @app.route("/knowledge/rules")
 def knowledge_rules():
     rules = load_json_data('rules.json')
-    if current_user.is_authenticated:
-        name = current_user.username
-    else:
-        name = None
-    return render_template('knowledge_rules.html', rules=rules, name=name)
+    return render_template('knowledge_rules.html', rules=rules, name=current_username())
 
 @app.route("/knowledge/character")
 def knowledge_character():
     character = load_json_data('character_basics.json')
-    print("Loaded character data:", character.keys() if character else "No data loaded")
-    if current_user.is_authenticated:
-        name = current_user.username
-    else:
-        name = None
-    return render_template('knowledge_character.html', character=character, name=name)
+    return render_template('knowledge_character.html', character=character, name=current_username())
 
 @app.route("/knowledge/races")
 def knowledge_races():
     races = load_json_data('races.json')
-    if current_user.is_authenticated:
-        name = current_user.username
-    else:
-        name = None
-    return render_template('knowledge_races.html', races=races, name=name)
+    return render_template('knowledge_races.html', races=races, name=current_username())
 
 @app.route("/knowledge/classes")
 def knowledge_classes():
     classes = load_json_data('classes.json')
-    if current_user.is_authenticated:
-        name = current_user.username
-    else:
-        name = None
-    return render_template('knowledge_classes.html', classes=classes, name=name)
+    return render_template('knowledge_classes.html', classes=classes, name=current_username())
+
+
+@app.route("/knowledge/bestiary")
+def knowledge_bestiary():
+    bestiary = load_json_data('monsters.json')
+    return render_template('knowledge_bestiary.html', bestiary=bestiary, name=current_username())
 
 
 def create_tables():
@@ -1730,14 +1787,4 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         create_tables()
-    app.run(debug=True)
-
-@app.route("/knowledge/bestiary")
-def knowledge_bestiary():
-    bestiary = load_json_data('bestiary.json')
-    if current_user.is_authenticated:
-        name = current_user.username
-    else:
-        name = None
-    return render_template('knowledge_bestiary.html', bestiary=bestiary, name=name)
-
+    app.run(debug=os.environ.get('FLASK_DEBUG') == '1')
