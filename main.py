@@ -35,7 +35,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Налаштування сесій для забезпечення окремих сесій для кожного користувача
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_USE_SIGNER'] = True
+app.config['SESSION_USE_SIGNER'] = False
 # Вимикаємо безпечні cookie для розробки (в продакшені має бути True)
 app.config['SESSION_COOKIE_SECURE'] = os.environ.get('FLASK_ENV') == 'production'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
