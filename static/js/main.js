@@ -7,6 +7,7 @@ function dice_initialize(container) {
     canvas.style.width = window.innerWidth - 1 + 'px';
     canvas.style.height = window.innerHeight - 1 + 'px';
     var label = $t.id('label');
+    label.innerHTML = '-';
     var set = $t.id('set');
     var selector_div = $t.id('selector_div');
     var info_div = $t.id('info_div');
