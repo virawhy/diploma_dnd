@@ -9,7 +9,7 @@
 .center_field * {
     position: relative;
     font-family: Trebuchet MS;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(23, 27, 21, 0.74);
     padding: 5px 15px;
 }
 
@@ -26,12 +26,57 @@
 }
 
 #label {
-    font-size: 32pt;
-    word-spacing: 0.5em;
-    padding: 5px 15px;
-    color: #ffffff;
-    top: 45%;
-    border-radius: 30px;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 180px;
+    box-sizing: border-box;
+    font-size: 30pt;
+    line-height: 1.05;
+    word-spacing: 0.3em;
+    padding: 14px 22px 16px;
+    color: #ffe9a8;
+    top: auto;
+    border: 1px solid rgba(255, 233, 168, 0.28);
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015)),
+        rgba(23, 27, 21, 0.9);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.42), 0 0 24px rgba(255, 233, 168, 0.1);
+    text-align: left;
+    font-family: 'Orbitron', 'Oswald', sans-serif;
+    font-weight: 600;
+}
+
+#label::before {
+    content: "Результат";
+    color: rgba(255, 233, 168, 0.66);
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    line-height: 16px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    word-spacing: normal;
+}
+
+#info_div {
+    position: fixed;
+    right: 34px;
+    bottom: 34px;
+    z-index: 20;
+    pointer-events: none;
+}
+
+#info_div .center_field {
+    position: static;
+    width: auto;
+    height: auto;
+    margin-top: 0;
+    text-align: left;
+}
+
+#info_div .bottom_field {
+    display: none;
 }
 
 #labelhelp {
@@ -47,7 +92,7 @@
     font-size: 26pt;
     border: none;
     color: #ffffff;
-    background:linear-gradient(0deg, rgba(0, 0, 0, 0.37));
+    background: rgba(23, 27, 21, 0.72);
     border-radius: 45px;
     top: 60%;
 }
@@ -57,7 +102,7 @@
     color: #ffffff;
     margin-left: 20%;
     margin-right: 20%;
-    background:linear-gradient(0deg, rgba(0, 0, 0, 0.37));
+    background: rgba(23, 27, 21, 0.72);
     border-radius: 45px;
     top: 25%;
 }
@@ -65,10 +110,10 @@
 #selector_div button {
     font-size: 20pt;
     color: rgba(255, 255, 255, 0.945);
-    background-color: rgba(0, 0, 0, 0.534);
+    background-color: rgba(127, 17, 17, 0.88);
     cursor: pointer;
     border: 1px solid;
-    border-color: rgba(0, 0, 0, 0.37);
+    border-color: rgba(242, 238, 228, 0.22);
     border-radius: 10px;
     width: 5em;
     top: 62%;
@@ -80,9 +125,11 @@
 }
 
 body{
-    background-color: black;
+    background:
+        radial-gradient(circle at 50% 35%, rgba(64, 54, 39, 0.48), rgba(23, 27, 21, 0.96) 58%),
+        #171b15;
 }
 
 header {
-    background-color: rgba(0,0,0,0.534);
+    background-color: rgba(23, 27, 21, 0.78);
 }

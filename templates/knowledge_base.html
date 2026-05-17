@@ -68,6 +68,7 @@
                         <input type="text" class="search-input" id="searchInput" placeholder="&#1042;&#1074;&#1077;&#1076;&#1110;&#1090;&#1100; &#1089;&#1083;&#1086;&#1074;&#1086; &#1072;&#1073;&#1086; &#1090;&#1077;&#1088;&#1084;&#1110;&#1085;">
                         <button class="search-button" id="searchButton">&#1047;&#1085;&#1072;&#1081;&#1090;&#1080;</button>
                     </div>
+                    <div class="search-results" id="searchResults" aria-live="polite"></div>
                 </div>
             </div>
         </section>
@@ -114,58 +115,181 @@
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
             const searchButton = document.getElementById('searchButton');
+            const searchResults = document.getElementById('searchResults');
+            const knowledgePages = [
+                { url: "{{ url_for('knowledge_rules') }}", label: "\u041f\u0440\u0430\u0432\u0438\u043b\u0430" },
+                { url: "{{ url_for('knowledge_character') }}", label: "\u0425\u0430\u0440\u0430\u043a\u0442\u0435\u0440\u0438\u0441\u0442\u0438\u043a\u0438" },
+                { url: "{{ url_for('knowledge_races') }}", label: "\u0420\u0430\u0441\u0438" },
+                { url: "{{ url_for('knowledge_classes') }}", label: "\u041a\u043b\u0430\u0441\u0438" },
+                { url: "{{ url_for('knowledge_bestiary') }}", label: "\u0411\u0435\u0441\u0442\u0456\u0430\u0440\u0456\u0439" }
+            ];
+            let searchIndexPromise;
+            let searchTimer;
 
-            function performSearch() {
-                const searchText = searchInput.value.toLowerCase();
-                const contentBlocks = document.querySelectorAll('.stat-block, .description');
-                const contentTitles = document.querySelectorAll('.content-title, .content-subtitle');
+            function normalizeSearchText(value) {
+                return value
+                    .toLocaleLowerCase('uk-UA')
+                    .normalize('NFKD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^\p{L}\p{N}\s'-]+/gu, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+            }
 
-                document.querySelectorAll('.highlight').forEach(el => {
-                    const parent = el.parentNode;
-                    parent.innerHTML = parent.innerHTML.replace(/<mark class="highlight">(.*?)<\/mark>/g, '$1');
-                });
+            function makeExcerpt(text, query) {
+                const normalizedText = normalizeSearchText(text);
+                const index = normalizedText.indexOf(query);
+                const sourceIndex = index > -1 ? index : 0;
+                const start = Math.max(0, sourceIndex - 70);
+                const end = Math.min(text.length, sourceIndex + query.length + 150);
+                const prefix = start > 0 ? '...' : '';
+                const suffix = end < text.length ? '...' : '';
+                return `${prefix}${text.slice(start, end).trim()}${suffix}`;
+            }
 
-                contentBlocks.forEach(block => {
-                    const text = block.textContent.toLowerCase();
-                    const title = block.querySelector('h2')?.textContent.toLowerCase() || '';
+            function escapeHtml(value) {
+                return value.replace(/[&<>"']/g, char => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                }[char]));
+            }
 
-                    if (searchText === '') {
-                        block.classList.remove('hidden');
-                        return;
+            function collectEntriesFromDocument(doc, page) {
+                return Array.from(doc.querySelectorAll('.stat-block, .description')).map((block, index) => {
+                    const heading = block.querySelector('h2, .stat-title, .content-subtitle');
+                    const parentTitle = block.closest('.content-section')?.querySelector('.content-title');
+                    const title = (heading?.textContent || parentTitle?.textContent || page.label).trim();
+                    const text = block.textContent.replace(/\s+/g, ' ').trim();
+                    const id = block.id || heading?.id || '';
+                    const href = `${page.url}${id ? `#${id}` : ''}`;
+
+                    return {
+                        id: `${page.url}-${id || index}`,
+                        title,
+                        section: page.label,
+                        href,
+                        text,
+                        normalizedTitle: normalizeSearchText(title),
+                        normalizedText: normalizeSearchText(text)
+                    };
+                }).filter(entry => entry.text.length > 0);
+            }
+
+            function getCurrentPageEntry(page) {
+                const currentPath = window.location.pathname.replace(/\/$/, '');
+                const pagePath = new URL(page.url, window.location.origin).pathname.replace(/\/$/, '');
+                return currentPath === pagePath;
+            }
+
+            async function buildSearchIndex() {
+                const parser = new DOMParser();
+                const entries = [];
+
+                for (const page of knowledgePages) {
+                    if (getCurrentPageEntry(page)) {
+                        entries.push(...collectEntriesFromDocument(document, page));
+                        continue;
                     }
 
-                    if (text.includes(searchText) || title.includes(searchText)) {
-                        block.classList.remove('hidden');
+                    try {
+                        const response = await fetch(page.url, { credentials: 'same-origin' });
+                        if (!response.ok) {
+                            continue;
+                        }
+                        const html = await response.text();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        entries.push(...collectEntriesFromDocument(doc, page));
+                    } catch (error) {
+                        console.warn('Knowledge search skipped page:', page.url, error);
+                    }
+                }
 
-                        const regex = new RegExp(searchText, 'gi');
-                        const elements = block.querySelectorAll('*');
-                        elements.forEach(el => {
-                            if (el.childNodes.length === 1 && el.childNodes[0].nodeType === 3) {
-                                const text = el.innerHTML;
-                                el.innerHTML = text.replace(regex, match =>
-                                    `<mark class="highlight">${match}</mark>`
-                                );
-                            }
-                        });
-                    } else {
-                        block.classList.add('hidden');
+                return entries;
+            }
+
+            function scoreEntry(entry, queryWords, query) {
+                let score = 0;
+
+                if (entry.normalizedTitle.includes(query)) {
+                    score += 80;
+                }
+                if (entry.normalizedText.includes(query)) {
+                    score += 25;
+                }
+
+                queryWords.forEach(word => {
+                    if (entry.normalizedTitle.includes(word)) {
+                        score += 20;
+                    }
+                    if (entry.normalizedText.includes(word)) {
+                        score += 8;
                     }
                 });
 
-                contentTitles.forEach(title => {
-                    const section = title.parentElement;
-                    const visibleBlocks = section.querySelectorAll('.stat-block:not(.hidden), .description:not(.hidden)');
-                    if (visibleBlocks.length === 0) {
-                        title.classList.add('hidden');
-                    } else {
-                        title.classList.remove('hidden');
-                    }
-                });
+                return score;
+            }
+
+            function renderResults(results, query) {
+                if (!query) {
+                    searchResults.innerHTML = '';
+                    searchResults.classList.remove('is-visible');
+                    return;
+                }
+
+                searchResults.classList.add('is-visible');
+
+                if (results.length === 0) {
+                    searchResults.innerHTML = '<p class="search-empty">&#1053;&#1110;&#1095;&#1086;&#1075;&#1086; &#1085;&#1077; &#1079;&#1085;&#1072;&#1081;&#1076;&#1077;&#1085;&#1086;. &#1057;&#1087;&#1088;&#1086;&#1073;&#1091;&#1081;&#1090;&#1077; &#1110;&#1085;&#1096;&#1080;&#1081; &#1079;&#1072;&#1087;&#1080;&#1090;.</p>';
+                    return;
+                }
+
+                const list = results.slice(0, 8).map(result => `
+                    <a class="search-result" href="${result.href}">
+                        <span class="search-result-section">${escapeHtml(result.section)}</span>
+                        <strong>${escapeHtml(result.title)}</strong>
+                        <span>${escapeHtml(makeExcerpt(result.text, query))}</span>
+                    </a>
+                `).join('');
+
+                searchResults.innerHTML = list;
+            }
+
+            async function performSearch() {
+                const query = normalizeSearchText(searchInput.value);
+
+                if (!query) {
+                    renderResults([], '');
+                    return;
+                }
+
+                searchResults.classList.add('is-visible');
+                searchResults.innerHTML = '<p class="search-empty">&#1064;&#1091;&#1082;&#1072;&#1102;...</p>';
+
+                if (!searchIndexPromise) {
+                    searchIndexPromise = buildSearchIndex();
+                }
+
+                const entries = await searchIndexPromise;
+                const queryWords = query.split(' ').filter(word => word.length > 1);
+                const results = entries
+                    .map(entry => ({ ...entry, score: scoreEntry(entry, queryWords, query) }))
+                    .filter(entry => entry.score > 0)
+                    .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title, 'uk-UA'));
+
+                renderResults(results, query);
             }
 
             searchButton.addEventListener('click', performSearch);
-            searchInput.addEventListener('keypress', function(event) {
+            searchInput.addEventListener('input', function() {
+                window.clearTimeout(searchTimer);
+                searchTimer = window.setTimeout(performSearch, 220);
+            });
+            searchInput.addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
+                    event.preventDefault();
                     performSearch();
                 }
             });

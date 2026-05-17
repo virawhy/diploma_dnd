@@ -270,17 +270,17 @@
     }
 
     this.material_options = {
-        specular: 0x172022,
-        color: 0xf0f0f0,
-        shininess: 10,
+        specular: 0x3b2a24,
+        color: 0xffffff,
+        shininess: 18,
         shading: THREE.FlatShading,
     };
-    this.label_color = '#ff0000';
-    this.dice_color = '#202020';
-    this.ambient_light_color = 0xf0f5fb;
-    this.spot_light_color = 0xefdfd5;
-    this.selector_back_colors = { color: 0x404040, shininess: 0, emissive: 0x858787 };
-    this.desk_color = 0xdfdfdf;
+    this.label_color = '#ffe9a8';
+    this.dice_color = '#7f1111';
+    this.ambient_light_color = 0xc5c0ad;
+    this.spot_light_color = 0xf2e4c8;
+    this.selector_back_colors = { color: 0x24281f, shininess: 4, emissive: 0x10130f };
+    this.desk_color = 0x171b15;
     this.use_shadows = true;
 
     this.known_types = ['d4', 'd6', 'd8', 'd10', 'd12', 'd20', 'd100'];
@@ -395,7 +395,7 @@
         container.appendChild(this.renderer.domElement);
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFShadowMap;
-        this.renderer.setClearColor(0xffffff, 1);
+        this.renderer.setClearColor(0x171b15, 1);
 
         this.reinit(container, dimentions);
 
