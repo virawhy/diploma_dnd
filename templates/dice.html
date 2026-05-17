@@ -73,6 +73,8 @@
         </div>
         <div id="canvas"></div>
     </main>
+    {% include 'footer.html' %}
+
     <!-- <script src="{{url_for('static', filename='js/script-header.js')}}"></script> -->
     <script src="../static/js/libs/three.min.js"></script>
     <script src="../static/js/libs/cannon.min.js"></script>
@@ -81,6 +83,7 @@
     <script type="text/javascript" src="../static/js/teal.js"></script>
     <script type="text/javascript" src="../static/js/dice.js"></script>
     <script type="text/javascript" src="../static/js/main.js"></script>
+
     <script type="text/javascript" defer="defer">
         dice_initialize(document.body);
     </script>

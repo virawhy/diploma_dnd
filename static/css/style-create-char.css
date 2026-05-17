@@ -242,15 +242,15 @@ body {
 }
 
 .list-choice:hover input[type="radio"]+span:hover {
-    background: #B41616;
+    background: #9f1515;
 }
 
 .list-choice:hover input[type="radio"]:checked+span:hover {
-    background: #B41616;
+    background: #9f1515;
 }
 
 .list-choice input[type="radio"]:checked+span {
-    background: #B41616;
+    background: #9f1515;
     position: absolute;
     top: 0em;
     border-radius: 0.2em;
@@ -306,7 +306,7 @@ body {
 .random-stats-button{
     height: 34px;
     width: 163px !important;
-    background: #B41616;
+    background: #9f1515;
     border-radius: 5px;
     font-family: 'Poppins';
 font-style: normal;
@@ -322,7 +322,7 @@ color: #FFFFFF;
 margin-top: 20px;
 }
 .random-stats-button:hover{
-    border: 1px solid  #B41616;
+    border: 1px solid  #9f1515;
     background: #000000;
     transition: 0.4s;
 }
@@ -701,7 +701,7 @@ color: #FFFFFF;
     position: absolute;
     height: 60px;
     width: 225px !important;
-    background: #B41616;
+    background: #9f1515;
     border-radius: 5px;
     font-family: 'Poppins';
 font-style: normal;
@@ -717,7 +717,7 @@ color: #FFFFFF;
 margin-top: 20px;
 }
 .submit-button:hover{
-    border: 1px solid  #B41616;
+    border: 1px solid  #9f1515;
     background: #000000;
     transition: 0.4s;
 }

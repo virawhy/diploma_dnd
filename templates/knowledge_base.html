@@ -5,161 +5,104 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='img/DnD-ico.ico')}}">
-    <title>База знань D&D</title>
+    <title>&#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1100; D&D</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/style-reset.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/header-footer-style.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/style-scrollbar.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/style-knowledge.css')}}">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        .search-container {
-            padding: 20px;
-            background-color: #2c2c2c;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .search-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #4a4a4a;
-            border-radius: 4px;
-            background-color: #363636;
-            color: #ffffff;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-        .search-input:focus {
-            outline: none;
-            border-color: #6a6a6a;
-        }
-        .search-button {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            background-color: #4a4a4a;
-            color: #ffffff;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .search-button:hover {
-            background-color: #6a6a6a;
-        }
-        .highlight {
-            background-color: #ffd700;
-            color: #000000;
-            padding: 2px;
-            border-radius: 2px;
-        }
-        .hidden {
-            display: none !important;
-        }
-    </style>
 </head>
-<body>
+<body class="knowledge-page">
     <div id="progressbar"></div>
 
     <header>
-
         <div class="header-frame">
-            <div class="header-logo"><a href="/"><img src="{{url_for('static', filename='img/logo.png')}}"></a></div>
+            <div class="header-logo"><a href="/"><img src="{{url_for('static', filename='img/logo.png')}}" alt="Dungeons and Dragons"></a></div>
             <div class="header-nav">
-                <a href="{{ url_for('knowledge_rules') }}"><p class="header-nav-element">База знань</p></a>
-
-                <a href="/dice.html"><p class="header-nav-element">Дайси</p></a>
-                
-
-
-
+                <a href="{{ url_for('knowledge_rules') }}"><p class="header-nav-element">&#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1100;</p></a>
+                <a href="/dice.html"><p class="header-nav-element">&#1044;&#1072;&#1081;&#1089;&#1080;</p></a>
                 {% if current_user.is_authenticated %}
-                <a href="/campaigns"><p class="header-nav-element">Кампанії</p></a>
-                <a href="/sessions"><p class="header-nav-element">Сесії</p></a>
-                <a href="/charlist.html"><p class="header-nav-element">Персонажі</p></a>
-                <a href="/logout"><p class="header-nav-element">Вихід</p></a>
-
-
+                <a href="/campaigns"><p class="header-nav-element">&#1050;&#1072;&#1084;&#1087;&#1072;&#1085;&#1110;&#1111;</p></a>
+                <a href="/sessions"><p class="header-nav-element">&#1057;&#1077;&#1089;&#1110;&#1111;</p></a>
+                <a href="/charlist.html"><p class="header-nav-element">&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1078;&#1110;</p></a>
+                <a href="/logout"><p class="header-nav-element">&#1042;&#1080;&#1093;&#1110;&#1076;</p></a>
                 {% else %}
-                    <a href="/auth.html"><p class="header-nav-element">Вхід</p></a>
-                    <a href="/registration.html"><p class="header-nav-element">Реєстрація</p></a>
+                <a href="/auth.html"><p class="header-nav-element">&#1042;&#1093;&#1110;&#1076;</p></a>
+                <a href="/registration.html"><p class="header-nav-element">&#1056;&#1077;&#1108;&#1089;&#1090;&#1088;&#1072;&#1094;&#1110;&#1103;</p></a>
                 {% endif %}
-                
             </div>
             <input type="checkbox" id="burger-toggle">
-            <label for="burger-toggle"  class="burger-container">
+            <label for="burger-toggle" class="burger-container" aria-label="Open menu">
                 <div class="burger-line"></div>
                 <div class="burger-line"></div>
                 <div class="burger-line"></div>
             </label>
             <nav class="nav-menu">
                 <ul>
-                  <li><a href="{{ url_for('knowledge_rules') }}">База знань</a></li>
-                  <li><a href="/dice.html">Дайси</a></li>
-                  {% if current_user.is_authenticated %}
-                    <li><a href="/charlist.html">Персонажі</a></li>
-                    <li><a href="/campaigns">Кампанії</a></li>
-                    <li><a href="/sessions">Сесії</a></li>
-                    <li><a href="/logout">Вихід</a></li>
-                  {% else %}
-                    <li><a href="/auth.html">Вхід</a></li>
-                    <li><a href="/registration.html">Реєстрація</a></li>
-                  {% endif %}
-                
+                    <li><a href="{{ url_for('knowledge_rules') }}">&#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1100;</a></li>
+                    <li><a href="/dice.html">&#1044;&#1072;&#1081;&#1089;&#1080;</a></li>
+                    {% if current_user.is_authenticated %}
+                    <li><a href="/charlist.html">&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1078;&#1110;</a></li>
+                    <li><a href="/campaigns">&#1050;&#1072;&#1084;&#1087;&#1072;&#1085;&#1110;&#1111;</a></li>
+                    <li><a href="/sessions">&#1057;&#1077;&#1089;&#1110;&#1111;</a></li>
+                    <li><a href="/logout">&#1042;&#1080;&#1093;&#1110;&#1076;</a></li>
+                    {% else %}
+                    <li><a href="/auth.html">&#1042;&#1093;&#1110;&#1076;</a></li>
+                    <li><a href="/registration.html">&#1056;&#1077;&#1108;&#1089;&#1090;&#1088;&#1072;&#1094;&#1110;&#1103;</a></li>
+                    {% endif %}
                 </ul>
             </nav>
         </div>
-
     </header>
 
-    <main>
+    <main class="knowledge-main">
+        <section class="knowledge-hero">
+            <div class="knowledge-hero-inner">
+                <p class="knowledge-kicker">Dungeons & Dragons</p>
+                <h1>&#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1100;</h1>
+                <p>&#1055;&#1088;&#1072;&#1074;&#1080;&#1083;&#1072;, &#1093;&#1072;&#1088;&#1072;&#1082;&#1090;&#1077;&#1088;&#1080;&#1089;&#1090;&#1080;&#1082;&#1080;, &#1088;&#1072;&#1089;&#1080;, &#1082;&#1083;&#1072;&#1089;&#1080; &#1090;&#1072; &#1073;&#1077;&#1089;&#1090;&#1110;&#1072;&#1088;&#1110;&#1081; &#1074; &#1086;&#1076;&#1085;&#1086;&#1084;&#1091; &#1084;&#1110;&#1089;&#1094;&#1110;.</p>
+            </div>
+        </section>
+
         <div class="knowledge-container">
-            <div class="knowledge-sidebar">
+            <aside class="knowledge-sidebar">
                 <div class="search-container">
-                    <input type="text" class="search-input" id="searchInput" placeholder="Пошук по базі знань...">
-                    <button class="search-button" id="searchButton">Пошук</button>
+                    <label class="search-label" for="searchInput">&#1055;&#1086;&#1096;&#1091;&#1082;</label>
+                    <input type="text" class="search-input" id="searchInput" placeholder="&#1042;&#1074;&#1077;&#1076;&#1110;&#1090;&#1100; &#1089;&#1083;&#1086;&#1074;&#1086; &#1072;&#1073;&#1086; &#1090;&#1077;&#1088;&#1084;&#1110;&#1085;">
+                    <button class="search-button" id="searchButton">&#1047;&#1085;&#1072;&#1081;&#1090;&#1080;</button>
                 </div>
                 <div class="sidebar-section">
-                    <h3 class="sidebar-title">Основне</h3>
+                    <h3 class="sidebar-title">&#1054;&#1089;&#1085;&#1086;&#1074;&#1085;&#1077;</h3>
                     <ul class="sidebar-list">
                         <li class="sidebar-item">
-                            <a href="{{ url_for('knowledge_rules') }}" class="sidebar-link">Правила</a>
+                            <a href="{{ url_for('knowledge_rules') }}" class="sidebar-link">&#1055;&#1088;&#1072;&#1074;&#1080;&#1083;&#1072;</a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="{{ url_for('knowledge_character') }}" class="sidebar-link">Характеристики</a>
+                            <a href="{{ url_for('knowledge_character') }}" class="sidebar-link">&#1061;&#1072;&#1088;&#1072;&#1082;&#1090;&#1077;&#1088;&#1080;&#1089;&#1090;&#1080;&#1082;&#1080;</a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="{{ url_for('knowledge_bestiary') }}" class="sidebar-link">Бестіарій</a>
+                            <a href="{{ url_for('knowledge_bestiary') }}" class="sidebar-link">&#1041;&#1077;&#1089;&#1090;&#1110;&#1072;&#1088;&#1110;&#1081;</a>
                         </li>
                     </ul>
                 </div>
                 <div class="sidebar-section">
-                    <h3 class="sidebar-title">Створення персонажа</h3>
+                    <h3 class="sidebar-title">&#1057;&#1090;&#1074;&#1086;&#1088;&#1077;&#1085;&#1085;&#1103; &#1087;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1078;&#1072;</h3>
                     <ul class="sidebar-list">
                         <li class="sidebar-item">
-                            <a href="{{ url_for('knowledge_races') }}" class="sidebar-link">Раси</a>
+                            <a href="{{ url_for('knowledge_races') }}" class="sidebar-link">&#1056;&#1072;&#1089;&#1080;</a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="{{ url_for('knowledge_classes') }}" class="sidebar-link">Класи</a>
+                            <a href="{{ url_for('knowledge_classes') }}" class="sidebar-link">&#1050;&#1083;&#1072;&#1089;&#1080;</a>
                         </li>
                     </ul>
                 </div>
                 {% block sidebar %}{% endblock %}
-            </div>
-            <div class="knowledge-content">
+            </aside>
+            <section class="knowledge-content">
                 {% block content %}{% endblock %}
-            </div>
+            </section>
         </div>
     </main>
-
-    <footer>
-        <div class="footer-top">
-            <div class="footer-logo"><img src="{{url_for('static', filename='img/logo.png')}}"></div>
-            <div class="footer-list">
-                <a href="/knowledge/rules"><div class="footer-list-element"><p>Правила</p></div></a>
-                <a href="/knowledge/character"><div class="footer-list-element"><p>Персонаж</p></div></a>
-            </div>
-        </div>
-    </footer>
+    {% include 'footer.html' %}
 
     <script src="{{url_for('static', filename='js/script-scrollbar.js')}}"></script>
     <script src="{{url_for('static', filename='js/script-header.js')}}"></script>
@@ -167,38 +110,35 @@
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
             const searchButton = document.getElementById('searchButton');
-            
-            // Функція для виконання пошуку
+
             function performSearch() {
                 const searchText = searchInput.value.toLowerCase();
                 const contentBlocks = document.querySelectorAll('.stat-block, .description');
                 const contentTitles = document.querySelectorAll('.content-title, .content-subtitle');
-                
-                // Очищаємо попередні підсвічування
+
                 document.querySelectorAll('.highlight').forEach(el => {
                     const parent = el.parentNode;
                     parent.innerHTML = parent.innerHTML.replace(/<mark class="highlight">(.*?)<\/mark>/g, '$1');
                 });
-                
+
                 contentBlocks.forEach(block => {
                     const text = block.textContent.toLowerCase();
                     const title = block.querySelector('h2')?.textContent.toLowerCase() || '';
-                    
+
                     if (searchText === '') {
                         block.classList.remove('hidden');
                         return;
                     }
-                    
+
                     if (text.includes(searchText) || title.includes(searchText)) {
                         block.classList.remove('hidden');
-                        
-                        // Підсвічуємо текст
+
                         const regex = new RegExp(searchText, 'gi');
                         const elements = block.querySelectorAll('*');
                         elements.forEach(el => {
                             if (el.childNodes.length === 1 && el.childNodes[0].nodeType === 3) {
                                 const text = el.innerHTML;
-                                el.innerHTML = text.replace(regex, match => 
+                                el.innerHTML = text.replace(regex, match =>
                                     `<mark class="highlight">${match}</mark>`
                                 );
                             }
@@ -207,8 +147,7 @@
                         block.classList.add('hidden');
                     }
                 });
-                
-                // Показуємо/приховуємо заголовки секцій
+
                 contentTitles.forEach(title => {
                     const section = title.parentElement;
                     const visibleBlocks = section.querySelectorAll('.stat-block:not(.hidden), .description:not(.hidden)');
@@ -219,11 +158,8 @@
                     }
                 });
             }
-            
-            // Обробник події для кнопки пошуку
+
             searchButton.addEventListener('click', performSearch);
-            
-            // Обробник події для поля вводу (пошук при натисканні Enter)
             searchInput.addEventListener('keypress', function(event) {
                 if (event.key === 'Enter') {
                     performSearch();

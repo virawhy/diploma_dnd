@@ -269,6 +269,28 @@
   line-height: 20px;
 }
 
+@media (max-width: 824px) {
+  .index-page footer {
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+    height: auto;
+    min-height: 220px;
+    padding: 28px 24px;
+  }
+
+  .index-page .footer-social {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .index-page .footer-social-title {
+    width: 100%;
+    margin-right: 0;
+    text-align: center;
+  }
+}
+
 .feature-carousel .character-content {
   align-items: center;
   box-sizing: border-box;

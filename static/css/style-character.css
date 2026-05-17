@@ -421,7 +421,7 @@ color: #FFFFFF;
   .submit-button{
     height: 60px;
     width: 225px !important;
-    background: #B41616;
+    background: #9f1515;
     border-radius: 5px;
     font-family: 'Poppins';
 font-style: normal;
@@ -437,7 +437,7 @@ color: #FFFFFF;
 margin-top: 68px;
 }
 .submit-button:hover{
-    border: 1px solid  #B41616;
+    border: 1px solid  #9f1515;
     background: #000000;
     transition: 0.4s;
 }

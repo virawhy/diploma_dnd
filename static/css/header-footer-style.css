@@ -143,16 +143,29 @@ header {
 /*--------------------------------------------------*/
 
 footer {
-    height: 254px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    min-height: 160px;
     background: var(--dark-forest, #171b15);
-    padding-top: 61px;
+    padding: 0 110px;
   }
   
   .footer-top {
     display: flex;
-    justify-content: space-between;
-    margin-left: 110px;
-    margin-right: 140px;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0;
+  }
+
+  .footer-logo a {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .footer-logo img {
+    display: block;
   }
   
   .footer-list {
@@ -183,16 +196,27 @@ footer {
   
   .footer-social {
     display: flex;
-    justify-content: right;
-    margin-right: 188px;
-    margin-top: 20px;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 14px;
+    margin: 0;
+  }
+
+  .footer-social-title {
+    margin: 0 10px 0 0;
+    color: #FFFFFF;
+    font-family: 'Orbitron', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
   }
   
   .footer-social-element {
     border-radius: 25px;
     width: 50px;
     height: 50px;
-    margin-left: 4px;
+    margin-left: 0;
   }
   
   .instagram svg {
@@ -347,5 +371,23 @@ footer {
 
     .burger-container {
       display: flex;
+    }
+
+    footer {
+      flex-direction: column;
+      justify-content: center;
+      gap: 24px;
+      padding: 28px 24px;
+    }
+
+    .footer-social {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .footer-social-title {
+      width: 100%;
+      margin-right: 0;
+      text-align: center;
     }
   }

@@ -39,7 +39,7 @@ body {
   text-rendering: optimizeSpeed;
   line-height: 1.5;
   overflow-x: hidden;
-  background: #B41616;
+  background: #171b15;
 }
 
 /* Удаляем стандартную стилизацию для всех ul и il, у которых есть атрибут class*/
