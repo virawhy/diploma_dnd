@@ -1,7 +1,7 @@
 header {
     display: flex;
     justify-content: space-between;
-    background-color: black;
+    background-color: var(--dark-forest, #171b15);
     height: 100px;
     align-items: center;
   }
@@ -55,7 +55,7 @@ header {
     position: absolute;
     width: 0%;
     height: 3px;
-    background: red;
+    background: var(--deep-red, #9f1515);
     top: 115%;
     left: 51%;
     transform: translate(-50%, 0%);
@@ -129,7 +129,7 @@ header {
 
     width: 50%;
 
-    background: rgb(199, 24, 24);
+    background: var(--deep-red, #9f1515);
  
     border-radius: 5px;
 
@@ -138,13 +138,13 @@ header {
     transition: 0.3s;
 }
 .user_info_window_button:hover{
-    background: rgb(97, 15, 15);
+    background: var(--deep-red-soft, #7f1111);
 } 
 /*--------------------------------------------------*/
 
 footer {
     height: 254px;
-    background: black;
+    background: var(--dark-forest, #171b15);
     padding-top: 61px;
   }
   
@@ -249,7 +249,7 @@ footer {
     right: -300px;
     width: 300px;
     height: 100%;
-    background-color: black;
+    background-color: var(--dark-forest, #171b15);
     overflow-y: auto;
     padding-top: 100px;
     z-index: 3;
@@ -295,7 +295,7 @@ footer {
     left: -100%;
     width: 100%;
     height: 2px;
-    background-color: red;
+    background-color: var(--deep-red, #9f1515);
     transition: left 0.3s ease;
   }
   
@@ -320,7 +320,7 @@ footer {
     justify-content: space-between;
     padding: 5px;
     border-radius: 5px;
-    box-shadow: 0 4px 6px #0000001a;
+    box-shadow: 0 4px 6px rgba(23, 27, 21, 0.16);
     display: none;
   }
   

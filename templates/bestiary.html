@@ -27,8 +27,6 @@
                 <a href="{{ url_for('knowledge_rules') }}"><p class="header-nav-element">База знань</p></a>
 
                 <a href="/dice.html"><p class="header-nav-element">Дайси</p></a>
-                
-                <a href="/merche.html"><p class="header-nav-element">Мерч</p></a>
 
 
 
@@ -55,7 +53,6 @@
                 <ul>
                   <li><a href="{{ url_for('knowledge_rules') }}">База знань</a></li>
                   <li><a href="/dice.html">Дайси</a></li>
-                  <li><a href="/merche.html">Мерч</a></li>
                   {% if current_user.is_authenticated %}
                     <li><a href="/charlist.html">Персонажі</a></li>
                     <li><a href="/campaigns">Кампанії</a></li>
@@ -173,8 +170,6 @@
                 <div class="footer-list-element"><p>Бестіарій</p></div></a>
                 <a href="/dice.html" >
                 <div class="footer-list-element"><p>Дайси</p></div></a>
-                <a href="/merche.html">
-                <div class="footer-list-element"><p>Мерч</p></div></a>
             </div>
         </div>
         <div class="footer-social">

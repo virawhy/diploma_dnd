@@ -50,12 +50,18 @@ const observerRight = new IntersectionObserver(function(entries, observer) {
   });
 }, options);
 
-observerDown.observe(posterLogo);
-observerLeft.observe(characterTextNButton);
-observerRight.observe(bestiaryTextNButton);
-observerLeft.observe(diceTextNButton);
-observerDown.observe(posterBig);
-observerDown.observe(posterBot);
+const observeIfExists = (observer, element) => {
+  if (element) {
+    observer.observe(element);
+  }
+};
+
+observeIfExists(observerDown, posterLogo);
+observeIfExists(observerLeft, characterTextNButton);
+observeIfExists(observerRight, bestiaryTextNButton);
+observeIfExists(observerLeft, diceTextNButton);
+observeIfExists(observerDown, posterBig);
+observeIfExists(observerDown, posterBot);
 
 // observerLeft.observe(characterButton);
 // observerLeft.observe(characterText);

@@ -10,137 +10,46 @@
 
         <title>Dungeons and Dragons</title>
     </head>
-    <body>
-        
-        <div id="progressbar"></div>
-
-        <header>
-
-            <div class="header-frame">
-                <div class="header-logo"><a href="/"><img src="../static/img/logo.png"></a></div>
-                <div class="header-nav">
-                    <a href="{{ url_for('knowledge_rules') }}"><p class="header-nav-element">Посібник</p></a>
-
-                <a href="dice.html"><p class="header-nav-element">Дайси</p></a>
-                
-
-                    {% if current_user.is_authenticated %}
-                    <a href="/campaigns"><p class="header-nav-element">Кампанії</p></a>
-                    <a href="/sessions"><p class="header-nav-element">Сесії</p></a>
-                    <a href="/charlist.html"><p class="header-nav-element">Персонажі</p></a>
-                    <a href="/logout"><p class="header-nav-element">Вихід</p></a>
-
-
-                    {% else %}
-                        <a href="auth.html"><p class="header-nav-element">Вхід</p></a>
-                        <a href="registration.html"><p class="header-nav-element">Реєстрація</p></a>
-                    {% endif %}
-                    
-                </div>
-                <input type="checkbox" id="burger-toggle">
-                <label for="burger-toggle"  class="burger-container">
-                    <div class="burger-line"></div>
-                    <div class="burger-line"></div>
-                    <div class="burger-line"></div>
-                </label>
-                <nav class="nav-menu">
-                    <ul>
-                      <li><a href="{{ url_for('knowledge_rules') }}">База знань</a></li>
-                      <li><a href="dice.html">Дайси</a></li>
-                      {% if current_user.is_authenticated %}
-                        <li><a href="/charlist.html">Персонажі</a></li>
-                        <li><a href="#services">Кампанії</a></li>
-                        <li><a href="/sessions">Сесії</a></li>
-                        <li><a href="/logout">Вихід</a></li>
-                      {% else %}
-                        <li><a href="auth.html">Вхід</a></li>
-                        <li><a href="registration.html">Реєстрація</a></li>
-                      {% endif %}
-                    
-                    </ul>
-                </nav>
+    <body class="index-page">
+        <header class="index-header">
+            <div class="index-header-logo">
+                <a href="/"><img src="{{url_for('static', filename='img/logo.png')}}" alt="Dungeons and Dragons"></a>
             </div>
-
         </header>
 
         <main>
-
             <div class="poster">
-                <div class="poster-top"><p>BECOME A DUNGEON MASTER</p></div>
+                <input type="checkbox" id="poster-menu-toggle" class="poster-menu-toggle">
+                <label for="poster-menu-toggle" class="poster-menu-button" aria-label="Open menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </label>
+                <nav class="poster-menu">
+                    <a href="{{ url_for('knowledge_rules') }}">&#1055;&#1088;&#1072;&#1074;&#1080;&#1083;&#1072; &#1075;&#1088;&#1080;</a>
+                    <a href="/knowledge/character">&#1061;&#1072;&#1088;&#1072;&#1082;&#1090;&#1077;&#1088;&#1080;&#1089;&#1090;&#1080;&#1082;&#1080;</a>
+                    <a href="/bestiary/aboleth">&#1041;&#1077;&#1089;&#1090;&#1110;&#1072;&#1088;&#1110;&#1081;</a>
+                    <span class="poster-menu-divider"></span>
+                    <a href="/dice.html">&#1050;&#1080;&#1085;&#1091;&#1090;&#1080; &#1076;&#1072;&#1081;&#1089;&#1080;</a>
+                    <span class="poster-menu-divider"></span>
+                    <a href="/charlist.html">&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1078;&#1110;</a>
+                    <a href="/campaigns">&#1050;&#1072;&#1084;&#1087;&#1072;&#1085;&#1110;&#1111;</a>
+                    <a href="/sessions">&#1057;&#1077;&#1089;&#1110;&#1111;</a>
+                </nav>
                 <div class="poster-big-logo" id="posterLogo"></div>
-            </div>
-
-            <div class="character">
-                <div class="character-content">
-                    <div class="character-text-n-button" id="characterTextNButton">
-                        <div class="character-text" id="characterButton">
-                            <p>Створіть свого першого персонажа тут</p>
-                        </div>
-                        <a href="./charlist.html"><div class="character-button" id="characterText">
-                            <p>Створити</p>
-                        </div></a>
-                    </div>
-                    <div class="character-right-logo"><img src="{{url_for('static', filename='img/char-dragon.png')}}"></div>
-                </div>
-            </div>
-
-            <div class="bestiary">
-                <div class="character-content">
-                    <div class="character-right-logo bestiary-pic"><img src="{{url_for('static', filename='img/bestiary-pic.png')}}"></div>
-                    <div class="character-text-n-button bestiary-text-n-button" id="bestiaryTextNButton">
-                        <div class="character-text bestiary-text" >
-                            <p>Посібник<br>(Правила та фішки гри)</p>
-                        </div>
-                        <a href="/bestiary/aboleth">
-                        <div class="character-button">
-                            <p>Дізнатися</p>
-                        </div></a>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="dice">
-                <div class="character-content">
-                    <div class="character-text-n-button" id="diceTextNButton">
-                        <div class="character-text" >
-                            <p>Рандомайзер дайсів</p>
-                        </div>
-                        <a href="/dice.html">
-                            <div class="character-button dice-button">
-                            <p>Дізнатися</p>
-                        </div></a>
-                    </div>
-                    <div class="character-right-logo dice-pic"><img src="{{url_for('static', filename='img/dice-pic.png')}}"></div>
+                <div class="poster-actions">
+                    <a href="auth.html" class="poster-action-button poster-action-login">&#1042;&#1093;&#1110;&#1076;</a>
+                    <a href="registration.html" class="poster-action-button poster-action-register">&#1056;&#1077;&#1108;&#1089;&#1090;&#1088;&#1072;&#1094;&#1110;&#1103;</a>
                 </div>
             </div>
         </main>
 
-        <div class="merge">
-            <div class="merge-div">
-                <div class="merge-div-pic"><img src="{{url_for('static', filename='img/merge-pic.jpg')}}"></div>
-                <div class="merge-div-text-n-button">
-                    <div class="merge-div-text">
-                        <p>Мерч<br>Dungeons and Dragons</p>
-                    </div>
-                    <a href="https://mimic-dnd.com/aksesuary">
-                    <div class="character-button merge-div-button"><p>Дізнатися</p></div>
-                </a>
-                </div>
-            </div>
-        </div>
-
         <footer>
             <div class="footer-top">
                 <div class="footer-logo"><img src="{{url_for('static', filename='img/logo.png')}}"></div>
-                <div class="footer-list">
-                    <a href="bestiary/aboleth" >
-                    <div class="footer-list-element"><p>Бестіарій</p></div></a>
-                    <a href="dice.html">
-                    <div class="footer-list-element"><p>Дайси</p></div></a>
-                </div>
             </div>
             <div class="footer-social">
+                <p class="footer-social-title">&#1052;&#1080; &#1091; &#1089;&#1086;&#1094;&#1084;&#1077;&#1088;&#1077;&#1078;&#1072;&#1093;</p>
                 <div class="footer-social-element instagram">
                     <svg width="74.5px" height="74.5px" viewBox="10 4 200 200">
                         <path d="M72.041 11.166c-33.543 0-60.833 27.29-60.833 60.834 0 33.544 27.29 60.834 60.833 60.834 33.544 0 60.834-27.29 60.834-60.834 0-33.544-27.291-60.834-60.834-60.834zm0 115.668c-30.235 0-54.833-24.599-54.833-54.834 0-30.235 24.598-54.834 54.833-54.834S126.875 41.765 126.875 72c0 30.235-24.599 54.834-54.834 54.834z"></path><path d="M91.076 42.701h-38.07c-5.615 0-10.184 4.568-10.184 10.184V91.13c0 5.615 4.568 10.184 10.184 10.184h38.069c5.615 0 10.184-4.568 10.184-10.184V52.884c0-5.615-4.568-10.183-10.183-10.183zM80.847 71.899c0 4.856-3.95 8.806-8.806 8.806s-8.806-3.95-8.806-8.806c0-2.409.974-4.593 2.546-6.184H78.3a8.767 8.767 0 0 1 2.547 6.184zm2.553-21.05h8.92v9.189H83.4v-9.189zm7.676 44.464h-38.07a4.189 4.189 0 0 1-4.184-4.184V65.715h9.784a14.699 14.699 0 0 0-1.371 6.184c0 8.165 6.642 14.806 14.806 14.806s14.806-6.642 14.806-14.806c0-2.209-.5-4.299-1.371-6.184h9.783v25.414a4.189 4.189 0 0 1-4.183 4.184z"></path>
@@ -160,7 +69,6 @@
         </footer>
         <script src="{{url_for('static', filename='js/script-index.js')}}"></script>
         <script src="{{url_for('static', filename='js/ap-animations.js')}}"></script>
-        <script src="{{url_for('static', filename='js/script-scrollbar.js')}}"></script>
         <script src="{{url_for('static', filename='js/script-header.js')}}"></script>
     </body>
 </html>

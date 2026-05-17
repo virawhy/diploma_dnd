@@ -1,5 +1,27 @@
 body{
-  background-color: #000000;
+  background-color: #171b15;
+}
+
+.auth-page {
+  --dark-forest: #171b15;
+  --dark-forest-soft: #20251d;
+  --deep-red: #9f1515;
+  --deep-red-soft: #7f1111;
+  --deep-red-glow: rgba(159, 21, 21, 0.72);
+}
+
+.index-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  background-color: var(--dark-forest);
+}
+
+.index-header-logo img {
+  display: block;
+  width: 124px;
+  height: auto;
 }
 .container {
   max-width: 1200px;
@@ -26,11 +48,11 @@ section {
 form {
   display: flex;
   justify-content: center;
-  background-color: black;
+  background-color: var(--dark-forest);
   width: 458px;
   height: 532px;
-  background: #000000;
-  box-shadow: 0px 4px 17px 17px rgba(0, 0, 0, 0.6);
+  background: var(--dark-forest);
+  box-shadow: 0px 4px 17px 17px rgba(23, 27, 21, 0.62);
   border-radius: 30px;
   padding-top: 67px;
   padding-bottom: 54px;
@@ -95,9 +117,9 @@ form {
   text-align: center;
   text-transform: uppercase;
   color: #FFFFFF;
-  background: #FF0000;
+  background: var(--deep-red);
   border-radius: 7px;
-  border-color: #FF0000;
+  border-color: var(--deep-red);
   cursor: pointer;
 }
 
@@ -122,7 +144,7 @@ form {
   opacity: 0;
 }
 .dec{
-  color:#FF0000;
+  color:var(--deep-red);
 }
 .dec:active{
   color:#FFFFFF;

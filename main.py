@@ -476,10 +476,6 @@ def index():
 
 #---------------
 
-@app.route("/merche.html")
-def merche():
-    return render_template("merche.html", name=current_username())
-
 @app.route("/sessions")
 @login_required
 def sessions():
