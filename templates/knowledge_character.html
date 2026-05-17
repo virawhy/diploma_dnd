@@ -1,8 +1,8 @@
 {% extends "knowledge_base.html" %}
 
 {% block sidebar %}
-<div class="sidebar-section">
-    <h3 class="sidebar-title">Характеристики</h3>
+<details class="sidebar-section">
+    <summary class="sidebar-title">Характеристики</summary>
     <ul class="sidebar-list">
         {% for score in character.ability_scores %}
         <li class="sidebar-item">
@@ -10,10 +10,10 @@
         </li>
         {% endfor %}
     </ul>
-</div>
+</details>
 
-<div class="sidebar-section">
-    <h3 class="sidebar-title">Стани</h3>
+<details class="sidebar-section">
+    <summary class="sidebar-title">Стани</summary>
     <ul class="sidebar-list">
         {% for condition in character.conditions %}
         <li class="sidebar-item">
@@ -21,10 +21,10 @@
         </li>
         {% endfor %}
     </ul>
-</div>
+</details>
 
-<div class="sidebar-section">
-    <h3 class="sidebar-title">Типи шкоди</h3>
+<details class="sidebar-section">
+    <summary class="sidebar-title">Типи шкоди</summary>
     <ul class="sidebar-list">
         {% for damage in character.damage_types %}
         <li class="sidebar-item">
@@ -32,10 +32,10 @@
         </li>
         {% endfor %}
     </ul>
-</div>
+</details>
 
-<div class="sidebar-section">
-    <h3 class="sidebar-title">Володіння</h3>
+<details class="sidebar-section">
+    <summary class="sidebar-title">Володіння</summary>
     <ul class="sidebar-list">
         {% for prof in character.proficiencies %}
         <li class="sidebar-item">
@@ -43,7 +43,7 @@
         </li>
         {% endfor %}
     </ul>
-</div>
+</details>
 {% endblock %}
 
 {% block content %}

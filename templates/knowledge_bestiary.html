@@ -1,8 +1,8 @@
 {% extends "knowledge_base.html" %}
 
 {% block sidebar %}
-<div class="sidebar-section">
-    <h3 class="sidebar-title">Бестіарій</h3>
+<details class="sidebar-section">
+    <summary class="sidebar-title">Бестіарій</summary>
     <ul class="sidebar-list">
         {% if bestiary and bestiary.monsters %}
         {% for monster in bestiary.monsters[:40] %}
@@ -12,7 +12,7 @@
         {% endfor %}
         {% endif %}
     </ul>
-</div>
+</details>
 {% endblock %}
 
 {% block content %}

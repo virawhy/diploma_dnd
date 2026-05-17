@@ -1,8 +1,8 @@
 {% extends "knowledge_base.html" %}
 
 {% block sidebar %}
-<div class="sidebar-section">
-    <h3 class="sidebar-title">Класи</h3>
+<details class="sidebar-section">
+    <summary class="sidebar-title">Класи</summary>
     <ul class="sidebar-list">
         {% for class in classes.classes %}
         <li class="sidebar-item">
@@ -10,10 +10,10 @@
         </li>
         {% endfor %}
     </ul>
-</div>
+</details>
 
-<div class="sidebar-section">
-    <h3 class="sidebar-title">Підкласи</h3>
+<details class="sidebar-section">
+    <summary class="sidebar-title">Підкласи</summary>
     <ul class="sidebar-list">
         {% for subclass in classes.subclasses %}
         <li class="sidebar-item">
@@ -21,10 +21,10 @@
         </li>
         {% endfor %}
     </ul>
-</div>
+</details>
 
-<div class="sidebar-section">
-    <h3 class="sidebar-title">Школи магії</h3>
+<details class="sidebar-section">
+    <summary class="sidebar-title">Школи магії</summary>
     <ul class="sidebar-list">
         {% for school in classes.magic_schools %}
         <li class="sidebar-item">
@@ -32,7 +32,7 @@
         </li>
         {% endfor %}
     </ul>
-</div>
+</details>
 {% endblock %}
 
 {% block content %}

@@ -1,8 +1,8 @@
 {% extends "knowledge_base.html" %}
 
 {% block sidebar %}
-<div class="sidebar-section">
-    <h3 class="sidebar-title">Раси</h3>
+<details class="sidebar-section">
+    <summary class="sidebar-title">Раси</summary>
     <ul class="sidebar-list">
         {% for race in races.races %}
         <li class="sidebar-item">
@@ -10,10 +10,10 @@
         </li>
         {% endfor %}
     </ul>
-</div>
+</details>
 
-<div class="sidebar-section">
-    <h3 class="sidebar-title">Передісторії</h3>
+<details class="sidebar-section">
+    <summary class="sidebar-title">Передісторії</summary>
     <ul class="sidebar-list">
         {% for bg in races.backgrounds %}
         <li class="sidebar-item">
@@ -21,10 +21,10 @@
         </li>
         {% endfor %}
     </ul>
-</div>
+</details>
 
-<div class="sidebar-section">
-    <h3 class="sidebar-title">Мови</h3>
+<details class="sidebar-section">
+    <summary class="sidebar-title">Мови</summary>
     <ul class="sidebar-list">
         {% for lang in races.languages %}
         <li class="sidebar-item">
@@ -32,7 +32,7 @@
         </li>
         {% endfor %}
     </ul>
-</div>
+</details>
 {% endblock %}
 
 {% block content %}

@@ -57,21 +57,25 @@
     <main class="knowledge-main">
         <section class="knowledge-hero">
             <div class="knowledge-hero-inner">
-                <p class="knowledge-kicker">Dungeons & Dragons</p>
-                <h1>&#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1100;</h1>
-                <p>&#1055;&#1088;&#1072;&#1074;&#1080;&#1083;&#1072;, &#1093;&#1072;&#1088;&#1072;&#1082;&#1090;&#1077;&#1088;&#1080;&#1089;&#1090;&#1080;&#1082;&#1080;, &#1088;&#1072;&#1089;&#1080;, &#1082;&#1083;&#1072;&#1089;&#1080; &#1090;&#1072; &#1073;&#1077;&#1089;&#1090;&#1110;&#1072;&#1088;&#1110;&#1081; &#1074; &#1086;&#1076;&#1085;&#1086;&#1084;&#1091; &#1084;&#1110;&#1089;&#1094;&#1110;.</p>
+                <div class="knowledge-hero-copy">
+                    <p class="knowledge-kicker">Dungeons & Dragons</p>
+                    <h1>&#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1100;</h1>
+                    <p>&#1055;&#1088;&#1072;&#1074;&#1080;&#1083;&#1072;, &#1093;&#1072;&#1088;&#1072;&#1082;&#1090;&#1077;&#1088;&#1080;&#1089;&#1090;&#1080;&#1082;&#1080;, &#1088;&#1072;&#1089;&#1080;, &#1082;&#1083;&#1072;&#1089;&#1080; &#1090;&#1072; &#1073;&#1077;&#1089;&#1090;&#1110;&#1072;&#1088;&#1110;&#1081; &#1074; &#1086;&#1076;&#1085;&#1086;&#1084;&#1091; &#1084;&#1110;&#1089;&#1094;&#1110;.</p>
+                </div>
+                <div class="search-container">
+                    <label class="search-label" for="searchInput">&#1055;&#1086;&#1096;&#1091;&#1082; &#1087;&#1086; &#1073;&#1072;&#1079;&#1110;</label>
+                    <div class="search-row">
+                        <input type="text" class="search-input" id="searchInput" placeholder="&#1042;&#1074;&#1077;&#1076;&#1110;&#1090;&#1100; &#1089;&#1083;&#1086;&#1074;&#1086; &#1072;&#1073;&#1086; &#1090;&#1077;&#1088;&#1084;&#1110;&#1085;">
+                        <button class="search-button" id="searchButton">&#1047;&#1085;&#1072;&#1081;&#1090;&#1080;</button>
+                    </div>
+                </div>
             </div>
         </section>
 
         <div class="knowledge-container">
             <aside class="knowledge-sidebar">
-                <div class="search-container">
-                    <label class="search-label" for="searchInput">&#1055;&#1086;&#1096;&#1091;&#1082;</label>
-                    <input type="text" class="search-input" id="searchInput" placeholder="&#1042;&#1074;&#1077;&#1076;&#1110;&#1090;&#1100; &#1089;&#1083;&#1086;&#1074;&#1086; &#1072;&#1073;&#1086; &#1090;&#1077;&#1088;&#1084;&#1110;&#1085;">
-                    <button class="search-button" id="searchButton">&#1047;&#1085;&#1072;&#1081;&#1090;&#1080;</button>
-                </div>
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">&#1054;&#1089;&#1085;&#1086;&#1074;&#1085;&#1077;</h3>
+                <details class="sidebar-section">
+                    <summary class="sidebar-title">&#1054;&#1089;&#1085;&#1086;&#1074;&#1085;&#1077;</summary>
                     <ul class="sidebar-list">
                         <li class="sidebar-item">
                             <a href="{{ url_for('knowledge_rules') }}" class="sidebar-link">&#1055;&#1088;&#1072;&#1074;&#1080;&#1083;&#1072;</a>
@@ -83,9 +87,9 @@
                             <a href="{{ url_for('knowledge_bestiary') }}" class="sidebar-link">&#1041;&#1077;&#1089;&#1090;&#1110;&#1072;&#1088;&#1110;&#1081;</a>
                         </li>
                     </ul>
-                </div>
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">&#1057;&#1090;&#1074;&#1086;&#1088;&#1077;&#1085;&#1085;&#1103; &#1087;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1078;&#1072;</h3>
+                </details>
+                <details class="sidebar-section">
+                    <summary class="sidebar-title">&#1057;&#1090;&#1074;&#1086;&#1088;&#1077;&#1085;&#1085;&#1103; &#1087;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1078;&#1072;</summary>
                     <ul class="sidebar-list">
                         <li class="sidebar-item">
                             <a href="{{ url_for('knowledge_races') }}" class="sidebar-link">&#1056;&#1072;&#1089;&#1080;</a>
@@ -94,7 +98,7 @@
                             <a href="{{ url_for('knowledge_classes') }}" class="sidebar-link">&#1050;&#1083;&#1072;&#1089;&#1080;</a>
                         </li>
                     </ul>
-                </div>
+                </details>
                 {% block sidebar %}{% endblock %}
             </aside>
             <section class="knowledge-content">

@@ -1,8 +1,8 @@
 {% extends "knowledge_base.html" %}
 
 {% block sidebar %}
-<div class="sidebar-section">
-    <h3 class="sidebar-title">Базові правила</h3>
+<details class="sidebar-section">
+    <summary class="sidebar-title">Базові правила</summary>
     <ul class="sidebar-list">
         {% for rule in rules.basic_rules %}
         <li class="sidebar-item">
@@ -10,10 +10,10 @@
         </li>
         {% endfor %}
     </ul>
-</div>
+</details>
 
-<div class="sidebar-section">
-    <h3 class="sidebar-title">Ігрові механіки</h3>
+<details class="sidebar-section">
+    <summary class="sidebar-title">Ігрові механіки</summary>
     <ul class="sidebar-list">
         {% for rule in rules.game_mechanics %}
         <li class="sidebar-item">
@@ -21,7 +21,7 @@
         </li>
         {% endfor %}
     </ul>
-</div>
+</details>
 {% endblock %}
 
 {% block content %}
