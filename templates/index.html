@@ -38,8 +38,13 @@
                 </nav>
                 <div class="poster-big-logo" id="posterLogo"></div>
                 <div class="poster-actions">
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('profile') }}" class="poster-action-button poster-action-login">&#1055;&#1088;&#1086;&#1092;&#1110;&#1083;&#1100;</a>
+                    <a href="{{ url_for('logout') }}" class="poster-action-button poster-action-register">&#1042;&#1080;&#1093;&#1110;&#1076;</a>
+                    {% else %}
                     <a href="auth.html" class="poster-action-button poster-action-login">&#1042;&#1093;&#1110;&#1076;</a>
                     <a href="registration.html" class="poster-action-button poster-action-register">&#1056;&#1077;&#1108;&#1089;&#1090;&#1088;&#1072;&#1094;&#1110;&#1103;</a>
+                    {% endif %}
                 </div>
             </div>
         </main>

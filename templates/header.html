@@ -22,6 +22,7 @@
 
 
                 {% if current_user.is_authenticated %}
+                <a href="{{ url_for('profile') }}"><p class="header-nav-element">Профіль</p></a>
                 <a href="{{ url_for('campaigns') }}"><p class="header-nav-element">Кампанії</p></a>
                 <a href="{{ url_for('sessions') }}"><p class="header-nav-element">Сесії</p></a>
                 <a href="{{ url_for('charlist') }}"><p class="header-nav-element">Персонажі</p></a>
@@ -45,6 +46,7 @@
                   <li><a href="{{ url_for('knowledge_rules') }}">База знань</a></li>
                   <li><a href="{{ url_for('dice') }}">Дайси</a></li>
                   {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('profile') }}">Профіль</a></li>
                     <li><a href="{{ url_for('charlist') }}">Персонажі</a></li>
                     <li><a href="{{ url_for('campaigns') }}">Кампанії</a></li>
                     <li><a href="{{ url_for('sessions') }}">Сесії</a></li>

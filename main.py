@@ -470,6 +470,50 @@ def detail_bestiary(monsters_name):
 def index():
     return render_template('index.html', name=current_username())
 
+
+@app.route("/profile")
+@login_required
+def profile():
+    characters = Character.query.filter_by(
+        id_user=current_user.id_user
+    ).order_by(Character.id_character.desc()).limit(4).all()
+    owned_campaigns = Campaign.query.filter_by(
+        id_user=current_user.id_user
+    ).order_by(Campaign.id_campaign.desc()).limit(4).all()
+    campaign_memberships = CampaignMember.query.filter_by(
+        id_user=current_user.id_user
+    ).all()
+    invited_memberships = [
+        membership for membership in campaign_memberships
+        if membership.status == 'invited'
+    ]
+    all_member_campaigns = [
+        membership for membership in campaign_memberships
+        if membership.status == 'member'
+    ]
+    sessions = GameSession.query.filter_by(
+        id_user=current_user.id_user
+    ).order_by(GameSession.created_date.desc()).limit(4).all()
+
+    stats = {
+        'characters': Character.query.filter_by(id_user=current_user.id_user).count(),
+        'owned_campaigns': Campaign.query.filter_by(id_user=current_user.id_user).count(),
+        'member_campaigns': len(all_member_campaigns),
+        'sessions': GameSession.query.filter_by(id_user=current_user.id_user).count(),
+        'invites': len(invited_memberships),
+    }
+
+    return render_template(
+        'profile.html',
+        user=current_user,
+        stats=stats,
+        characters=characters,
+        owned_campaigns=owned_campaigns,
+        member_campaigns=all_member_campaigns[:4],
+        invited_memberships=invited_memberships,
+        sessions=sessions,
+    )
+
 #--------------
 
 
@@ -1253,14 +1297,18 @@ def decline_invitation(membership_id):
 @login_required
 def charlist():
     character_list = Character.query.filter_by(
-        id_user=current_user.id_user).all()
+        id_user=current_user.id_user).order_by(Character.id_character.desc()).all()
     character_dict = {}
     for character in character_list:
         character_dict[character.id_character] = [
             character.name, character.class_name.class_name, character.racial_group.racial_group, character.level
         ]
-    print(character_dict)
-    return render_template('charlist.html', name=current_user.username, character_dict=character_dict)
+    return render_template(
+        'charlist.html',
+        name=current_user.username,
+        character_dict=character_dict,
+        characters=character_list,
+    )
 
 
 @app.route("/create-char.html", methods=("POST", "GET"))
@@ -1589,6 +1637,9 @@ def character(id_class_f):
 
 @app.route('/auth.html', methods=("POST", "GET"))
 def auth():
+    if current_user.is_authenticated:
+        return redirect(url_for('profile'))
+
     if request.method == "POST":
         email = request.form.get('email')
         password = request.form.get('password')
@@ -1599,7 +1650,7 @@ def auth():
             flash('Логін або пароль введено невірно')
             return redirect(url_for('auth'))
         login_user(user)
-        return redirect(url_for("charlist"))
+        return redirect(url_for("profile"))
 
     return render_template('auth.html')
 
@@ -1783,4 +1834,7 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         create_tables()
-    app.run(debug=os.environ.get('FLASK_DEBUG') == '1')
+    app.run(
+        debug=os.environ.get('FLASK_DEBUG') == '1',
+        port=int(os.environ.get('PORT', 5000)),
+    )

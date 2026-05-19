@@ -1,0 +1,138 @@
+{% extends "header.html" %}
+
+{% block head %}
+<title>&#1055;&#1088;&#1086;&#1092;&#1110;&#1083;&#1100;</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style-profile.css') }}">
+{% endblock %}
+
+{% block content %}
+<main class="profile-page">
+    <section class="profile-hero">
+        <div class="profile-identity">
+            <div class="profile-avatar">{{ user.username[:1]|upper }}</div>
+            <div>
+                <p class="profile-kicker">&#1055;&#1088;&#1086;&#1092;&#1110;&#1083;&#1100; &#1075;&#1088;&#1072;&#1074;&#1094;&#1103;</p>
+                <h1>{{ user.username }}</h1>
+                <p class="profile-email">{{ user.email }}</p>
+            </div>
+        </div>
+        <div class="profile-actions">
+            <a href="{{ url_for('charlist') }}" class="profile-button profile-button-primary">&#1052;&#1086;&#1111; &#1087;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1078;&#1110;</a>
+            <a href="{{ url_for('campaigns') }}" class="profile-button">&#1050;&#1072;&#1084;&#1087;&#1072;&#1085;&#1110;&#1111;</a>
+        </div>
+    </section>
+
+    <section class="profile-stats">
+        <div class="profile-stat">
+            <span>{{ stats.characters }}</span>
+            <p>&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1078;&#1110;</p>
+        </div>
+        <div class="profile-stat">
+            <span>{{ stats.owned_campaigns }}</span>
+            <p>&#1052;&#1086;&#1111; &#1082;&#1072;&#1084;&#1087;&#1072;&#1085;&#1110;&#1111;</p>
+        </div>
+        <div class="profile-stat">
+            <span>{{ stats.member_campaigns }}</span>
+            <p>&#1059;&#1095;&#1072;&#1089;&#1090;&#1100;</p>
+        </div>
+        <div class="profile-stat">
+            <span>{{ stats.sessions }}</span>
+            <p>&#1057;&#1077;&#1089;&#1110;&#1111;</p>
+        </div>
+        <div class="profile-stat {% if stats.invites %}profile-stat-alert{% endif %}">
+            <span>{{ stats.invites }}</span>
+            <p>&#1047;&#1072;&#1087;&#1088;&#1086;&#1096;&#1077;&#1085;&#1085;&#1103;</p>
+        </div>
+    </section>
+
+    <section class="profile-grid">
+        <div class="profile-panel">
+            <div class="profile-panel-heading">
+                <h2>&#1054;&#1089;&#1090;&#1072;&#1085;&#1085;&#1110; &#1087;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1078;&#1110;</h2>
+                <a href="{{ url_for('charlist') }}">&#1059;&#1089;&#1110;</a>
+            </div>
+            {% if characters %}
+                {% for character in characters %}
+                <a class="profile-list-item" href="/character/{{ character.id_character }}">
+                    <strong>{{ character.name }}</strong>
+                    <span>{{ character.class_name.class_name if character.class_name else '-' }} &middot; lvl {{ character.level }}</span>
+                </a>
+                {% endfor %}
+            {% else %}
+                <p class="profile-empty">&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1078;&#1110;&#1074; &#1097;&#1077; &#1085;&#1077;&#1084;&#1072;&#1108;.</p>
+                <a class="profile-inline-action" href="/create-char.html">&#1057;&#1090;&#1074;&#1086;&#1088;&#1080;&#1090;&#1080; &#1087;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1078;&#1072;</a>
+            {% endif %}
+        </div>
+
+        <div class="profile-panel">
+            <div class="profile-panel-heading">
+                <h2>&#1052;&#1086;&#1111; &#1082;&#1072;&#1084;&#1087;&#1072;&#1085;&#1110;&#1111;</h2>
+                <a href="{{ url_for('campaigns') }}">&#1059;&#1089;&#1110;</a>
+            </div>
+            {% if owned_campaigns %}
+                {% for campaign in owned_campaigns %}
+                <a class="profile-list-item" href="/campaign/{{ campaign.id_campaign }}">
+                    <strong>{{ campaign.name }}</strong>
+                    <span>{{ campaign.description[:110] }}{% if campaign.description|length > 110 %}...{% endif %}</span>
+                </a>
+                {% endfor %}
+            {% else %}
+                <p class="profile-empty">&#1042;&#1083;&#1072;&#1089;&#1085;&#1080;&#1093; &#1082;&#1072;&#1084;&#1087;&#1072;&#1085;&#1110;&#1081; &#1097;&#1077; &#1085;&#1077;&#1084;&#1072;&#1108;.</p>
+                <a class="profile-inline-action" href="{{ url_for('campaigns') }}">&#1057;&#1090;&#1074;&#1086;&#1088;&#1080;&#1090;&#1080; &#1082;&#1072;&#1084;&#1087;&#1072;&#1085;&#1110;&#1102;</a>
+            {% endif %}
+        </div>
+
+        <div class="profile-panel">
+            <div class="profile-panel-heading">
+                <h2>&#1059;&#1095;&#1072;&#1089;&#1090;&#1100; &#1091; &#1082;&#1072;&#1084;&#1087;&#1072;&#1085;&#1110;&#1103;&#1093;</h2>
+                <a href="{{ url_for('campaigns') }}">&#1059;&#1089;&#1110;</a>
+            </div>
+            {% if member_campaigns %}
+                {% for membership in member_campaigns %}
+                <a class="profile-list-item" href="/campaign/{{ membership.campaign.id_campaign }}">
+                    <strong>{{ membership.campaign.name }}</strong>
+                    <span>{{ membership.character.name if membership.character else '-' }}</span>
+                </a>
+                {% endfor %}
+            {% else %}
+                <p class="profile-empty">&#1042;&#1080; &#1097;&#1077; &#1085;&#1077; &#1091;&#1095;&#1072;&#1089;&#1085;&#1080;&#1082; &#1110;&#1085;&#1096;&#1080;&#1093; &#1082;&#1072;&#1084;&#1087;&#1072;&#1085;&#1110;&#1081;.</p>
+            {% endif %}
+        </div>
+
+        <div class="profile-panel">
+            <div class="profile-panel-heading">
+                <h2>&#1057;&#1077;&#1089;&#1110;&#1111;</h2>
+                <a href="{{ url_for('sessions') }}">&#1059;&#1089;&#1110;</a>
+            </div>
+            {% if sessions %}
+                {% for session in sessions %}
+                <a class="profile-list-item" href="/session/{{ session.id_session }}">
+                    <strong>{{ session.name }}</strong>
+                    <span>{{ session.campaign.name if session.campaign else '-' }}</span>
+                </a>
+                {% endfor %}
+            {% else %}
+                <p class="profile-empty">&#1057;&#1077;&#1089;&#1110;&#1081; &#1097;&#1077; &#1085;&#1077;&#1084;&#1072;&#1108;.</p>
+                <a class="profile-inline-action" href="{{ url_for('sessions') }}">&#1057;&#1090;&#1074;&#1086;&#1088;&#1080;&#1090;&#1080; &#1089;&#1077;&#1089;&#1110;&#1102;</a>
+            {% endif %}
+        </div>
+    </section>
+
+    {% if invited_memberships %}
+    <section class="profile-panel profile-invites">
+        <div class="profile-panel-heading">
+            <h2>&#1040;&#1082;&#1090;&#1080;&#1074;&#1085;&#1110; &#1079;&#1072;&#1087;&#1088;&#1086;&#1096;&#1077;&#1085;&#1085;&#1103;</h2>
+            <a href="{{ url_for('campaigns') }}">&#1055;&#1077;&#1088;&#1077;&#1075;&#1083;&#1103;&#1085;&#1091;&#1090;&#1080;</a>
+        </div>
+        {% for membership in invited_memberships %}
+        <div class="profile-list-item">
+            <strong>{{ membership.campaign.name }}</strong>
+            <span>{{ membership.campaign.description[:130] }}{% if membership.campaign.description|length > 130 %}...{% endif %}</span>
+        </div>
+        {% endfor %}
+    </section>
+    {% endif %}
+</main>
+
+{% include 'footer.html' %}
+{% endblock %}
