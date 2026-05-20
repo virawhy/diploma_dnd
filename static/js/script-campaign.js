@@ -249,14 +249,26 @@ document.addEventListener('DOMContentLoaded', function() {
     // Модифікуємо функцію пошуку користувача з обробкою помилок
     if (findUserBtn) {
         findUserBtn.onclick = async function() {
-            const username = usernameInput.value;
+            const username = usernameInput.value.trim();
+            if (!username) {
+                alert('Введіть логін користувача');
+                return;
+            }
             try {
-                const response = await fetch(`/api/campaign/${campaignId}/user/${username}/characters`);
+                const response = await fetch(`/api/campaign/${campaignId}/user/${encodeURIComponent(username)}/characters`);
             const characters = await response.json();
             
             console.log('Отримані дані персонажів:', characters);
             
             if (response.ok) {
+                if (!characters.length) {
+                    characterList.innerHTML = '<div class="character-option"><h4>Персонажів не знайдено</h4><p>У цього користувача поки немає персонажів для додавання.</p></div>';
+                    userSelectStep.style.display = 'none';
+                    characterSelectStep.style.display = 'block';
+                    addSelectedCharacterBtn.removeAttribute('data-selected-id');
+                    return;
+                }
+
                 characterList.innerHTML = characters.map(char => {
                     console.log('Обробка персонажа:', char);
                     
@@ -751,11 +763,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const editBtn = entryElement.querySelector('.edit-btn');
         const id = entryElement.getAttribute('data-id');
 
-        deleteBtn.addEventListener('click', () => {
-            currentDeleteId = id;
-            document.getElementById('delete-modal').style.display = 'block';
-        });
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', () => {
+                currentDeleteId = id;
+                document.getElementById('delete-modal').style.display = 'block';
+            });
+        }
 
+        if (editBtn) {
         editBtn.addEventListener('click', () => {
             currentEditId = id;
             currentEditType = currentTab;
@@ -778,6 +793,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             editModal.style.display = 'block';
         });
+        }
     }
 
     // Налаштування модальних вікон

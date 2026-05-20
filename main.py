@@ -1090,7 +1090,9 @@ def get_user_characters(campaign_id, username):
         abort(403)
     
     # Знаходимо користувача за username
-    user = User.query.filter_by(username=username).first_or_404()
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
     app.logger.debug(f'Знайдено користувача: {user.username} (id: {user.id_user})')
     
     # Отримуємо список персонажів користувача
@@ -1179,10 +1181,6 @@ def manage_campaign_character(campaign_id, character_id):
         abort(403)
 
     # Перевіряємо чи персонаж вже не є учасником іншої кампанії
-    existing_campaign = CampaignCharacter.query.filter_by(id_character=character_id).first()
-    if existing_campaign:
-        return jsonify({'message': 'Character is already in another campaign'}), 400
-    
     # Перевіряємо чи персонаж вже не доданий до цієї кампанії
     existing = CampaignCharacter.query.filter_by(
         id_campaign=campaign_id,
@@ -1199,16 +1197,33 @@ def manage_campaign_character(campaign_id, character_id):
     )
     
     # Створюємо запис в campaign_member для власника персонажа
-    campaign_member = CampaignMember(
+    campaign_member = CampaignMember.query.filter_by(
         id_campaign=campaign_id,
         id_user=character.id_user,
-        id_character=character_id,
-        status='member'
-    )
+        id_character=character_id
+    ).first()
+
+    if not campaign_member:
+        campaign_member = CampaignMember.query.filter_by(
+            id_campaign=campaign_id,
+            id_user=character.id_user,
+            id_character=None
+        ).first()
+
+    if campaign_member:
+        campaign_member.id_character = character_id
+        campaign_member.status = 'member'
+    else:
+        campaign_member = CampaignMember(
+            id_campaign=campaign_id,
+            id_user=character.id_user,
+            id_character=character_id,
+            status='member'
+        )
+        db.session.add(campaign_member)
     
     try:
         db.session.add(campaign_character)
-        db.session.add(campaign_member)
         db.session.commit()
         return jsonify({'message': 'Character added to campaign successfully'}), 200
     except Exception as e:

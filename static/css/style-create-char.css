@@ -1,5 +1,5 @@
 body {
-    background: #070707;
+    background: #171b15;
     color: #fff;
 }
 
@@ -11,7 +11,7 @@ header {
 .create-character-page {
     min-height: calc(100vh - 86px);
     background-image:
-        linear-gradient(90deg, rgba(0, 0, 0, 0.92), rgba(20, 20, 20, 0.76) 48%, rgba(0, 0, 0, 0.9)),
+        linear-gradient(90deg, rgba(23, 27, 21, 0.82), rgba(23, 27, 21, 0.58) 48%, rgba(23, 27, 21, 0.78)),
         url("../img/background-create-char-1.jpg");
     background-attachment: fixed;
     background-position: center;
@@ -79,10 +79,17 @@ header {
 .builder-card,
 .builder-band,
 .submit-panel {
-    background: rgba(0, 0, 0, 0.78);
+    background: rgba(23, 27, 21, 0.76);
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 8px;
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+}
+
+.builder-card,
+.builder-band {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0)),
+        rgba(23, 27, 21, 0.76);
 }
 
 .builder-card,
@@ -227,7 +234,7 @@ header {
 .pill-select input:checked + span,
 .pill-select span:hover {
     border-color: rgba(214, 179, 106, 0.86);
-    background: rgba(159, 21, 21, 0.72);
+    background: rgba(255, 255, 255, 0.095);
 }
 
 .random-panel {
@@ -237,7 +244,7 @@ header {
     align-items: center;
     padding: 18px;
     margin-bottom: 24px;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.055);
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 8px;
 }
@@ -312,7 +319,7 @@ header {
     gap: 12px;
     min-height: 186px;
     padding: 18px 12px;
-    background: rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.055);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 8px;
 }
@@ -345,7 +352,7 @@ header {
 
 .loadout-card {
     padding: 18px;
-    background: rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.055);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 8px;
 }
@@ -411,7 +418,7 @@ header {
 .add-attack-button:hover,
 .remove-attack-button:hover:not(:disabled) {
     border-color: #d6b36a;
-    background: rgba(159, 21, 21, 0.55);
+    background: rgba(255, 255, 255, 0.095);
 }
 
 .attack-list {
@@ -482,7 +489,7 @@ header {
     position: relative;
     gap: 10px;
     padding: 8px 10px;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.055);
     border: 1px solid rgba(255, 255, 255, 0.13);
 }
 
@@ -499,7 +506,7 @@ header {
 .checkbox-grid input:checked + label,
 .checkbox-list input:checked + label {
     border-color: rgba(214, 179, 106, 0.86);
-    background: rgba(159, 21, 21, 0.55);
+    background: rgba(255, 255, 255, 0.095);
 }
 
 .checkbox-grid input:checked + label span::after,

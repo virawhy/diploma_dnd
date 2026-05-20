@@ -3,10 +3,15 @@ header {
     z-index: 2;
 }
 
+body {
+    background: #171b15;
+    color: #fff;
+}
+
 .charlist-container {
     width: 100%;
     min-height: calc(100vh - 86px);
-    background-image: linear-gradient(rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.72)), url("../img/charlist-background.jpg");
+    background-image: linear-gradient(90deg, rgba(23, 27, 21, 0.82), rgba(23, 27, 21, 0.58) 50%, rgba(23, 27, 21, 0.78)), url("../img/charlist-background.jpg");
     background-attachment: fixed;
     background-position: center;
     background-repeat: no-repeat;
@@ -24,7 +29,7 @@ header {
 
 .charlist-panel,
 .character-preview-panel {
-    background: rgba(0, 0, 0, 0.78);
+    background: rgba(23, 27, 21, 0.76);
     border-radius: 0;
     box-shadow: none;
 }
@@ -33,7 +38,7 @@ header {
     min-height: calc(100vh - 86px);
     max-height: calc(100vh - 86px);
     overflow: hidden;
-    border-right: 2px solid rgba(255, 255, 255, 0.34);
+    border-right: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .charlist-panel-heading {
@@ -117,9 +122,9 @@ header {
 
 .charlist-element:hover,
 .charlist-element.active {
-    background: rgba(159, 21, 21, 0.38);
-    border-color: rgba(255, 255, 255, 0.78);
-    box-shadow: 0 0 18px rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.095);
+    border-color: rgba(214, 179, 106, 0.48);
+    box-shadow: 0 0 18px rgba(0, 0, 0, 0.22);
 }
 
 .badge-container {
@@ -193,6 +198,9 @@ header {
     max-height: calc(100vh - 86px);
     overflow-y: auto;
     padding: 30px 38px;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0)),
+        rgba(23, 27, 21, 0.76);
 }
 
 .character-preview,
@@ -261,7 +269,7 @@ header {
 .ability-grid div {
     min-height: 92px;
     padding: 16px;
-    background: rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.055);
     border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 8px;
 }
@@ -328,7 +336,7 @@ header {
     align-items: center;
     min-height: 60px;
     padding: 12px;
-    background: rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.055);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 8px;
 }
@@ -363,7 +371,7 @@ header {
     padding: 0 9px;
     border: 1px solid rgba(214, 179, 106, 0.72);
     border-radius: 50%;
-    background: rgba(159, 21, 21, 0.46);
+    background: rgba(255, 255, 255, 0.08);
     font-size: 15px;
     font-weight: 700;
     line-height: 18px;
@@ -394,7 +402,7 @@ header {
     gap: 8px;
     min-height: 34px;
     padding: 6px 10px;
-    background: rgba(159, 21, 21, 0.42);
+    background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 5px;
     color: #fff;
@@ -438,7 +446,7 @@ header {
         min-height: auto;
         max-height: none;
         border-right: 0;
-        border-bottom: 2px solid rgba(255, 255, 255, 0.34);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.16);
     }
 
     .charlist-itself {

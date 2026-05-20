@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const deleteModal = document.getElementById('deleteCampaignModal');
     const createForm = document.getElementById('createCampaignForm');
     const createBtn = document.getElementById('createCampaignBtn');
+    const emptyCreateBtn = document.querySelector('.empty-create-btn');
     const closeBtns = document.getElementsByClassName('close');
     const cancelBtns = document.getElementsByClassName('cancel-btn');
 
@@ -12,6 +13,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Відкриття модального вікна створення кампанії
     createBtn.onclick = function() {
         createModal.style.display = 'block';
+    }
+
+    if (emptyCreateBtn) {
+        emptyCreateBtn.onclick = function() {
+            createModal.style.display = 'block';
+        }
     }
 
     // Закриття модальних вікон при кліку на хрестик
@@ -199,36 +206,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-
-    findUserBtn.onclick = async function() {
-        const username = usernameInput.value;
-        try {
-            const response = await fetch(`/api/campaign/${campaignId}/user/${username}/characters`);
-            const characters = await response.json();
-            
-            console.log('Отримані дані персонажів:', characters);
-            
-            if (response.ok) {
-                characterList.innerHTML = characters.map(char => {
-                    console.log('Обробка персонажа:', char);
-                    
-                    // Перевірка та логування даних персонажа
-                    console.log('Раса:', char.race);
-                    console.log('Клас:', char.class);
-                    
-                    
-                    const charLevel = char.level ;
-                    
-                    return `
-                        <div class="character-option" data-id="${char.id_character}">
-                            <h4>${char.name || 'Безіменний'}</h4>
-                            <p>${char.race} - ${className} (Рівень ${charLevel})</p>
-                        </div>
-                    `;
-                }).join('');
-            }
-        } catch (error) {
-            console.error('Детальна помилка при пошуку користувача:', error);
-            alert('Помилка при пошуку користувача. Перевірте консоль для деталей.');
-        }
-    }
