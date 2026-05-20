@@ -31,6 +31,8 @@ if os.environ.get('FLASK_ENV') == 'production' and not secret_key:
 app.config['SECRET_KEY'] = secret_key or secrets.token_hex(32)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///dnd.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 # Налаштування сесій для забезпечення окремих сесій для кожного користувача
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -1296,18 +1298,71 @@ def decline_invitation(membership_id):
 @app.route('/charlist.html')
 @login_required
 def charlist():
-    character_list = Character.query.filter_by(
+    characters = Character.query.filter_by(
         id_user=current_user.id_user).order_by(Character.id_character.desc()).all()
-    character_dict = {}
-    for character in character_list:
-        character_dict[character.id_character] = [
-            character.name, character.class_name.class_name, character.racial_group.racial_group, character.level
-        ]
+
+    class_icons = {
+        'Варвар': 'ico-barbar.png',
+        'Бард': 'ico-bard.png',
+        'Друїд': 'ico-druid.png',
+        'Рейнджер': 'ico-hunt.png',
+        'Чаклун': 'ico-mage.png',
+        'Монах': 'ico-monk.png',
+        'Паладін': 'ico-pala.png',
+        'Розбійник': 'ico-plut.png',
+        'Клірик': 'ico-priest.png',
+        'Заклинатель': 'ico-sorc.png',
+        'Воїн': 'ico-war.png',
+        'Чорнокнижник': 'ico-warlock.png',
+    }
+
+    characters_data = []
+    for character_obj in characters:
+        proficiencies = CharacterProficiency.query.filter_by(
+            id_character=character_obj.id_character
+        ).all()
+
+        class_name = character_obj.class_name.class_name if character_obj.class_name else ''
+        racial_group = character_obj.racial_group.racial_group if character_obj.racial_group else ''
+
+        characters_data.append({
+            'id': character_obj.id_character,
+            'name': character_obj.name,
+            'level': character_obj.level,
+            'class_name': class_name,
+            'racial_group': racial_group,
+            'icon': class_icons.get(class_name, 'character-logo.png'),
+            'strength': character_obj.strength,
+            'dexterity': character_obj.dexterity,
+            'constitution': character_obj.constitution,
+            'intelligence': character_obj.intelligence,
+            'wisdom': character_obj.wisdom,
+            'charisma': character_obj.charisma,
+            'armor_class': character_obj.armor_class,
+            'speed': character_obj.speed,
+            'initiative': character_obj.initiative,
+            'health_current': character_obj.health_current,
+            'health_max': character_obj.health_max,
+            'proficiency_bonus': character_obj.proficiency_bonus,
+            'inspiration': character_obj.inspiration,
+            'attack_name': character_obj.attack.name if character_obj.attack else '',
+            'attack_bonus': character_obj.attack.attack_bonus if character_obj.attack else '',
+            'attack_damage': character_obj.attack.damage_type if character_obj.attack else '',
+            'note': character_obj.note.text if character_obj.note else '',
+            'proficiencies': [
+                {
+                    'name': proficiency.proficiency.proficiency,
+                    'value': proficiency.value,
+                }
+                for proficiency in proficiencies
+                if proficiency.checker
+            ],
+        })
+
     return render_template(
         'charlist.html',
         name=current_user.username,
-        character_dict=character_dict,
-        characters=character_list,
+        characters=characters_data,
     )
 
 
@@ -1668,7 +1723,8 @@ def registration():
         password = request.form['password']
         confirm_password = request.form['confirm_password']
         if password != confirm_password:
-            print("Паролі не збігаються")
+            flash("Паролі не збігаються")
+            return redirect(url_for("registration"))
         else:
             try:
                 hash = generate_password_hash(password)
@@ -1680,7 +1736,8 @@ def registration():
                 return redirect(url_for("auth"))
             except Exception as e:
                 db.session.rollback()
-                print("Помилка додавання в БД:", e)
+                current_app.logger.exception("Error adding user to database: %s", e)
+                flash("Не вдалося створити акаунт")
     return render_template("registration.html")
 
 

@@ -26,6 +26,7 @@
                     <h1 id="auth-title">&#1042;&#1093;&#1110;&#1076;</h1>
                 </div>
                 <form class="auth-form" action="" method="POST">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                     <label class="auth-field" for="email">
                         <span>E-mail</span>
                         <input type="email" name="email" id="email" placeholder="name@example.com" required>

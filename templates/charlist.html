@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='img/DnD-ico.ico')}}">
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='img/DnD-ico.ico')}}">
     <title>Список персонажів</title>
 
     <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style-reset.css')}}">
@@ -13,148 +13,155 @@
     <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/header-footer-style.css')}}">
     <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style-scrollbar.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/show-move.css')}}">
-
 </head>
 
 <body>
-
     <div id="progressbar"></div>
 
-    <header>
-
-        <div class="header-frame">
-            <div class="header-logo"><a href="/"><img src="../static/img/logo.png"></a></div>
-            <div class="header-nav">
-                <a href="{{ url_for('knowledge_rules') }}"><p class="header-nav-element">Посібник</p></a>
-
-                <a href="dice.html"><p class="header-nav-element">Дайси</p></a>
-                
-
-
-
-                {% if current_user.is_authenticated %}
-                <a href="/campaigns"><p class="header-nav-element">Кампанії</p></a>
-                <a href="/sessions"><p class="header-nav-element">Сесії</p></a>
-                <a href="/charlist.html"><p class="header-nav-element">Персонажі</p></a>
-                <a href="/logout"><p class="header-nav-element">Вихід</p></a>
-
-
-                {% else %}
-                    <a href="auth.html"><p class="header-nav-element">Вхід</p></a>
-                    <a href="registration.html"><p class="header-nav-element">Реєстрація</p></a>
-                {% endif %}
-                
-            </div>
-            <input type="checkbox" id="burger-toggle">
-            <label for="burger-toggle"  class="burger-container">
-                <div class="burger-line"></div>
-                <div class="burger-line"></div>
-                <div class="burger-line"></div>
-            </label>
-            <nav class="nav-menu">
-                <ul>
-                  <li><a href="{{ url_for('knowledge_rules') }}">База знань</a></li>
-                  <li><a href="dice.html">Дайси</a></li>
-                  {% if current_user.is_authenticated %}
-                    <li><a href="/charlist.html">Персонажі</a></li>
-                    <li><a href="/campaigns">Кампанії</a></li>
-                    <li><a href="/sessions">Сесії</a></li>
-                    <li><a href="/logout">Вихід</a></li>
-                  {% else %}
-                    <li><a href="auth.html">Вхід</a></li>
-                    <li><a href="registration.html">Реєстрація</a></li>
-                  {% endif %}
-                
-                </ul>
-            </nav>
-        </div>
-
-    </header>
-
+    {% include 'header.html' %}
 
     <main>
         <div class="charlist-container">
-            <div class="charlist-itself">
-
-
-                {%for character_l in character_dict.items()%}
-                <a href="character/{{character_l[0]}}">
-                    <div class="charlist-element">
-                        <div class="badge-container">
-                            {% if character_l[1][1] == "Варвар" %}
-                            <img src="{{url_for('static', filename='/img/ico-barbar.png')}}">
-                            {% elif character_l[1][1] == "Бард" %}
-                            <img src="{{url_for('static', filename='/img/ico-bard.png')}}">
-                            {% elif character_l[1][1] == "Друїд" %}
-                            <img src="{{url_for('static', filename='/img/ico-druid.png')}}">
-                            {% elif character_l[1][1] == "Рейнджер" %}
-                            <img src="{{url_for('static', filename='/img/ico-hunt.png')}}">
-                            {% elif character_l[1][1] == "Чаклун" %}
-                            <img src="{{url_for('static', filename='/img/ico-mage.png')}}">
-                            {% elif character_l[1][1] == "Монах" %}
-                            <img src="{{url_for('static', filename='/img/ico-monk.png')}}">
-                            {% elif character_l[1][1] == "Паладін" %}
-                            <img src="{{url_for('static', filename='/img/ico-pala.png')}}">
-                            {% elif character_l[1][1] == "Розбійник" %}
-                            <img src="{{url_for('static', filename='/img/ico-plut.png')}}">
-                            {% elif character_l[1][1] == "Клірик" %}
-                            <img src="{{url_for('static', filename='/img/ico-priest.png')}}">
-                            {% elif character_l[1][1] == "Заклинатель" %}
-                            <img src="{{url_for('static', filename='/img/ico-sorc.png')}}">
-                            {% elif character_l[1][1] == "Воїн" %}
-                            <img src="{{url_for('static', filename='/img/ico-war.png')}}">
-                            {% elif character_l[1][1] == "Чорнокнижник" %}
-                            <img src="{{url_for('static', filename='/img/ico-warlock.png')}}">
-                            
-                            {% endif %}
-                        </div>
-                        <div class="name-container">
-                            <div class="name-top charlist-text charlist-text-interval">
-                                <p>Ім'я</p>
-                            </div>
-                            <div class="name-bot charlist-text">
-                                <p>{{character_l[1][0]}}</p>
-                            </div>
-                        </div>
-                        <div class="class-container">
-                            <div class="class-top charlist-text charlist-text-interval">
-                                <p>Клас:</p>
-                            </div>
-                            <div class="class-bot charlist-text">
-                                <p>{{character_l[1][1]}}</p>
-                            </div>
-                        </div>
-                        <div class="race-container">
-                            <div class="race-top charlist-text charlist-text-interval">
-                                <p>Раса:</p>
-                            </div>
-                            <div class="race-bot charlist-text">
-                                <p>{{character_l[1][2]}}</p>
-                            </div>
-                        </div>
-                        <div class="level-container">
-                            <div class="level-top charlist-text charlist-text-interval">
-                                <p>Рівень:</p>
-                            </div>
-                            <div class="level-bot charlist-text">
-                                <p>{{character_l[1][3]}}</p>
-                            </div>
-                        </div>
+            <div class="charlist-layout">
+                <aside class="charlist-panel">
+                    <div class="charlist-panel-heading">
+                        <h1>Персонажі</h1>
+                        <a class="charlist-create-link" href="{{ url_for('create_char') }}">
+                            <span>+</span>
+                            Створити
+                        </a>
                     </div>
-                </a>
-                {%endfor%}
 
-                <a href="create-char.html"><div class="charlist-element charlist-new charlist-text">
-                    <p>Створити нового персонажа</p>
-                    <img clas="border-hover" src="../static/img/plus.png">
-                </div></a>
+                    <div class="charlist-itself">
+                        {% for character in characters %}
+                        <button class="charlist-element {% if loop.first %}active{% endif %}" type="button" data-character-id="{{ character.id }}">
+                            <span class="badge-container">
+                                <img src="{{url_for('static', filename='img/' ~ character.icon)}}" alt="">
+                            </span>
+                            <span class="charlist-text-group">
+                                <span class="charlist-name">{{ character.name }}</span>
+                                <span class="charlist-meta">{{ character.class_name }} · {{ character.racial_group }}</span>
+                            </span>
+                            <span class="charlist-level">
+                                <span>Рівень</span>
+                                {{ character.level }}
+                            </span>
+                        </button>
+                        {% else %}
+                        <div class="charlist-empty">
+                            <p>У вас поки немає персонажів.</p>
+                            <a href="{{ url_for('create_char') }}">Створити першого персонажа</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </aside>
+
+                <section class="character-preview-panel">
+                    {% for character in characters %}
+                    <article class="character-preview {% if loop.first %}active{% endif %}" data-character-panel="{{ character.id }}">
+                        <div class="character-preview-header">
+                            <div>
+                                <p class="character-preview-kicker">{{ character.class_name }} · {{ character.racial_group }}</p>
+                                <h2>{{ character.name }}</h2>
+                            </div>
+                        </div>
+
+                        <div class="character-summary-grid">
+                            <div class="character-summary-card">
+                                <span>Клас броні</span>
+                                <strong>{{ character.armor_class }}</strong>
+                            </div>
+                            <div class="character-summary-card">
+                                <span>Швидкість</span>
+                                <strong>{{ character.speed }}</strong>
+                            </div>
+                            <div class="character-summary-card">
+                                <span>Ініціатива</span>
+                                <strong>{{ character.initiative }}</strong>
+                            </div>
+                            <div class="character-summary-card">
+                                <span>Здоров'я</span>
+                                <strong>{{ character.health_current }}/{{ character.health_max }}</strong>
+                            </div>
+                            <div class="character-summary-card">
+                                <span>Майстерність</span>
+                                <strong>{{ character.proficiency_bonus }}</strong>
+                            </div>
+                            <div class="character-summary-card">
+                                <span>Натхнення</span>
+                                <strong>{{ character.inspiration }}</strong>
+                            </div>
+                        </div>
+
+                        <div class="character-section">
+                            <h3>Характеристики</h3>
+                            <div class="ability-grid">
+                                <div><span>Сила</span><strong>{{ character.strength }}</strong></div>
+                                <div><span>Спритність</span><strong>{{ character.dexterity }}</strong></div>
+                                <div><span>Статура</span><strong>{{ character.constitution }}</strong></div>
+                                <div><span>Інтелект</span><strong>{{ character.intelligence }}</strong></div>
+                                <div><span>Мудрість</span><strong>{{ character.wisdom }}</strong></div>
+                                <div><span>Харизма</span><strong>{{ character.charisma }}</strong></div>
+                            </div>
+                        </div>
+
+                        <div class="character-section character-two-column">
+                            <div>
+                                <h3>Атака та чари</h3>
+                                <div class="detail-list">
+                                    <p><span>Назва</span>{{ character.attack_name or 'Не вказано' }}</p>
+                                    <p><span>Бонус атаки</span>{{ character.attack_bonus }}</p>
+                                    <p><span>Пошкодження/тип</span>{{ character.attack_damage or 'Не вказано' }}</p>
+                                </div>
+                            </div>
+                            <div>
+                                <h3>Активні навички</h3>
+                                {% if character.proficiencies %}
+                                <div class="proficiency-list">
+                                    {% for proficiency in character.proficiencies %}
+                                    <span>{{ proficiency.name }} <strong>{{ proficiency.value }}</strong></span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                <p class="muted-text">Активні навички не вибрані.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="character-section">
+                            <h3>Спорядження та примітки</h3>
+                            <p class="character-note">{{ character.note or 'Приміток немає.' }}</p>
+                        </div>
+                    </article>
+                    {% else %}
+                    <div class="character-preview-placeholder">
+                        <h2>Оберіть або створіть персонажа</h2>
+                        <p>Коли персонаж з'явиться у списку, його характеристики будуть показані тут.</p>
+                    </div>
+                    {% endfor %}
+                </section>
             </div>
         </div>
     </main>
+
     {% include 'footer.html' %}
     <script src="{{url_for('static', filename='js/script-scrollbar.js')}}"></script>
     <script src="{{url_for('static', filename='js/script-header.js')}}"></script>
+    <script>
+        const characterButtons = document.querySelectorAll('.charlist-element[data-character-id]');
+        const characterPanels = document.querySelectorAll('.character-preview[data-character-panel]');
 
-    </body>
+        characterButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                const characterId = button.dataset.characterId;
+
+                characterButtons.forEach((item) => item.classList.toggle('active', item === button));
+                characterPanels.forEach((panel) => {
+                    panel.classList.toggle('active', panel.dataset.characterPanel === characterId);
+                });
+            });
+        });
+    </script>
+</body>
 
 </html>

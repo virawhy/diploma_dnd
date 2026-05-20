@@ -26,6 +26,7 @@
                     <h1 id="registration-title">&#1056;&#1077;&#1108;&#1089;&#1090;&#1088;&#1072;&#1094;&#1110;&#1103;</h1>
                 </div>
                 <form class="auth-form" action="" method="POST">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                     <label class="auth-field" for="name">
                         <span>&#1053;&#1110;&#1082;&#1085;&#1077;&#1081;&#1084;</span>
                         <input type="text" name="username" id="name" placeholder="Hero name" required>
