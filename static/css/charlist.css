@@ -47,6 +47,7 @@ header {
 
 .charlist-panel-heading h1,
 .character-preview-header h2,
+.character-preview-placeholder h2,
 .character-section h3 {
     margin: 0;
     font-family: 'Roboto', 'Inter', sans-serif;

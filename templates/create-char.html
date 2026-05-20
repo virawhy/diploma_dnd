@@ -1,370 +1,252 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='img/DnD-ico.ico')}}">
-    <title>Створення персонажу</title>
+    <title>Створення персонажа</title>
     <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style-reset.css')}}">
     <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style-create-char.css')}}">
     <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/header-footer-style.css')}}">
     <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style-scrollbar.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/show-move.css')}}">
-
 </head>
 
 <body>
-
     <div id="progressbar"></div>
 
-    <header>
-        <div class="header-frame">
-            <div class="header-logo"><a href="/"><img src="../static/img/logo.png"></a></div>
-            <div class="header-nav">
+    {% include 'header.html' %}
 
-                <a href="/bestiary/aboleth" >
-                    <p class="header-nav-element">Бестіарій</p>
-                </a>
+    <main class="create-character-page">
+        <form class="character-builder" action="" method="POST">
+            <section class="builder-hero">
+                <div class="builder-hero-copy">
+                    <p class="builder-kicker">Новий лист персонажа</p>
+                    <h1>Створення персонажа</h1>
+                    <p>Задайте основу героя, розподіліть характеристики та оберіть стартові навички зі спорядженням.</p>
+                </div>
 
-                <a href="dice.html" >
-                    <p class="header-nav-element">Дайси</p>
-                </a>
-                <div class="acc-svg-container">
-                    <svg id="id_svg" width="40" height="40" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink">
-                        <rect width="30" height="30" fill="url(#pattern0)" />
-                        <defs>
-                            <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
-                                <use xlink:href="#image0_209_43" transform="scale(0.0333333)" />
-                            </pattern>
-                            <image id="image0_209_43" width="30" height="30"
-                                xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAalJREFUSEvtlutNw0AQhGcqgA6ACkgqACoAKgAqIFSAqACoAKiApAKSCggVAB2QCgYNukPWOfadY0UREiv5h2N7v529fYTYkHFDXKwElnQCYD8EPSc56SqgE1jSOYBbANsJ6AvAFcnH0gCKwZLuAFxmHN+THJXAi8Ahtc8lDgGckhzn3i0FzytnugAwimkN6Xc2tipnPuwNlrQL4L3iaEjSgfyapAGA18pPeyQ/2uBZxZIOAbwEJzOSvq+ZpCmAg/DgiKTvG60ruLF4kuLrD3bIktwuPkP37NLzkxTrYEEybbea8qziAHZ/noWvL9J+DQX2EJ4/kXS/t1op2AqsaCd4cyBxWBgSQZ8ABiSdof7goNqVa1gclanjNweQVnwTvUhx/FiSlUeFMQADfzJQojT66gTOpa/L878BDsPEQ8LTzJfNE8rXlOSsVHVWcRiZ1wC8g3P96Wr2grjpNTKT/iwVE9+r9XvVQaPijquwKajGFdkGdsqOu8pM3p+Q9BHVrA1c3Tar8hu3WRvYy93Tqo95qSz9K5St6j7Utm//wevKbHlVrzuCjZ3xN5Iyjh/ou2QrAAAAAElFTkSuQmCC" />
-                        </defs>
-                    </svg>
-                    <div class="user_info_window user_info_display user_info_transition">
-                        <div style="margin-top: 7%;">
-                            <div class="user_info_window_text">Dungeon Master</div>
-                            <div class="user_info_window_text">{{name}}</div>
-                            <div style="display: flex;">
+                <div class="builder-card identity-card">
+                    <div class="builder-section-heading">
+                        <span>1</span>
+                        <div>
+                            <p>Основа</p>
+                            <h2>Ім'я, походження і клас</h2>
+                        </div>
+                    </div>
 
-                                <div class="user_info_window_button"><a class="a_text" href="charlist.html">Мої персонажі</a></div>
+                    <div class="form-grid">
+                        <label class="field field-wide">
+                            <span>Ім'я</span>
+                            <input class="name-input" maxlength="50" type="text" placeholder="Ім'я персонажа" name="name_ch" required>
+                        </label>
 
-                                <div class="user_info_window_button"><a class="a_text" href="/logout">Вихід</a></div>
-                            </div>
+                        <label class="field compact-field">
+                            <span>Рівень</span>
+                            <input type="number" min="1" max="20" class="input-level" value="1" name="level">
+                        </label>
+                    </div>
+
+                    <div class="choice-field">
+                        <span class="field-label">Раса</span>
+                        <div class="pill-select">
+                            <label><input type="radio" name="race" value="Дракононароджений" checked><span>Дракононароджений</span></label>
+                            <label><input type="radio" name="race" value="Дварф"><span>Дварф</span></label>
+                            <label><input type="radio" name="race" value="Ельф"><span>Ельф</span></label>
+                            <label><input type="radio" name="race" value="Гном"><span>Гном</span></label>
+                            <label><input type="radio" name="race" value="Напівельф"><span>Напівельф</span></label>
+                            <label><input type="radio" name="race" value="Напіворк"><span>Напіворк</span></label>
+                            <label><input type="radio" name="race" value="Напіврослик"><span>Напіврослик</span></label>
+                            <label><input type="radio" name="race" value="Людина"><span>Людина</span></label>
+                            <label><input type="radio" name="race" value="Тифлінг"><span>Тифлінг</span></label>
+                            <label><input type="radio" name="race" value="Орк"><span>Орк</span></label>
+                        </div>
+                    </div>
+
+                    <div class="choice-field">
+                        <span class="field-label">Клас</span>
+                        <div class="pill-select class-select">
+                            <label><input type="radio" name="class" value="Воїн" checked><span>Воїн</span></label>
+                            <label><input type="radio" name="class" value="Паладін"><span>Паладін</span></label>
+                            <label><input type="radio" name="class" value="Чаклун"><span>Чаклун</span></label>
+                            <label><input type="radio" name="class" value="Варвар"><span>Варвар</span></label>
+                            <label><input type="radio" name="class" value="Клірик"><span>Клірик</span></label>
+                            <label><input type="radio" name="class" value="Чорнокнижник"><span>Чорнокнижник</span></label>
+                            <label><input type="radio" name="class" value="Розбійник"><span>Розбійник</span></label>
+                            <label><input type="radio" name="class" value="Заклинатель"><span>Заклинатель</span></label>
+                            <label><input type="radio" name="class" value="Монах"><span>Монах</span></label>
+                            <label><input type="radio" name="class" value="Рейнджер"><span>Рейнджер</span></label>
+                            <label><input type="radio" name="class" value="Друїд"><span>Друїд</span></label>
+                            <label><input type="radio" name="class" value="Бард"><span>Бард</span></label>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </header>
+            </section>
 
-
-
-
-    <main>
-        <form action="" method="POST">
-            <div class="create-char-top">
-                <div class="create-char-top-container">
+            <section class="builder-band">
+                <div class="builder-section-heading">
+                    <span>2</span>
                     <div>
-                        <div class="create-char-caption" id="id-create-char-caption">
-                            <p>Створення персонажу</p>
-                        </div>
+                        <p>Характеристики</p>
+                        <h2>Згенеруйте набір або введіть значення вручну</h2>
                     </div>
-                    <div class="create-char-question" id="id-create-char-question">
-                        <p>Які у вас ім'я, раса, клас<br>та рівень?</p>
-                    </div>
-                    <div class="create-char-input-container">
-                        <div class="char-input-element">
-                            <div class="char-input-text more-margin">Ім'я</div>
-                            <input class="name-input" maxlength="50" type="text" placeholder="Ім'я персонажа" name="name_ch">
-                        </div>
-                        <div class="char-input-element">
-                            <div class="char-input-text">Раса</div>
-                            <div class="list-choice">
-                                <div class="list-choice-title">Раса</div>
-                                <div class="list-choice-objects">
-                                    <label>
-                                        <input type="radio" name="race" value="Дракононароджений" checked/> <span>Дракононароджений</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="race" value="Дварф"/> <span>Дварф</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="race" value="Ельф"/> <span>Ельф</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="race" value="Гном"/> <span>Гном</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="race" value="Напівельф"/> <span>Напівельф</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="race" value="Напіворк"/> <span>Напіворк</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="race" value="Напіврослик"/> <span>Напіврослик</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="race" value="Людина"/> <span>Людина</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="race" value="Тифлінг"/> <span>Тифлінг</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="race" value="Орк"/> <span>Орк</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="char-input-element">
-                            <div class="char-input-text">Клас</div>
-                            <div class="list-choice">
-                                <div class="list-choice-title">Клас</div>
-                                <div class="list-choice-objects">
-                                    <label>
-                                        <input type="radio" name="class" value="Воїн" checked/> <span>Воїн</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="class" value="Паладін" /> <span>Паладін</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="class" value="Чаклун" /> <span>Чаклун</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="class" value="Варвар" /> <span>Варвар</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="class" value="Клірик" /> <span>Клірик</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="class" value="Чорнокнижник" /> <span>Чорнокнижник</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="class" value="Розбійник" /> <span>Розбійник</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="class" value="Заклинатель" /> <span>Заклинатель</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="class" value="Монах" /> <span>Монах</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="class" value="Рейнджер" /> <span>Рейнджер</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="class" value="Друїд" /> <span>Друїд</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="class" value="Бард" /> <span>Бард</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="char-input-element">
-                            <div class="char-input-text">Рівень</div>
-                            <input type="number" min="1" max="20" class="input-level" value="1" name="level"
-                                onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'">
-                        </div>
-                    </div>
-                    <div class="random-stats-text">
-                        <p>Дозвольте фортуні створити вам два набори характеристик та оберіть той, що подобається
-                            більше.</p>
-                    </div>
-                    <div class="random-stats-container">
-                        <input type="text" value="?" readonly>
-                        <input type="text" value="?" readonly>
-                        <input type="text" value="?" readonly>
-                        <input type="text" value="?" readonly>
-                        <input type="text" value="?" readonly>
-                        <input type="text" value="?" readonly>
-                    </div>
-                    <div class="random-stats-container">
-                        <input type="text" value="?" readonly>
-                        <input type="text" value="?" readonly>
-                        <input type="text" value="?" readonly>
-                        <input type="text" value="?" readonly>
-                        <input type="text" value="?" readonly>
-                        <input type="text" value="?" readonly>
-                    </div>
-                    <div class="center-button"><div class="random-stats-button" onclick="generateRandomStats()">Згенерувати</div></div>
                 </div>
-            </div>
 
-            <div class="create-char-stats">
-                <div class="create-char-top-container">
-                    <div class="create-char-stats-caption" id="id-create-char-stats-caption">Значення навичок:</div>
-                    <div class="create-char-stats-container">
-                        <div class="create-char-stats-element">
-                            <div class="create-char-stats-text">Сила</div>
-                            <img src="{{url_for('static', filename='img/strength.png')}}">
-                            <input type="number" min="1" max="20" class="input-level center-input" value="1" name="strength"
-                                onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'">
+                <div class="random-panel">
+                    <div>
+                        <p class="random-title">Кидок 4d6 без найменшого значення</p>
+                        <p class="random-copy">Натисніть кнопку, щоб отримати два набори по шість значень і перенести вподобані числа у поля характеристик.</p>
+                    </div>
+                    <div class="random-sets">
+                        <div class="random-stats-container" aria-label="Перший набір характеристик">
+                            <input type="text" value="?" readonly>
+                            <input type="text" value="?" readonly>
+                            <input type="text" value="?" readonly>
+                            <input type="text" value="?" readonly>
+                            <input type="text" value="?" readonly>
+                            <input type="text" value="?" readonly>
                         </div>
-                        <div class="create-char-stats-element">
-                            <div class="create-char-stats-text">Спритність</div>
-                            <img src="{{url_for('static', filename='img/dexterity.png')}}">
-                            <input type="number" min="1" max="20" class="input-level center-input" value="1" name="dexterity"
-                                onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'">
-                        </div>
-                        <div class="create-char-stats-element">
-                            <div class="create-char-stats-text">Статура</div>
-                            <img src="{{url_for('static', filename='img/constitution.png')}}">
-                            <input type="number" min="1" max="20" class="input-level center-input" value="1" name="constitution"
-                                onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'">
+                        <div class="random-stats-container" aria-label="Другий набір характеристик">
+                            <input type="text" value="?" readonly>
+                            <input type="text" value="?" readonly>
+                            <input type="text" value="?" readonly>
+                            <input type="text" value="?" readonly>
+                            <input type="text" value="?" readonly>
+                            <input type="text" value="?" readonly>
                         </div>
                     </div>
-                    <div class="create-char-stats-container">
-                        <div class="create-char-stats-element">
-                            <div class="create-char-stats-text">Інтелект</div>
-                            <img src="{{url_for('static', filename='img/intelect.png')}}">
-                            <input type="number" min="1" max="20" class="input-level center-input" value="1" name="intelect"
-                                onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'">
+                    <button type="button" class="random-stats-button">Згенерувати</button>
+                </div>
+
+                <div class="ability-grid">
+                    <label class="ability-card">
+                        <img src="{{url_for('static', filename='img/tw-dnd/strength.svg')}}" alt="">
+                        <span>Сила</span>
+                        <input type="number" min="1" max="20" class="input-level center-input" value="1" name="strength">
+                    </label>
+                    <label class="ability-card">
+                        <img src="{{url_for('static', filename='img/tw-dnd/dexterity.svg')}}" alt="">
+                        <span>Спритність</span>
+                        <input type="number" min="1" max="20" class="input-level center-input" value="1" name="dexterity">
+                    </label>
+                    <label class="ability-card">
+                        <img src="{{url_for('static', filename='img/tw-dnd/constitution.svg')}}" alt="">
+                        <span>Статура</span>
+                        <input type="number" min="1" max="20" class="input-level center-input" value="1" name="constitution">
+                    </label>
+                    <label class="ability-card">
+                        <img src="{{url_for('static', filename='img/tw-dnd/intelligence.svg')}}" alt="">
+                        <span>Інтелект</span>
+                        <input type="number" min="1" max="20" class="input-level center-input" value="1" name="intelect">
+                    </label>
+                    <label class="ability-card">
+                        <img src="{{url_for('static', filename='img/tw-dnd/wisdom.svg')}}" alt="">
+                        <span>Мудрість</span>
+                        <input type="number" min="1" max="20" class="input-level center-input" value="1" name="wisdom">
+                    </label>
+                    <label class="ability-card">
+                        <img src="{{url_for('static', filename='img/tw-dnd/charisma.svg')}}" alt="">
+                        <span>Харизма</span>
+                        <input type="number" min="1" max="20" class="input-level center-input" value="1" name="charisma">
+                    </label>
+                </div>
+            </section>
+
+            <section class="builder-band choices-band">
+                <div class="builder-section-heading">
+                    <span>3</span>
+                    <div>
+                        <p>Стартовий набір</p>
+                        <h2>Навички та спорядження</h2>
+                    </div>
+                </div>
+
+                <div class="loadout-grid">
+                    <div class="loadout-card">
+                        <h3>Оберіть 3 навички</h3>
+                        <div class="checkbox-grid test-column">
+                            <input type="checkbox" id="Arcane" name="answer1" value="Магія">
+                            <label for="Arcane"><span></span>Магія</label>
+                            <input type="checkbox" id="Deception" name="answer1" value="Обман">
+                            <label for="Deception"><span></span>Обман</label>
+                            <input type="checkbox" id="History" name="answer1" value="Історія">
+                            <label for="History"><span></span>Історія</label>
+                            <input type="checkbox" id="Sleight_of_hand" name="answer1" value="Спритність рук">
+                            <label for="Sleight_of_hand"><span></span>Спритність рук</label>
+                            <input type="checkbox" id="Medicine" name="answer1" value="Медицина">
+                            <label for="Medicine"><span></span>Медицина</label>
+                            <input type="checkbox" id="Nature" name="answer1" value="Природа">
+                            <label for="Nature"><span></span>Природа</label>
+                            <input type="checkbox" id="Religion" name="answer1" value="Релігія">
+                            <label for="Religion"><span></span>Релігія</label>
+                            <input type="checkbox" id="Investigation" name="answer1" value="Розслідування">
+                            <label for="Investigation"><span></span>Розслідування</label>
+                            <input type="checkbox" id="Persuasiveness" name="answer1" value="Переконання">
+                            <label for="Persuasiveness"><span></span>Переконання</label>
+                            <input type="checkbox" id="Animal_taming" name="answer1" value="Приборкання тварин">
+                            <label for="Animal_taming"><span></span>Приборкання тварин</label>
                         </div>
-                        <div class="create-char-stats-element">
-                            <div class="create-char-stats-text">Мудрість</div>
-                            <img src="{{url_for('static', filename='img/wisdom.png')}}">
-                            <input type="number" min="1" max="20" class="input-level center-input" value="1" name="wisdom"
-                                onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'">
+                    </div>
+
+                    <div class="loadout-card">
+                        <h3>Оберіть 1 зброю</h3>
+                        <div class="checkbox-list test-column-1">
+                            <input type="checkbox" id="Spear" name="answer2" value="Спис">
+                            <label for="Spear"><span></span>Спис</label>
+                            <input type="checkbox" id="Bow" name="answer2" value="Лук">
+                            <label for="Bow"><span></span>Лук</label>
+                            <input type="checkbox" id="Bastard_sword" name="answer2" value="Полуторний меч">
+                            <label for="Bastard_sword"><span></span>Полуторний меч</label>
+                            <input type="checkbox" id="simple_weapon" name="answer2" value="Проста зброя">
+                            <label for="simple_weapon"><span></span>Проста зброя</label>
                         </div>
-                        <div class="create-char-stats-element">
-                            <div class="create-char-stats-text">Харизма</div>
-                            <img src="{{url_for('static', filename='img/charisma.png')}}">
-                            <input type="number" min="1" max="20" class="input-level center-input" value="1" name="charisma"
-                                onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'">
+                    </div>
+
+                    <div class="loadout-card">
+                        <h3>Оберіть 1 обладунок</h3>
+                        <div class="checkbox-list test-column-2">
+                            <input type="checkbox" id="scalemail" name="answer2" value="Лускатий обладунок (17)">
+                            <label for="scalemail"><span></span>Лускатий обладунок (17)</label>
+                            <input type="checkbox" id="chainmail" name="answer2" value="Кольчужний обладунок (16)">
+                            <label for="chainmail"><span></span>Кольчужний обладунок (16)</label>
+                            <input type="checkbox" id="stugleather" name="answer2" value="Клепаний шкіряний обладунок (14)">
+                            <label for="stugleather"><span></span>Клепаний шкіряний обладунок (14)</label>
+                            <input type="checkbox" id="letherman" name="answer2" value="Шкіряний обладунок (12)">
+                            <label for="letherman"><span></span>Шкіряний обладунок (12)</label>
+                        </div>
+                    </div>
+
+                    <div class="loadout-card">
+                        <h3>Оберіть 1 спорядження</h3>
+                        <div class="checkbox-list test-column-3">
+                            <input type="checkbox" id="prayerbook" name="answer2" value="Молитовник">
+                            <label for="prayerbook"><span></span>Молитовник</label>
+                            <input type="checkbox" id="holysymbol" name="answer2" value="Святий символ">
+                            <label for="holysymbol"><span></span>Святий символ</label>
+                            <input type="checkbox" id="explorerkit" name="answer2" value="Набір дослідника">
+                            <label for="explorerkit"><span></span>Набір дослідника</label>
+                            <input type="checkbox" id="handicrafttools" name="answer2" value="Ремісничі інструменти">
+                            <label for="handicrafttools"><span></span>Ремісничі інструменти</label>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="create-char-bot">
-                <div class="create-char-top-container">
-                    <div class="create-char-stats-caption2" id="id-create-char-stats-caption some-margin">Оберіть<br>
-                        навички та спорядження:</div>
-                    <div class="create-char-start-container">
-                        <div class="create-char-start-container-element">
-                            <div class="create-char-start-prof">
-                                <div class="create-char-start-prof-text">Оберіть 3 навички:</div>
-                                <div class="test">
-                                    <div class="test-column">
-                                        <input type="checkbox" id="Arcane" name="answer1" value="Магія">
-                                        <label for="Arcane"><span></span>Магія</label>
-
-                                        <input type="checkbox" id="Deception" name="answer1" value="Обман">
-                                        <label for="Deception"><span></span>Обман</label>
-
-                                        <input type="checkbox" id="History" name="answer1" value="Історія">
-                                        <label for="History"><span></span>Історія</label>
-
-                                        <input type="checkbox" id="Sleight_of_hand" name="answer1"
-                                            value="Спритність рук">
-                                        <label for="Sleight_of_hand"><span></span>Спритність рук</label>
-
-                                        <input type="checkbox" id="Medicine" name="answer1" value="Медицина">
-                                        <label for="Medicine"><span></span>Медицина</label>
-                                    </div>
-                                    <div class="test-column">
-                                        <input type="checkbox" id="Nature" name="answer1" value="Природа">
-                                        <label for="Nature"><span></span>Природа</label>
-
-                                        <input type="checkbox" id="Religion" name="answer1" value="Релігія">
-                                        <label for="Religion"><span></span>Релігія</label>
-
-                                        <input type="checkbox" id="Investigation" name="answer1" value="Розслідування">
-                                        <label for="Investigation"><span></span>Розслідування</label>
-
-                                        <input type="checkbox" id="Persuasiveness" name="answer1"
-                                            value="Переконання">
-                                        <label for="Persuasiveness"><span></span>Переконання</label>
-
-                                        <input type="checkbox" id="Animal_taming" name="answer1" value="Приборкання тварин">
-                                        <label for="Animal_taming"><span></span>Приборкання тварин</label>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="create-char-start-container-element">
-                            <div class="create-char-start-prof">
-                                <div class="create-char-start-prof-text">Оберіть 1 зброю:</div>
-                                <div class="test less-width">
-                                    <div class="test-column-1 some-margin">
-                                        <input type="checkbox" id="Spear" name="answer2" value="Спис">
-                                        <label for="Spear" nowrap><span></span>Спис</label>
-
-                                        <input type="checkbox" id="Bow" name="answer2" value="Лук">
-                                        <label for="Bow" nowrap><span></span>Лук</label>
-
-                                        <input type="checkbox" id="Bastard_sword" name="answer2" value="Полуторний меч">
-                                        <label for="Bastard_sword" nowrap><span></span>Полуторний меч</label>
-
-                                        <input type="checkbox" id="simple_weapon" name="answer2" value="Проста зброя">
-                                        <label for="simple_weapon" nowrap><span></span>Проста зброя</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="create-char-start-container-element">
-                            <div class="create-char-start-prof">
-                                <div class="create-char-start-prof-text">Оберіть 1 обладунок:</div>
-                                <div class="test">
-                                    <div class="test-column-2 some-margin">
-                                        <input type="checkbox" id="scalemail" name="answer2" value="Лускатий обладунок (17)">
-                                        <label for="scalemail" nowrap><span></span>Лускатий обладунок (17)</label>
-
-                                        <input type="checkbox" id="chainmail" name="answer2" value="Кольчужний обладунок (16)">
-                                        <label for="chainmail" nowrap><span></span>Кольчужний обладунок (16)</label>
-
-                                        <input type="checkbox" id="stugleather" name="answer2" value="Клепаний шкіряний обладунок (14)">
-                                        <label for="stugleather" nowrap><span></span>Клепаний шкіряний обладунок (14)</label>
-
-                                        <input type="checkbox" id="letherman" name="answer2" value="Шкіряний обладунок (12)">
-                                        <label for="letherman" nowrap><span></span>Шкіряний обладунок (12)</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="create-char-start-container-element">
-                            <div class="create-char-start-prof">
-                                <div class="create-char-start-prof-text">Оберіть 1 спорядження:</div>
-                                <div class="test less-width">
-                                    <div class="test-column-3 some-margin">
-                                        <input type="checkbox" id="prayerbook" name="answer2" value="Молитовник">
-                                        <label for="prayerbook" nowrap><span></span>Молитовник</label>
-
-                                        <input type="checkbox" id="holysymbol" name="answer2" value="Святий символ">
-                                        <label for="holysymbol" nowrap><span></span>Святий символ</label>
-
-                                        <input type="checkbox" id="explorerkit" name="answer2" value="Набір дослідника">
-                                        <label for="explorerkit" nowrap><span></span>Набір дослідника</label>
-
-                                        <input type="checkbox" id="handicrafttools" name="answer2"
-                                            value="Ремісничі інструменти">
-                                        <label for="handicrafttools" nowrap><span></span>Ремісничі інструменти</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="submit-button-flex">
+            <div class="submit-panel">
+                <a class="secondary-link" href="{{ url_for('charlist') }}">До списку персонажів</a>
                 <input type="submit" class="submit-button" value="Почати пригоди">
             </div>
         </form>
     </main>
+
     {% include 'footer.html' %}
 
-    <script src="{{url_for('static', filename='js/script-char-create.js')}}"></script>
     <script src="{{url_for('static', filename='js/script-header.js')}}"></script>
     <script src="{{url_for('static', filename='js/script-scrollbar.js')}}"></script>
     <script src="{{url_for('static', filename='js/script-create-char-random.js')}}"></script>
     <script src="{{url_for('static', filename='js/script-create-char.js')}}"></script>
-
-    <script src=""></script>
-    <script src=""></script>
 </body>
 
 </html>
