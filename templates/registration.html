@@ -25,6 +25,15 @@
                     <p class="auth-eyebrow">&#1053;&#1086;&#1074;&#1072; &#1087;&#1088;&#1080;&#1075;&#1086;&#1076;&#1072;</p>
                     <h1 id="registration-title">&#1056;&#1077;&#1108;&#1089;&#1090;&#1088;&#1072;&#1094;&#1110;&#1103;</h1>
                 </div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    <div class="auth-alerts">
+                        {% for category, message in messages %}
+                        <p class="auth-alert auth-alert-{{ category }}">{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endwith %}
                 <form class="auth-form" action="" method="POST">
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                     <label class="auth-field" for="name">

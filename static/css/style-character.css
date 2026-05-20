@@ -12,7 +12,7 @@ header {
     min-height: calc(100vh - 86px);
     background-image:
         linear-gradient(90deg, rgba(0, 0, 0, 0.92), rgba(18, 18, 18, 0.74) 50%, rgba(0, 0, 0, 0.92)),
-        url("../img/background-character.png");
+        url("../img/char-dragon.jpg");
     background-attachment: fixed;
     background-position: center;
     background-repeat: no-repeat;

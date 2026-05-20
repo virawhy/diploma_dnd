@@ -83,6 +83,35 @@ body {
   color: #ffffff;
 }
 
+.auth-alerts {
+  display: grid;
+  gap: 10px;
+  margin: -8px 0 18px;
+}
+
+.auth-alert {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(214, 179, 106, 0.58);
+  border-radius: 6px;
+  background: rgba(159, 21, 21, 0.28);
+  color: rgba(255, 255, 255, 0.9);
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.auth-alert a {
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.auth-alert a:hover {
+  color: rgba(255, 255, 255, 0.76);
+}
+
 .auth-form {
   display: flex;
   flex-direction: column;
