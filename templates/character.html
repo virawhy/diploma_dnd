@@ -1,397 +1,271 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='img/DnD-ico.ico')}}">
-    <title>Персонаж</title>
+    <title>{{ character['name'] }} | Персонаж</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/style-reset.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/header-footer-style.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/style-scrollbar.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/style-character.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/show-move.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/dice-animation.css')}}">
-
 </head>
 
 <body>
-
     <div id="progressbar"></div>
 
     {% include 'header.html' %}
-    <main>
-        <form action="" method="POST">
-            <div class="wrapper">
 
-                <div class="character-caption">
-                    <div class="character-caption-flex">
-                        <div class="character-caption-element-double">
-                            <div class="character-caption-element"><img
-                                    src="{{url_for('static', filename='/img/character-logo.png')}}"></div>
-                            <div class="character-caption-element"><input class="name-input" maxlength="50" type="text" value = "{{character['name']}}" name="name_ch"
-                                    placeholder="Ім'я персонажа" {% if not is_owner %}readonly{% endif %}></div>
-                        </div>
-                        <div class="character-caption-element-double">
-                            <div class="character-caption-element">
-                                <p>Клас:</p>
-                                <input class="name-input class-width" type="text" placeholder="" readonly value = "{{character['class_name']}}">
-                            </div>
-                            <div class="character-caption-element race-block-width">
-                                <p>Раса:</p>
-                                <input class="name-input race-width" type="text" placeholder="" readonly value = "{{character['racial_group']}}">
-                            </div>
-                        </div>
-                        <div class="character-caption-element-double">
-                            <div class="character-caption-element less-num-ud">
-                                <p>Рівень:</p>
-                                <input type="number" min="1" max="20" class="input-level" value = "{{character['level']}}" name="level"
-                                    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                            </div>
-                            <div class="character-caption-element race-block-width">
-                                <p>Ім'я користувача:</p>
-                                <input class="name-input race-width" type="text" placeholder="" readonly value={{name}}>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    {% set class_icons = {
+        'Варвар': 'barbarian.svg',
+        'Бард': 'bard.svg',
+        'Друїд': 'druid.svg',
+        'Рейнджер': 'ranger.svg',
+        'Чаклун': 'wizard.svg',
+        'Монах': 'monk.svg',
+        'Паладін': 'paladin.svg',
+        'Розбійник': 'rogue.svg',
+        'Клірик': 'cleric.svg',
+        'Заклинатель': 'sorcerer.svg',
+        'Воїн': 'fighter.svg',
+        'Чорнокнижник': 'warlock.svg'
+    } %}
 
-                <div class="character-params">
-                    <div class="character-params-element">
-                        <p>Клас броні:</p>
-                        <img src="{{url_for('static', filename='img/armor-class.png')}}">
-                        <input type="number" min="1" max="100" class="input-level" value = "{{character['armor_class']}}" name="armor_class"
-                            onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                    </div>
-                    <div class="character-params-element">
-                        <p>Швидкість:</p>
-                        <img src="{{url_for('static', filename='img/speed-icon.png')}}">
-                        <input type="number" min="1" max="100" class="input-level" value = "{{character['speed']}}" name="speed"
-                            onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                    </div>
-                    <div class="character-params-element">
-                        <p>Інтіціатива:</p>
-                        <img src="{{url_for('static', filename='/img/initiative.png')}}">
-                        <input type="number" min="0" max="100" class="input-level" value="{{character['initiative']}}" name="initiative"
-                            onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                    </div>
-                    <div class="character-params-element">
-                        <p>Здоров'я:</p>
-                        <img src="{{url_for('static', filename='/img/health.png')}}">
-                        <div class="health-flex">
-                            <input type="number" min="0" max="1000" class="input-level" value="{{character['health_current']}}" name="health_current"
-                                onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                            <p>/</p>
-                            <input type="number" min="0" max="1000" class="input-level" value="{{character['health_max']}}" name="health_max"
-                                onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                        </div>
-                    </div>
+    {% macro number_field(name, value, min_value=0, max_value=100, extra_class='') -%}
+        <input type="number" min="{{ min_value }}" max="{{ max_value }}" class="input-level {{ extra_class }}" value="{{ value }}" name="{{ name }}" {% if not is_owner %}readonly{% endif %}>
+    {%- endmacro %}
 
-                </div>
+    {% macro skill_row(skill_name, value, parent_id, kind='regular-throw') -%}
+        <div class="character-stats-prof-list-element">
+            <input type="checkbox" class="character-stats-check {{ kind }}" name="{{ skill_name }}" value="true" {% if skill_name in proficiencies_list %}checked{% endif %} {% if not is_owner %}disabled{% endif %}>
+            <input type="number" min="0" max="99" class="input-level center-input child" value="{{ value }}" name="{{ skill_name }}_value" data-parent="{{ parent_id }}" {% if not is_owner %}readonly{% endif %}>
+            <p>{{ 'Рятівні кидки' if skill_name.startswith('Рятівні кидки') else skill_name }}</p>
+        </div>
+    {%- endmacro %}
 
-                <div class="character-bonus">
-                    <div class="character-bonus-element">
-                        <img src="{{url_for('static', filename='/img/mastery.png')}}">
-                        <div class="character-bonus-element-info">
-                            <div class="character-bonus-text">
-                                <p>Бонус майстерності:</p>
-                            </div>
-                            <input type="number" min="0" max="100" class="input-level" value="{{character['proficiency_bonus']}}" id="masteryBonus" name="proficiency_bonus"
-                                onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                        </div>
-                    </div>
-                    <div class="character-bonus-element">
-                        <img src="{{url_for('static', filename='/img/inspiration.png')}}">
-                        <div class="character-bonus-element-info">
-                            <div class="character-bonus-text">
-                                <p>Натхнення</p>
-                            </div>
-                            <input type="number" min="0" max="100" class="input-level" value="{{character['inspiration']}}" name="inspiration"
-                                onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="character-stats">
-                    <div class="character-stats-flex">
-                        <div class="character-stats-element border-1">
-                            <div class="character-stats-element-stat">
-                                <div class="character-stats-element-stat-text">
-                                    <p>Сила</p>
-                                </div>
-                                <img src="{{url_for('static', filename='/img/strength.png')}}">
-                                <input type="number" min="1" max="20" class="input-level parent" value="{{character['strength']}}" name="strength"
-                                id="parent1" onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                            </div>
-                            <div class="character-stats-prof-list">
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check save-throw" name="Рятівні кидки Сила" value="true" {% if 'Рятівні кидки Сила' in proficiencies_list %}checked{% endif %} {% if not is_owner %}disabled{% endif %}> 
-                                    <input type="number" min="0" max="99" class="input-level child center-input" value="{{proficiency_values.get('Рятівні кидки Сила')}}" name="Рятівні кидки Сила_value" id="child1_1" data-parent="parent1" onkeydown="return (event.key >= '0' && event.key <= '9') || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Рятівні кидки</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Атлетика" value="true" {% if 'Атлетика' in proficiencies_list %}checked{% endif %} {% if not is_owner %}disabled{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level child center-input" value="{{proficiency_values.get('Атлетика', 0)}}" name="Атлетика_value" id="child1_1" data-parent="parent1" onkeydown="return (event.key >= '0' && event.key <= '9') || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Атлетика</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="character-stats-element border-2">
-                            <div class="character-stats-element-stat">
-                                <div class="character-stats-element-stat-text">
-                                    <p>Інтелект</p>
-                                </div>
-                                <img src="{{url_for('static', filename='/img/intelect.png')}}">
-                                <input type="number" min="1" max="20" class="input-level parent" value="{{character['intelligence']}}" name="intelligence"
-                                id="parent2" onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                            </div>
-                            <div class="character-stats-prof-list">
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check save-throw" name="Рятівні кидки Інтелект" value="true" {% if 'Рятівні кидки Інтелект' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Рятівні кидки Інтелект', 0)}}" name="Рятівні кидки Інтелект_value" id="child2_2" data-parent="parent2" onkeydown="return (event.key >= '0' && event.key <= '9') || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Рятівні кидки</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Магія" value="true" {% if 'Магія' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Магія', 0)}}" name="Магія_value" id="child2_2" data-parent="parent2" onkeydown="return (event.key >= '0' && event.key <= '9') || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Магія</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Історія" value="true" {% if 'Історія' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Історія', 1)}}" name="Історія_value" id="child1_1" data-parent="parent2"  onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %} {% if not is_owner %}readonly{% endif %}>
-                                    <p>Історія</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Природа" value="true" {% if 'Природа' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Природа', 0)}}" name="Природа_value" id="child2_4" data-parent="parent2"    onkeydown="return (event.key >= '0' && event.key <= '9') || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Природа</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Релігія" value="true" {% if 'Релігія' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Релігія', 1)}}" name="Релігія_value" id="child1_1" data-parent="parent2"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Релігія</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Розслідування" value="true" {% if 'Розслідування' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Розслідування', 1)}}" name="Розслідування_value" id="child1_1" data-parent="parent2"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Розслідування</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="character-stats-flex">
-                        <div class="character-stats-element border-3">
-                            <div class="character-stats-element-stat">
-                                <div class="character-stats-element-stat-text">
-                                    <p>Спритність</p>
-                                </div>
-                                <img src="{{url_for('static', filename='/img/dexterity.png')}}">
-                                <input type="number" min="1" max="20" class="input-level parent" value="{{character['dexterity']}}" name="dexterity"
-                                id="parent3"   onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                            </div>
-                            <div class="character-stats-prof-list">
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check save-throw" name="Рятівні кидки Спритність" value="true" {% if 'Рятівні кидки Спритність' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Рятівні кидки Спритність', 0)}}" name="Рятівні кидки Спритність_value"
-                                    id="child1_1" data-parent="parent3"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Рятівні кидки</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Акробатика" value="true" {% if 'Акробатика' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Акробатика', 0)}}" name="Акробатика_value"
-                                    id="child1_1" data-parent="parent3"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Акробатика</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Скритність" value="true" {% if 'Скритність' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Скритність', 0)}}" name="Скритність_value"
-                                    id="child1_1" data-parent="parent3"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Скритність</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Спритність рук" value="true" {% if 'Спритність рук' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Спритність рук', 0)}}" name="Спритність рук_value"
-                                    id="child1_1" data-parent="parent3"   onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Спритність рук</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="character-stats-element border-4">
-                            <div class="character-stats-element-stat">
-                                <div class="character-stats-element-stat-text">
-                                    <p>Мудрість</p>
-                                </div>
-                                <img src="{{url_for('static', filename='/img/wisdom.png')}}">
-                                <input type="number" min="1" max="20" class="input-level parent" value="{{character['wisdom']}}" name="wisdom"
-                                id="parent4"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                            </div>
-                            <div class="character-stats-prof-list">
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check save-throw" name="Рятівні кидки Мудрість" value="true" {% if 'Рятівні кидки Мудрість' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Рятівні кидки Мудрість', 0)}}" name="Рятівні кидки Мудрість_value"
-                                    id="child1_1" data-parent="parent4"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Рятівні кидки</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Виживання" value="true" {% if 'Виживання' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Виживання', 0)}}" name="Виживання_value"
-                                    id="child1_1" data-parent="parent4"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Виживання</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Медицина" value="true" {% if 'Медицина' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Медицина', 0)}}" name="Медицина_value"
-                                    id="child1_1" data-parent="parent4"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Медицина</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Догляд за тваринами" value="true" {% if 'Догляд за тваринами' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Догляд за тваринами', 0)}}" name="Догляд за тваринами_value"
-                                    id="child1_1" data-parent="parent4"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Догляд за тваринами</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Проникливість" value="true" {% if 'Проникливість' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Проникливість', 0)}}" name="Проникливість_value"
-                                    id="child1_1" data-parent="parent4"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Проникливість</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Уважність" value="true" {% if 'Уважність' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Уважність', 0)}}" name="Уважність_value"
-                                    id="child1_1" data-parent="parent4"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Уважність</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="character-stats-flex">
-                        <div class="character-stats-element border-5">
-                            <div class="character-stats-element-stat">
-                                <div class="character-stats-element-stat-text">
-                                    <p>Статура</p>
-                                </div>
-                                <img src="{{url_for('static', filename='/img/constitution.png')}}">
-                                <input type="number" min="1" max="20" class="input-level parent" value="{{character['constitution']}}" name="constitution"
-                                id="parent5"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                            </div>
-                            <div class="character-stats-prof-list">
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check save-throw" name="Рятівні кидки Статура" value="true" {% if 'Рятівні кидки Статура' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Рятівні кидки Статура', 0)}}" name="Рятівні кидки Статура_value"
-                                    id="child1_1" data-parent="parent5"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Рятівні кидки</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="character-stats-element border-6">
-                            <div class="character-stats-element-stat">
-                                <div class="character-stats-element-stat-text">
-                                    <p>Харизма</p>
-                                </div>
-                                <img src="{{url_for('static', filename='/img/charisma.png')}}">
-                                <input type="number" min="1" max="20" class="input-level parent" value="{{character['charisma']}}" name="charisma"
-                                id="parent6"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                            </div>
-                            <div class="character-stats-prof-list">
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check save-throw" name="Рятівні кидки Харизма" value="true" {% if 'Рятівні кидки Харизма' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Рятівні кидки Харизма', 0)}}" name="Рятівні кидки Харизма_value"
-                                    id="child1_1" data-parent="parent6"   onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Рятівні кидки</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Виступ" value="true" {% if 'Виступ' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Виступ', 0)}}" name="Виступ_value"
-                                    id="child6_2" data-parent="parent6"    onkeydown="return (event.key >= '0' && event.key <= '9') || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Виступ</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Залякування" value="true" {% if 'Залякування' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Залякування', 0)}}" name="Залякування_value"
-                                    id="child1_1" data-parent="parent6"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Залякування</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Обман" value="true" {% if 'Обман' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Обман', 0)}}" name="Обман_value"
-                                    id="child1_1" data-parent="parent6"    onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Обман</p>
-                                </div>
-                                <div class="character-stats-prof-list-element">
-                                    <input type="checkbox" class="character-stats-check regular-throw" name="Переконання" value="true" {% if 'Переконання' in proficiencies_list %}checked{% endif %}>
-                                    <input type="number" min="0" max="99" class="input-level center-input child" value="{{proficiency_values.get('Переконання', 0)}}" name="Переконання_value"
-                                    id="child6_5" data-parent="parent6"   onkeydown="return (event.key >= '0' && event.key <= '9') || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                                    <p>Переконання</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="character-spells">
-                    <div class="character-spells-caption">
-                        <p>Атака та чаротворство</p>
-                    </div>
-                    <div class="character-spells-list">
-                        <div class="character-spells-list-element">
-                            <p>Назва</p>
-                            <div style="margin-left:110px">
-                                <p>Бонус атаки</p>
-                            </div>
-                            <p>Пошкодження/Тип</p>
-                        </div>
-                        <div class="character-spells-list-element">
-                            <input class="name-input more-height" maxlength="50" type="text" placeholder="Назва заклинання" value="{{character['attack_name']}}" name="attack_name" {% if not is_owner %}readonly{% endif %}>
-                            <input type="number" min="0" max="100" class="input-level" value="{{character['attack_bonus']}}" name="attack_bonus"
-                                onkeydown="return (event.key >= '0' && event.key <= '') || event.key === '.' || event.key === ',' || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab'" {% if not is_owner %}readonly{% endif %}>
-                            <input class="name-input more-height" maxlength="50" type="text" placeholder="Опис заклинання" value="{{character['attack_damage']}}" name="damage_type" {% if not is_owner %}readonly{% endif %}>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="character-inventory">
-                    <div class="character-inventory-caption">Спорядження та інші примітки</div>
-                    <textarea class="name-input textarea-style" maxlength="2000" placeholder="" name="note" {% if not is_owner %}readonly{% endif %}>{{character['note']}}</textarea>
+    {% macro ability_card(parent_id, title, key, icon_name, skills) -%}
+        <section class="character-stats-element">
+            <div class="ability-head">
+                <img src="{{url_for('static', filename='img/tw-dnd/' ~ icon_name ~ '.svg')}}" alt="">
+                <div>
+                    <span>{{ title }}</span>
+                    <input type="number" min="1" max="20" class="input-level parent" value="{{ character[key] }}" name="{{ key }}" id="{{ parent_id }}" {% if not is_owner %}readonly{% endif %}>
                 </div>
             </div>
+            <div class="character-stats-prof-list">
+                {% for skill in skills %}
+                    {{ skill_row(skill.name, proficiency_values.get(skill.name, 0), parent_id, skill.kind) }}
+                {% endfor %}
+            </div>
+        </section>
+    {%- endmacro %}
+
+    <main class="character-page">
+        <form class="character-sheet" action="" method="POST">
+            <section class="character-hero">
+                <div class="character-mark">
+                    <img src="{{url_for('static', filename='img/tw-dnd/class/' ~ class_icons.get(character['class_name'], 'fighter.svg'))}}" alt="">
+                </div>
+                <div class="character-identity">
+                    <p class="sheet-kicker">{{ character['class_name'] }} · {{ character['racial_group'] }}</p>
+                    <label class="field name-field">
+                        <span>Ім'я персонажа</span>
+                        <input class="name-input character-name-input" maxlength="50" type="text" value="{{character['name']}}" name="name_ch" placeholder="Ім'я персонажа" {% if not is_owner %}readonly{% endif %}>
+                    </label>
+                </div>
+                <div class="hero-meta-grid">
+                    <label class="field">
+                        <span>Клас</span>
+                        <input class="name-input" type="text" readonly value="{{character['class_name']}}">
+                    </label>
+                    <label class="field">
+                        <span>Раса</span>
+                        <input class="name-input" type="text" readonly value="{{character['racial_group']}}">
+                    </label>
+                    <label class="field">
+                        <span>Рівень</span>
+                        {{ number_field('level', character['level'], 1, 20) }}
+                    </label>
+                    <label class="field">
+                        <span>Гравець</span>
+                        <input class="name-input" type="text" readonly value="{{name}}">
+                    </label>
+                </div>
+            </section>
+
+            <section class="sheet-section quick-stats">
+                <label class="quick-card">
+                    <span>Клас броні</span>
+                    {{ number_field('armor_class', character['armor_class'], 1, 100) }}
+                </label>
+                <label class="quick-card">
+                    <span>Швидкість</span>
+                    {{ number_field('speed', character['speed'], 1, 100) }}
+                </label>
+                <label class="quick-card">
+                    <span>Ініціатива</span>
+                    {{ number_field('initiative', character['initiative'], 0, 100) }}
+                </label>
+                <div class="quick-card health-card">
+                    <span>Здоров'я</span>
+                    <div class="health-flex">
+                        {{ number_field('health_current', character['health_current'], 0, 1000) }}
+                        <p>/</p>
+                        {{ number_field('health_max', character['health_max'], 0, 1000) }}
+                    </div>
+                </div>
+                <label class="quick-card">
+                    <span>Майстерність</span>
+                    {{ number_field('proficiency_bonus', character['proficiency_bonus'], 0, 100) }}
+                </label>
+                <label class="quick-card">
+                    <span>Натхнення</span>
+                    {{ number_field('inspiration', character['inspiration'], 0, 100) }}
+                </label>
+            </section>
+
+            <section class="sheet-section">
+                <div class="section-heading">
+                    <p>Характеристики та навички</p>
+                    <h2>Кидки, значення і володіння</h2>
+                </div>
+                <div class="character-stats">
+                    {{ ability_card('parent1', 'Сила', 'strength', 'strength', [
+                        {'name': 'Рятівні кидки Сила', 'kind': 'save-throw'},
+                        {'name': 'Атлетика', 'kind': 'regular-throw'}
+                    ]) }}
+                    {{ ability_card('parent3', 'Спритність', 'dexterity', 'dexterity', [
+                        {'name': 'Рятівні кидки Спритність', 'kind': 'save-throw'},
+                        {'name': 'Акробатика', 'kind': 'regular-throw'},
+                        {'name': 'Скритність', 'kind': 'regular-throw'},
+                        {'name': 'Спритність рук', 'kind': 'regular-throw'}
+                    ]) }}
+                    {{ ability_card('parent5', 'Статура', 'constitution', 'constitution', [
+                        {'name': 'Рятівні кидки Статура', 'kind': 'save-throw'}
+                    ]) }}
+                    {{ ability_card('parent2', 'Інтелект', 'intelligence', 'intelligence', [
+                        {'name': 'Рятівні кидки Інтелект', 'kind': 'save-throw'},
+                        {'name': 'Магія', 'kind': 'regular-throw'},
+                        {'name': 'Історія', 'kind': 'regular-throw'},
+                        {'name': 'Природа', 'kind': 'regular-throw'},
+                        {'name': 'Релігія', 'kind': 'regular-throw'},
+                        {'name': 'Розслідування', 'kind': 'regular-throw'}
+                    ]) }}
+                    {{ ability_card('parent4', 'Мудрість', 'wisdom', 'wisdom', [
+                        {'name': 'Рятівні кидки Мудрість', 'kind': 'save-throw'},
+                        {'name': 'Виживання', 'kind': 'regular-throw'},
+                        {'name': 'Медицина', 'kind': 'regular-throw'},
+                        {'name': 'Догляд за тваринами', 'kind': 'regular-throw'},
+                        {'name': 'Приборкання', 'kind': 'regular-throw'},
+                        {'name': 'Проникливість', 'kind': 'regular-throw'},
+                        {'name': 'Уважність', 'kind': 'regular-throw'}
+                    ]) }}
+                    {{ ability_card('parent6', 'Харизма', 'charisma', 'charisma', [
+                        {'name': 'Рятівні кидки Харизма', 'kind': 'save-throw'},
+                        {'name': 'Артистизм', 'kind': 'regular-throw'},
+                        {'name': 'Виступ', 'kind': 'regular-throw'},
+                        {'name': 'Залякування', 'kind': 'regular-throw'},
+                        {'name': 'Обман', 'kind': 'regular-throw'},
+                        {'name': 'Переконання', 'kind': 'regular-throw'}
+                    ]) }}
+                </div>
+            </section>
+
+            <section class="sheet-section sheet-bottom-grid">
+                <div class="sheet-panel character-spells">
+                    <div class="section-heading compact-heading">
+                        <p>Бойові дії</p>
+                        <div class="panel-heading-row">
+                            <h2>Атаки та чаротворство</h2>
+                            {% if is_owner %}
+                            <button type="button" class="add-attack-button" id="add-attack-row">Додати</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="attack-list" id="attack-list">
+                        {% for attack in character['attack_entries'] %}
+                        <div class="spell-grid attack-row">
+                            <label class="field">
+                                <span>Назва</span>
+                                <input class="name-input" maxlength="50" type="text" placeholder="Назва заклинання" value="{{ attack.name }}" name="attack_name" {% if not is_owner %}readonly{% endif %}>
+                            </label>
+                            <label class="field">
+                                <span>Бонус атаки</span>
+                                <input type="number" min="0" max="100" class="input-level" value="{{ attack.bonus }}" name="attack_bonus" {% if not is_owner %}readonly{% endif %}>
+                            </label>
+                            <label class="field spell-description">
+                                <span>Пошкодження/тип</span>
+                                <input class="name-input" maxlength="50" type="text" placeholder="Опис заклинання" value="{{ attack.damage }}" name="damage_type" {% if not is_owner %}readonly{% endif %}>
+                            </label>
+                            {% if is_owner %}
+                            <button type="button" class="remove-attack-button" aria-label="Прибрати атаку">×</button>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="sheet-panel character-inventory">
+                    <div class="section-heading compact-heading">
+                        <p>Нотатки</p>
+                        <h2>Спорядження та примітки</h2>
+                    </div>
+                    <textarea class="name-input textarea-style" maxlength="2000" placeholder="Записи персонажа" name="note" {% if not is_owner %}readonly{% endif %}>{{character['note']}}</textarea>
+                </div>
+            </section>
+
             <div class="button-flex">
+                <a class="secondary-link" href="{{ url_for('charlist', character=request.view_args.get('id_class_f')) }}">До списку персонажів</a>
                 {% if is_owner %}
                 <input type="submit" class="submit-button" value="Зберегти зміни">
                 {% endif %}
             </div>
         </form>
     </main>
+
     {% include 'footer.html' %}
+
     <script src="{{url_for('static', filename='js/script-scrollbar.js')}}"></script>
     <script src="{{url_for('static', filename='js/script-header.js')}}"></script>
     <script src="{{url_for('static', filename='js/script-dice-animation.js')}}"></script>
-</body>
+    {% if is_owner %}
+    <script>
+        const attackList = document.getElementById('attack-list');
+        const addAttackButton = document.getElementById('add-attack-row');
 
-</html>
-<script>
-document.querySelector('form').addEventListener('submit', function(e) {
-    // Логуємо значення всіх полів форми
-    const formData = new FormData(this);
-    console.log('Відправка форми. Значення полів:');
-    for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-    }
-
-    // Логуємо значення підхарактеристик
-    const proficiencyInputs = document.querySelectorAll('.character-stats-check');
-    console.log('Значення підхарактеристик:');
-    proficiencyInputs.forEach(input => {
-        console.log(`${input.name}: checked=${input.checked}, value=${input.value}`);
-        const valueInput = document.querySelector(`input[name="${input.name}_value"]`);
-        if (valueInput) {
-            console.log(`${input.name}_value: ${valueInput.value}`);
+        function updateAttackRemoveButtons() {
+            const rows = attackList.querySelectorAll('.attack-row');
+            rows.forEach((row) => {
+                const removeButton = row.querySelector('.remove-attack-button');
+                if (removeButton) {
+                    removeButton.disabled = rows.length === 1;
+                }
+            });
         }
-    });
-});
-</script>
-    <script src="{{url_for('static', filename='js/script-dice-animation.js')}}"></script>
+
+        addAttackButton.addEventListener('click', () => {
+            const row = attackList.querySelector('.attack-row').cloneNode(true);
+            row.querySelectorAll('input').forEach((input) => {
+                input.value = input.type === 'number' ? '1' : '';
+            });
+            attackList.appendChild(row);
+            updateAttackRemoveButtons();
+        });
+
+        attackList.addEventListener('click', (event) => {
+            const button = event.target.closest('.remove-attack-button');
+            if (!button || button.disabled) return;
+            button.closest('.attack-row').remove();
+            updateAttackRemoveButtons();
+        });
+
+        updateAttackRemoveButtons();
+    </script>
+    {% endif %}
 </body>
 
 </html>

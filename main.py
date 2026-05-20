@@ -1300,20 +1300,25 @@ def decline_invitation(membership_id):
 def charlist():
     characters = Character.query.filter_by(
         id_user=current_user.id_user).order_by(Character.id_character.desc()).all()
+    requested_character_id = request.args.get('character', type=int)
+    character_ids = {character.id_character for character in characters}
+    selected_character_id = requested_character_id if requested_character_id in character_ids else None
+    if selected_character_id is None and characters:
+        selected_character_id = characters[0].id_character
 
     class_icons = {
-        'Варвар': 'ico-barbar.png',
-        'Бард': 'ico-bard.png',
-        'Друїд': 'ico-druid.png',
-        'Рейнджер': 'ico-hunt.png',
-        'Чаклун': 'ico-mage.png',
-        'Монах': 'ico-monk.png',
-        'Паладін': 'ico-pala.png',
-        'Розбійник': 'ico-plut.png',
-        'Клірик': 'ico-priest.png',
-        'Заклинатель': 'ico-sorc.png',
-        'Воїн': 'ico-war.png',
-        'Чорнокнижник': 'ico-warlock.png',
+        'Варвар': 'tw-dnd/class/barbarian.svg',
+        'Бард': 'tw-dnd/class/bard.svg',
+        'Друїд': 'tw-dnd/class/druid.svg',
+        'Рейнджер': 'tw-dnd/class/ranger.svg',
+        'Чаклун': 'tw-dnd/class/wizard.svg',
+        'Монах': 'tw-dnd/class/monk.svg',
+        'Паладін': 'tw-dnd/class/paladin.svg',
+        'Розбійник': 'tw-dnd/class/rogue.svg',
+        'Клірик': 'tw-dnd/class/cleric.svg',
+        'Заклинатель': 'tw-dnd/class/sorcerer.svg',
+        'Воїн': 'tw-dnd/class/fighter.svg',
+        'Чорнокнижник': 'tw-dnd/class/warlock.svg',
     }
 
     characters_data = []
@@ -1324,6 +1329,13 @@ def charlist():
 
         class_name = character_obj.class_name.class_name if character_obj.class_name else ''
         racial_group = character_obj.racial_group.racial_group if character_obj.racial_group else ''
+        clean_note, attack_entries = split_attack_note_section(character_obj.note.text if character_obj.note else '')
+        if not attack_entries and character_obj.attack and (character_obj.attack.name or character_obj.attack.damage_type):
+            attack_entries = [{
+                'name': character_obj.attack.name,
+                'bonus': character_obj.attack.attack_bonus,
+                'damage': character_obj.attack.damage_type,
+            }]
 
         characters_data.append({
             'id': character_obj.id_character,
@@ -1348,7 +1360,8 @@ def charlist():
             'attack_name': character_obj.attack.name if character_obj.attack else '',
             'attack_bonus': character_obj.attack.attack_bonus if character_obj.attack else '',
             'attack_damage': character_obj.attack.damage_type if character_obj.attack else '',
-            'note': character_obj.note.text if character_obj.note else '',
+            'attack_entries': attack_entries,
+            'note': clean_note,
             'proficiencies': [
                 {
                     'name': proficiency.proficiency.proficiency,
@@ -1363,6 +1376,7 @@ def charlist():
         'charlist.html',
         name=current_user.username,
         characters=characters_data,
+        selected_character_id=selected_character_id,
     )
 
 
@@ -1385,19 +1399,48 @@ def create_char():
         intelect = request.form.get('intelect')
         wisdom = request.form.get('wisdom')
         charisma = request.form.get('charisma')
+        attack_names = [value.strip() for value in request.form.getlist('attack_name')]
+        attack_bonuses = [value.strip() for value in request.form.getlist('attack_bonus')]
+        damage_types = [value.strip() for value in request.form.getlist('damage_type')]
+        note_text = request.form.get('note', '').strip()
         answers = request.form.getlist('answer1')
         equipments = request.form.getlist('answer2')
         health_max = 7 + int(constitution) * 3
 
-        text = ''
-        
-        new_attack = Attack(name='', attack_bonus=1, damage_type='')
+        attack_entries = []
+        max_attacks = max(len(attack_names), len(attack_bonuses), len(damage_types))
+        for index in range(max_attacks):
+            attack_name = attack_names[index] if index < len(attack_names) else ''
+            attack_bonus = attack_bonuses[index] if index < len(attack_bonuses) and attack_bonuses[index] else '1'
+            damage_type = damage_types[index] if index < len(damage_types) else ''
+            if attack_name or damage_type:
+                attack_entries.append({
+                    'name': attack_name,
+                    'bonus': attack_bonus,
+                    'damage': damage_type,
+                })
+
+        primary_attack = attack_entries[0] if attack_entries else {'name': '', 'bonus': '1', 'damage': ''}
+        note_parts = []
+        if attack_entries:
+            note_parts.append(
+                'Атаки та чари:\n' +
+                '\n'.join(
+                    f"- {entry['name'] or 'Без назви'} | бонус {entry['bonus']} | {entry['damage'] or 'без опису'}"
+                    for entry in attack_entries
+                )
+            )
+        if equipments:
+            note_parts.append('Спорядження:\n' + '\n'.join(equipments))
+        if note_text:
+            note_parts.append('Примітки:\n' + note_text)
+        text = '\n\n'.join(note_parts)
+
+        new_attack = Attack(name=primary_attack['name'], attack_bonus=primary_attack['bonus'], damage_type=primary_attack['damage'])
         db.session.add(new_attack)
         db.session.flush()
         attack_id = new_attack.id_attack
 
-        for equipment in equipments:
-            text = text + equipment + '\n'
         new_note = Note(text=text)
         db.session.add(new_note)
         db.session.flush()
@@ -1462,6 +1505,86 @@ def dice():
     return render_template("dice.html", name=current_username())
 
 
+ATTACKS_NOTE_HEADING = 'Атаки та чари:'
+
+
+def split_attack_note_section(note_text):
+    normalized_note = (note_text or '').replace('\r\n', '\n').strip()
+    if not normalized_note:
+        return '', []
+
+    note_blocks = []
+    attack_entries = []
+    for block in normalized_note.split('\n\n'):
+        stripped_block = block.strip()
+        if not stripped_block:
+            continue
+
+        if stripped_block.startswith(ATTACKS_NOTE_HEADING):
+            for line in stripped_block.split('\n')[1:]:
+                line = line.strip()
+                if not line.startswith('- '):
+                    continue
+
+                parts = [part.strip() for part in line[2:].split('|')]
+                name = parts[0] if parts else ''
+                bonus = '1'
+                damage = ''
+                if len(parts) > 1:
+                    bonus = parts[1].replace('бонус', '', 1).strip() or '1'
+                if len(parts) > 2:
+                    damage = '' if parts[2] == 'без опису' else parts[2]
+
+                attack_entries.append({
+                    'name': name if name != 'Без назви' else '',
+                    'bonus': bonus,
+                    'damage': damage,
+                })
+        else:
+            note_blocks.append(stripped_block)
+
+    return '\n\n'.join(note_blocks), attack_entries
+
+
+def build_attack_entries(form):
+    attack_names = [value.strip() for value in form.getlist('attack_name')]
+    attack_bonuses = [value.strip() for value in form.getlist('attack_bonus')]
+    damage_types = [value.strip() for value in form.getlist('damage_type')]
+
+    attack_entries = []
+    max_attacks = max(len(attack_names), len(attack_bonuses), len(damage_types))
+    for index in range(max_attacks):
+        attack_name = attack_names[index] if index < len(attack_names) else ''
+        attack_bonus = attack_bonuses[index] if index < len(attack_bonuses) and attack_bonuses[index] else '1'
+        damage_type = damage_types[index] if index < len(damage_types) else ''
+        if attack_name or damage_type:
+            attack_entries.append({
+                'name': attack_name,
+                'bonus': attack_bonus,
+                'damage': damage_type,
+            })
+
+    return attack_entries
+
+
+def compose_note_with_attacks(note_text, attack_entries):
+    clean_note, _ = split_attack_note_section(note_text)
+    note_parts = []
+
+    if attack_entries:
+        note_parts.append(
+            ATTACKS_NOTE_HEADING + '\n' +
+            '\n'.join(
+                f"- {entry['name'] or 'Без назви'} | бонус {entry['bonus']} | {entry['damage'] or 'без опису'}"
+                for entry in attack_entries
+            )
+        )
+    if clean_note:
+        note_parts.append(clean_note)
+
+    return '\n\n'.join(note_parts)
+
+
 # Маршрут для відображення та оновлення інформації про персонажа
 @app.route("/character/<id_class_f>", methods=("POST", "GET"))
 @login_required  # Декоратор, що вимагає авторизації користувача
@@ -1475,6 +1598,14 @@ def character(id_class_f):
         
     # Перевіряємо, чи поточний користувач є власником персонажа
     is_owner = character_obj.id_user == current_user.id_user
+    clean_note, stored_attack_entries = split_attack_note_section(character_obj.note.text if character_obj.note else '')
+    primary_attack_entry = {
+        'name': character_obj.attack.name if character_obj.attack else '',
+        'bonus': character_obj.attack.attack_bonus if character_obj.attack else 1,
+        'damage': character_obj.attack.damage_type if character_obj.attack else '',
+    }
+    attack_entries = stored_attack_entries or [primary_attack_entry]
+
     # Створюємо словник з основними характеристиками персонажа
     character_dict = {
         'name': character_obj.name,  # Ім'я персонажа
@@ -1494,10 +1625,11 @@ def character(id_class_f):
         'health_max': character_obj.health_max,  # Максимальне здоров'я
         'proficiency_bonus': character_obj.proficiency_bonus,  # Бонус майстерності
         'inspiration': character_obj.inspiration,  # Натхнення
-        'attack_name': character_obj.attack.name,  # Назва атаки
-        'attack_bonus': character_obj.attack.attack_bonus,  # Бонус атаки
-        'attack_damage': character_obj.attack.damage_type,  # Тип пошкодження
-        'note': character_obj.note.text,  # Нотатки
+        'attack_name': primary_attack_entry['name'],  # Назва атаки
+        'attack_bonus': primary_attack_entry['bonus'],  # Бонус атаки
+        'attack_damage': primary_attack_entry['damage'],  # Тип пошкодження
+        'attack_entries': attack_entries,
+        'note': clean_note,  # Нотатки
     }
 
     # Отримуємо всі підхарактеристики персонажа
@@ -1537,9 +1669,9 @@ def character(id_class_f):
         print(f"Intelligence: {request.form.get('intelligence')}")
         print(f"Wisdom: {request.form.get('wisdom')}")
         print(f"Charisma: {request.form.get('charisma')}")
-        print(f"Attack Name: {request.form.get('attack_name')}")
-        print(f"Attack Bonus: {request.form.get('attack_bonus')}")
-        print(f"Damage Type: {request.form.get('damage_type')}")
+        print(f"Attack Name: {request.form.getlist('attack_name')}")
+        print(f"Attack Bonus: {request.form.getlist('attack_bonus')}")
+        print(f"Damage Type: {request.form.getlist('damage_type')}")
         print(f"Note: {request.form.get('note')}")
         print("\n=== Proficiency Values ===")
         all_proficiencies = Proficiency.query.all()
@@ -1565,10 +1697,12 @@ def character(id_class_f):
         char_to_update.intelligence = request.form.get('intelligence')
         char_to_update.wisdom = request.form.get('wisdom')
         char_to_update.charisma = request.form.get('charisma')
-        char_to_update.attack.name = request.form.get('attack_name')
-        char_to_update.attack.attack_bonus = request.form.get('attack_bonus')
-        char_to_update.attack.damage_type = request.form.get('damage_type')
-        char_to_update.note.text = request.form.get('note')
+        attack_entries = build_attack_entries(request.form)
+        primary_attack_entry = attack_entries[0] if attack_entries else {'name': '', 'bonus': '1', 'damage': ''}
+        char_to_update.attack.name = primary_attack_entry['name']
+        char_to_update.attack.attack_bonus = primary_attack_entry['bonus']
+        char_to_update.attack.damage_type = primary_attack_entry['damage']
+        char_to_update.note.text = compose_note_with_attacks(request.form.get('note', ''), attack_entries)
         
         # Зберігаємо зміни в базі даних
         db.session.commit()
@@ -1593,7 +1727,8 @@ def character(id_class_f):
             'attack_name': char_to_update.attack.name,
             'attack_bonus': char_to_update.attack.attack_bonus,
             'attack_damage': char_to_update.attack.damage_type,
-            'note': char_to_update.note.text
+            'attack_entries': attack_entries or [primary_attack_entry],
+            'note': split_attack_note_section(char_to_update.note.text)[0]
         })
         
         # Отримуємо всі поточні підхарактеристики персонажа
@@ -1674,7 +1809,8 @@ def character(id_class_f):
                 'attack_name': char_to_update.attack.name,
                 'attack_bonus': char_to_update.attack.attack_bonus,
                 'attack_damage': char_to_update.attack.damage_type,
-                'note': char_to_update.note.text
+                'attack_entries': attack_entries or [primary_attack_entry],
+                'note': split_attack_note_section(char_to_update.note.text)[0]
             })
             return render_template("character.html", character=character_dict, name=current_user.username, proficiencies_list=proficiencies_list, proficiency_values=proficiency_values, is_owner=is_owner)
         except Exception as e:

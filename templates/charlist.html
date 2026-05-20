@@ -34,7 +34,7 @@
 
                     <div class="charlist-itself">
                         {% for character in characters %}
-                        <button class="charlist-element {% if loop.first %}active{% endif %}" type="button" data-character-id="{{ character.id }}">
+                        <button class="charlist-element {% if character.id == selected_character_id %}active{% endif %}" type="button" data-character-id="{{ character.id }}">
                             <span class="badge-container">
                                 <img src="{{url_for('static', filename='img/' ~ character.icon)}}" alt="">
                             </span>
@@ -58,12 +58,13 @@
 
                 <section class="character-preview-panel">
                     {% for character in characters %}
-                    <article class="character-preview {% if loop.first %}active{% endif %}" data-character-panel="{{ character.id }}">
+                    <article class="character-preview {% if character.id == selected_character_id %}active{% endif %}" data-character-panel="{{ character.id }}">
                         <div class="character-preview-header">
                             <div>
                                 <p class="character-preview-kicker">{{ character.class_name }} · {{ character.racial_group }}</p>
                                 <h2>{{ character.name }}</h2>
                             </div>
+                            <a class="character-edit-link" href="{{ url_for('character', id_class_f=character.id) }}">Редагувати</a>
                         </div>
 
                         <div class="character-summary-grid">
@@ -108,11 +109,21 @@
                         <div class="character-section character-two-column">
                             <div>
                                 <h3>Атака та чари</h3>
-                                <div class="detail-list">
-                                    <p><span>Назва</span>{{ character.attack_name or 'Не вказано' }}</p>
-                                    <p><span>Бонус атаки</span>{{ character.attack_bonus }}</p>
-                                    <p><span>Пошкодження/тип</span>{{ character.attack_damage or 'Не вказано' }}</p>
+                                {% if character.attack_entries %}
+                                <div class="attack-preview-list">
+                                    {% for attack in character.attack_entries %}
+                                    <div class="attack-preview-item">
+                                        <div>
+                                            <strong>{{ attack.name or 'Без назви' }}</strong>
+                                            <span>{{ attack.damage or 'Без опису' }}</span>
+                                        </div>
+                                        <span class="attack-bonus">+{{ attack.bonus }}</span>
+                                    </div>
+                                    {% endfor %}
                                 </div>
+                                {% else %}
+                                <p class="muted-text">Атаки або чари не вказані.</p>
+                                {% endif %}
                             </div>
                             <div>
                                 <h3>Активні навички</h3>

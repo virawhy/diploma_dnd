@@ -53,7 +53,7 @@
             </div>
             {% if characters %}
                 {% for character in characters %}
-                <a class="profile-list-item" href="/character/{{ character.id_character }}">
+                <a class="profile-list-item" href="{{ url_for('charlist', character=character.id_character) }}">
                     <strong>{{ character.name }}</strong>
                     <span>{{ character.class_name.class_name if character.class_name else '-' }} &middot; lvl {{ character.level }}</span>
                 </a>

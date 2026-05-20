@@ -356,6 +356,112 @@ header {
     line-height: 24px;
 }
 
+.details-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+    gap: 14px;
+}
+
+.detail-card {
+    padding: 18px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+}
+
+.detail-card h3 {
+    margin: 0 0 15px;
+    color: #fff;
+    font-family: 'Roboto', 'Inter', sans-serif;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: 0;
+}
+
+.detail-card-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 15px;
+}
+
+.detail-card-heading h3 {
+    margin-bottom: 0;
+}
+
+.add-attack-button,
+.remove-attack-button {
+    border: 1px solid rgba(214, 179, 106, 0.72);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.add-attack-button {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.add-attack-button:hover,
+.remove-attack-button:hover:not(:disabled) {
+    border-color: #d6b36a;
+    background: rgba(159, 21, 21, 0.55);
+}
+
+.attack-list {
+    display: grid;
+    gap: 14px;
+}
+
+.attack-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 96px 38px;
+    gap: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.attack-row:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.attack-description-field {
+    grid-column: 1 / 3;
+}
+
+.remove-attack-button {
+    align-self: end;
+    width: 38px;
+    height: 44px;
+    font-size: 24px;
+    line-height: 24px;
+}
+
+.remove-attack-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.42;
+}
+
+.notes-field {
+    height: calc(100% - 39px);
+}
+
+.notes-input {
+    min-height: 138px;
+    height: 100%;
+    padding: 12px 13px;
+    resize: vertical;
+    text-align: left;
+}
+
 .checkbox-grid,
 .checkbox-list {
     display: grid;
@@ -411,7 +517,7 @@ header {
 
 .submit-panel {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     gap: 16px;
     margin-top: 24px;
@@ -438,7 +544,8 @@ header {
 @media (max-width: 1080px) {
     .builder-hero,
     .random-panel,
-    .loadout-grid {
+    .loadout-grid,
+    .details-grid {
         grid-template-columns: 1fr;
     }
 
@@ -465,8 +572,17 @@ header {
 
     .form-grid,
     .ability-grid,
-    .checkbox-grid {
+    .checkbox-grid,
+    .attack-grid {
         grid-template-columns: 1fr;
+    }
+
+    .attack-description-field {
+        grid-column: auto;
+    }
+
+    .remove-attack-button {
+        width: 100%;
     }
 
     .random-stats-container {
