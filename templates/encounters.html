@@ -1,102 +1,53 @@
 <!DOCTYPE html>
 <html lang="uk">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='img/DnD-ico.ico')}}">
-    <title>Сутички</title>
-    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style-reset.css')}}">
-    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/header-footer-style.css')}}">
-    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style-scrollbar.css')}}">
-    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/encounters.css')}}">
-    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/initiative.css')}}">
-    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/selection.css')}}">
-    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/atack.css')}}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/DnD-ico.ico') }}">
+    <title>{{ session.name }} - Сутички</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style-reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header-footer-style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style-scrollbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/encounters.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/initiative.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/selection.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/atack.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style-session-detail.css') }}">
 </head>
+
 <body>
     <div id="progressbar"></div>
+    {% include 'header.html' %}
 
-    <header>
-
-        <div class="header-frame">
-            <div class="header-logo"><a href="/"><img src="{{url_for('static', filename='img/logo.png')}}"></a></div>
-            <div class="header-nav">
-                <a href="{{ url_for('knowledge_rules') }}"><p class="header-nav-element">Посібник</p></a>
-
-                <a href="/dice.html"><p class="header-nav-element">Дайси</p></a>
-                
-
-
-
-                {% if current_user.is_authenticated %}
-                <a href="/campaigns"><p class="header-nav-element">Кампанії</p></a>
-                <a href="/sessions"><p class="header-nav-element">Сесії</p></a>
-                <a href="/charlist.html"><p class="header-nav-element">Персонажі</p></a>
-                <a href="/logout"><p class="header-nav-element">Вихід</p></a>
-
-
-                {% else %}
-                    <a href="/auth.html"><p class="header-nav-element">Вхід</p></a>
-                    <a href="/registration.html"><p class="header-nav-element">Реєстрація</p></a>
-                {% endif %}
-                
-            </div>
-            <input type="checkbox" id="burger-toggle">
-            <label for="burger-toggle"  class="burger-container">
-                <div class="burger-line"></div>
-                <div class="burger-line"></div>
-                <div class="burger-line"></div>
-            </label>
-            <nav class="nav-menu">
-                <ul>
-                  <li><a href="{{ url_for('knowledge_rules') }}">База знань</a></li>
-                  <li><a href="/dice.html">Дайси</a></li>
-                  {% if current_user.is_authenticated %}
-                    <li><a href="/charlist.html">Персонажі</a></li>
-                    <li><a href="/campaigns">Кампанії</a></li>
-                    <li><a href="/sessions">Сесії</a></li>
-                    <li><a href="/logout">Вихід</a></li>
-                  {% else %}
-                    <li><a href="/auth.html">Вхід</a></li>
-                    <li><a href="/registration.html">Реєстрація</a></li>
-                  {% endif %}
-                
-                </ul>
-            </nav>
+    <section class="session-toolbar">
+        <div>
+            <p class="session-kicker">{{ session.campaign.name if session.campaign else 'Ігрова сесія' }}</p>
+            <h1>{{ session.name }}</h1>
+            <p>{{ session.description }}</p>
         </div>
-
-    </header>
+        <a href="{{ url_for('sessions') }}">До сесій</a>
+    </section>
 
     <main class="encounter-container">
-        <!-- Кнопки для приховування/відображення сайдбарів -->
         <button class="sidebar-toggle left-toggle" id="leftSidebarToggle">◀</button>
         <button class="sidebar-toggle right-toggle" id="rightSidebarToggle">▶</button>
-        <!-- Лівий сайдбар -->
+
         <aside class="left-sidebar">
             <div class="tabs">
                 <button class="tab-button active" data-tab="tokens">Токени</button>
                 <button class="tab-button" data-tab="objects">Об'єкти</button>
                 <button class="tab-button" data-tab="environment">Оточення</button>
             </div>
-            <div class="tab-content active" id="tokens-content">
-                <!-- Тут будуть токени -->
-            </div>
-            <div class="tab-content" id="objects-content">
-                <!-- Тут будуть об'єкти -->
-            </div>
-            <div class="tab-content" id="environment-content">
-                <!-- Тут буде оточення -->
-            </div>
+            <div class="tab-content active" id="tokens-content"></div>
+            <div class="tab-content" id="objects-content"></div>
+            <div class="tab-content" id="environment-content"></div>
         </aside>
 
-        <!-- Ігрове поле -->
         <div class="game-field">
-            <div class="grid-container" id="gridContainer">
-                <!-- Сітка буде генеруватися через JavaScript -->
-            </div>
+            <div class="grid-container" id="gridContainer"></div>
         </div>
 
-        <!-- Правий сайдбар -->
         <aside class="right-sidebar">
             <div class="selected-info">
                 <h3>Вибраний елемент</h3>
@@ -107,6 +58,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="token-stats-panel">
                 <div class="stats">
                     <div class="stat-item">
@@ -147,18 +99,14 @@
                     <button class="remove-token-btn primary-button">Видалити токен</button>
                 </div>
             </div>
+
             <div class="initiative-tracker">
                 <h3>Перебіг ініціативи</h3>
-                <div id="initiative-list">
-                    <!-- Тут буде список ініціативи -->
-                </div>
+                <div id="initiative-list"></div>
             </div>
         </aside>
     </main>
-    {% include 'footer.html' %}
 
-
-    <!-- Нижній бар з кнопками -->    
     <div class="bottom-bar" id="bottomBar">
         <div class="bottom-bar-group">
             <button class="bottom-bar-button" id="normalModeBtn">Звичайний режим</button>
@@ -173,7 +121,6 @@
     </div>
     <button class="sidebar-toggle bottom-toggle" id="bottomBarToggle">▲</button>
 
-    <!-- Модальне вікно для розмірності поля -->
     <div class="modal" id="gridSizeModal">
         <div class="modal-content">
             <h2>Введіть розмірність поля</h2>
@@ -185,6 +132,9 @@
         </div>
     </div>
 
-    <script type="module" src="{{url_for('static', filename='js/encounters/index.js')}}"></script>
+    {% include 'footer.html' %}
+
+    <script type="module" src="{{ url_for('static', filename='js/encounters/index.js') }}"></script>
 </body>
+
 </html>

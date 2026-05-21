@@ -1,5 +1,5 @@
 body {
-    background: #070707;
+    background: #171b15;
     color: #fff;
 }
 
@@ -11,7 +11,7 @@ header {
 .character-page {
     min-height: calc(100vh - 86px);
     background-image:
-        linear-gradient(90deg, rgba(0, 0, 0, 0.92), rgba(18, 18, 18, 0.74) 50%, rgba(0, 0, 0, 0.92)),
+        linear-gradient(90deg, rgba(23, 27, 21, 0.9), rgba(23, 27, 21, 0.7) 50%, rgba(23, 27, 21, 0.86)),
         url("../img/char-dragon.jpg");
     background-attachment: fixed;
     background-position: center;
@@ -29,10 +29,19 @@ header {
 .sheet-section,
 .sheet-panel,
 .button-flex {
-    background: rgba(0, 0, 0, 0.78);
+    background: rgba(23, 27, 21, 0.84);
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 8px;
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+}
+
+.character-hero,
+.sheet-section,
+.sheet-panel,
+.button-flex {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0)),
+        rgba(23, 27, 21, 0.84);
 }
 
 .character-hero {
@@ -242,7 +251,7 @@ header {
 .add-attack-button:hover,
 .remove-attack-button:hover:not(:disabled) {
     border-color: #d6b36a;
-    background: rgba(159, 21, 21, 0.55);
+    background: rgba(255, 255, 255, 0.095);
 }
 
 .character-stats {
@@ -308,7 +317,7 @@ header {
     margin: 0;
     border: 1px solid rgba(214, 179, 106, 0.72);
     border-radius: 5px;
-    background: rgba(0, 0, 0, 0.28);
+    background: rgba(255, 255, 255, 0.055);
     cursor: pointer;
     transition: background 0.2s, border-color 0.2s, transform 0.2s;
 }
@@ -319,7 +328,7 @@ header {
 
 .character-stats-check:checked {
     border-color: rgba(214, 179, 106, 0.98);
-    background: #9f1515;
+    background: rgba(255, 255, 255, 0.095);
 }
 
 .save-throw:checked {
