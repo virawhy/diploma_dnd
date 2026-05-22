@@ -1,0 +1,138 @@
+{% extends "header.html" %}
+
+{% block head %}
+<title>Адмін-панель</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style-admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<main class="admin-page">
+    <section class="admin-hero">
+        <div>
+            <p class="admin-kicker">Керування сайтом</p>
+            <h1>Адмін-панель</h1>
+            <p class="admin-muted">Огляд користувачів, персонажів, кампаній і сесій.</p>
+        </div>
+    </section>
+
+    <section class="admin-stats">
+        <div class="admin-stat"><span>{{ stats.users }}</span><p>Користувачі</p></div>
+        <div class="admin-stat"><span>{{ stats.characters }}</span><p>Персонажі</p></div>
+        <div class="admin-stat"><span>{{ stats.campaigns }}</span><p>Кампанії</p></div>
+        <div class="admin-stat"><span>{{ stats.sessions }}</span><p>Сесії</p></div>
+    </section>
+
+    <section class="admin-grid">
+        <div class="admin-panel admin-panel-wide">
+            <div class="admin-panel-heading">
+                <h2>Користувачі</h2>
+                <span>{{ users|length }}</span>
+            </div>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Нікнейм</th>
+                            <th>Email</th>
+                            <th>Персонажі</th>
+                            <th>Кампанії</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user_item in users %}
+                        <tr>
+                            <td>{{ user_item.id_user }}</td>
+                            <td>{{ user_item.username }}</td>
+                            <td>{{ user_item.email }}</td>
+                            <td>{{ user_item.characters|length }}</td>
+                            <td>{{ user_item.campaigns|length }}</td>
+                            <td>
+                                {% if user_item.id_user != current_user.id_user %}
+                                <form action="{{ url_for('admin_delete_user', user_id=user_item.id_user) }}" method="POST">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                                    <button class="admin-danger" type="submit">Видалити</button>
+                                </form>
+                                {% else %}
+                                <span class="admin-self">Це ви</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="6">Користувачів немає.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="admin-panel">
+            <div class="admin-panel-heading">
+                <h2>Останні персонажі</h2>
+                <span>{{ characters|length }}</span>
+            </div>
+            <div class="admin-list">
+                {% for character in characters %}
+                <div class="admin-list-item">
+                    <div>
+                        <strong>{{ character.name }}</strong>
+                        <span>{{ character.user.username if character.user else '-' }} · {{ character.class_name.class_name if character.class_name else '-' }} · lvl {{ character.level }}</span>
+                    </div>
+                    <form action="{{ url_for('admin_delete_character', character_id=character.id_character) }}" method="POST">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                        <button class="admin-danger" type="submit">Видалити</button>
+                    </form>
+                </div>
+                {% else %}
+                <p class="admin-empty">Персонажів немає.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="admin-panel">
+            <div class="admin-panel-heading">
+                <h2>Останні кампанії</h2>
+                <span>{{ campaigns|length }}</span>
+            </div>
+            <div class="admin-list">
+                {% for campaign in campaigns %}
+                <div class="admin-list-item">
+                    <div>
+                        <strong>{{ campaign.name }}</strong>
+                        <span>{{ campaign.owner.username if campaign.owner else '-' }} · {{ campaign.members|length }} учасн.</span>
+                    </div>
+                    <form action="{{ url_for('admin_delete_campaign', campaign_id=campaign.id_campaign) }}" method="POST">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                        <button class="admin-danger" type="submit">Видалити</button>
+                    </form>
+                </div>
+                {% else %}
+                <p class="admin-empty">Кампаній немає.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="admin-panel admin-panel-wide">
+            <div class="admin-panel-heading">
+                <h2>Останні сесії</h2>
+                <span>{{ sessions|length }}</span>
+            </div>
+            <div class="admin-list admin-list-compact">
+                {% for session_item in sessions %}
+                <div class="admin-list-item">
+                    <div>
+                        <strong>{{ session_item.name }}</strong>
+                        <span>{{ session_item.user.username if session_item.user else '-' }} · {{ session_item.campaign.name if session_item.campaign else '-' }} · {{ session_item.created_date.strftime('%Y-%m-%d') if session_item.created_date else '-' }}</span>
+                    </div>
+                </div>
+                {% else %}
+                <p class="admin-empty">Сесій немає.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</main>
+
+{% include 'footer.html' %}
+{% endblock %}

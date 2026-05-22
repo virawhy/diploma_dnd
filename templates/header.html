@@ -26,6 +26,9 @@
                 <a href="{{ url_for('campaigns') }}"><p class="header-nav-element">Кампанії</p></a>
                 <a href="{{ url_for('sessions') }}"><p class="header-nav-element">Сесії</p></a>
                 <a href="{{ url_for('charlist') }}"><p class="header-nav-element">Персонажі</p></a>
+                {% if is_admin() %}
+                <a href="{{ url_for('admin_panel') }}"><p class="header-nav-element">Адмін</p></a>
+                {% endif %}
                 <a href="{{ url_for('logout') }}"><p class="header-nav-element">Вихід</p></a>
 
 
@@ -50,6 +53,9 @@
                     <li><a href="{{ url_for('charlist') }}">Персонажі</a></li>
                     <li><a href="{{ url_for('campaigns') }}">Кампанії</a></li>
                     <li><a href="{{ url_for('sessions') }}">Сесії</a></li>
+                    {% if is_admin() %}
+                    <li><a href="{{ url_for('admin_panel') }}">Адмін</a></li>
+                    {% endif %}
                     <li><a href="{{ url_for('logout') }}">Вихід</a></li>
                   {% else %}
                     <li><a href="{{ url_for('auth') }}">Вхід</a></li>

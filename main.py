@@ -7,6 +7,7 @@ import json
 from markdown import markdown
 import os
 import secrets
+from functools import wraps
 from hmac import compare_digest
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -363,6 +364,70 @@ def current_username():
     return current_user.username if current_user.is_authenticated else None
 
 
+def configured_admin_emails():
+    return {
+        email.strip().lower()
+        for email in os.environ.get('ADMIN_EMAILS', '').split(',')
+        if email.strip()
+    }
+
+
+def configured_admin_usernames():
+    return {
+        username.strip().lower()
+        for username in os.environ.get('ADMIN_USERNAMES', '').split(',')
+        if username.strip()
+    }
+
+
+def current_user_is_admin():
+    if not current_user.is_authenticated:
+        return False
+
+    admin_emails = configured_admin_emails()
+    admin_usernames = configured_admin_usernames()
+
+    return (
+        current_user.email.lower() in admin_emails
+        or current_user.username.lower() in admin_usernames
+    )
+
+
+@app.context_processor
+def inject_admin_status():
+    return {'is_admin': current_user_is_admin}
+
+
+def admin_required(view_func):
+    @wraps(view_func)
+    def wrapped_view(*args, **kwargs):
+        if not current_user_is_admin():
+            abort(403)
+        return view_func(*args, **kwargs)
+
+    return login_required(wrapped_view)
+
+
+def delete_character_record(character_id):
+    character_obj = Character.query.get_or_404(character_id)
+    CharacterProficiency.query.filter_by(id_character=character_id).delete()
+    CharacterEquipment.query.filter_by(id_character=character_id).delete()
+    CampaignCharacter.query.filter_by(id_character=character_id).delete()
+    db.session.delete(character_obj)
+
+
+def delete_campaign_record(campaign_id):
+    GameSession.query.filter_by(id_campaign=campaign_id).delete()
+    CampaignCharacter.query.filter_by(id_campaign=campaign_id).delete()
+    NPC.query.filter_by(id_campaign=campaign_id).delete()
+    Event.query.filter_by(id_campaign=campaign_id).delete()
+    Location.query.filter_by(id_campaign=campaign_id).delete()
+    CampaignMember.query.filter_by(id_campaign=campaign_id).delete()
+
+    campaign = Campaign.query.get_or_404(campaign_id)
+    db.session.delete(campaign)
+
+
 def get_owned_game_session_or_404(session_id):
     game_session = GameSession.query.get_or_404(session_id)
     if game_session.id_user != current_user.id_user:
@@ -609,6 +674,72 @@ def profile():
         invited_memberships=invited_memberships,
         sessions=sessions,
     )
+
+
+@app.route("/admin")
+@admin_required
+def admin_panel():
+    users = User.query.order_by(User.id_user.desc()).all()
+    characters = Character.query.order_by(Character.id_character.desc()).limit(30).all()
+    campaigns = Campaign.query.order_by(Campaign.id_campaign.desc()).limit(30).all()
+    sessions_list = GameSession.query.order_by(GameSession.created_date.desc()).limit(30).all()
+
+    stats = {
+        'users': User.query.count(),
+        'characters': Character.query.count(),
+        'campaigns': Campaign.query.count(),
+        'sessions': GameSession.query.count(),
+    }
+
+    return render_template(
+        'admin.html',
+        stats=stats,
+        users=users,
+        characters=characters,
+        campaigns=campaigns,
+        sessions=sessions_list,
+    )
+
+
+@app.route("/admin/user/<int:user_id>/delete", methods=["POST"])
+@admin_required
+def admin_delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+
+    if user.id_user == current_user.id_user:
+        flash("Не можна видалити власний акаунт з адмін-панелі.", "error")
+        return redirect(url_for('admin_panel'))
+
+    for campaign in Campaign.query.filter_by(id_user=user_id).all():
+        delete_campaign_record(campaign.id_campaign)
+    for character_obj in Character.query.filter_by(id_user=user_id).all():
+        delete_character_record(character_obj.id_character)
+    GameSession.query.filter_by(id_user=user_id).delete()
+    CampaignMember.query.filter_by(id_user=user_id).delete()
+
+    db.session.delete(user)
+    db.session.commit()
+    flash("Користувача видалено.", "success")
+    return redirect(url_for('admin_panel'))
+
+
+@app.route("/admin/campaign/<int:campaign_id>/delete", methods=["POST"])
+@admin_required
+def admin_delete_campaign(campaign_id):
+    delete_campaign_record(campaign_id)
+    db.session.commit()
+    flash("Кампанію видалено.", "success")
+    return redirect(url_for('admin_panel'))
+
+
+@app.route("/admin/character/<int:character_id>/delete", methods=["POST"])
+@admin_required
+def admin_delete_character(character_id):
+    delete_character_record(character_id)
+    db.session.commit()
+    flash("Персонажа видалено.", "success")
+    return redirect(url_for('admin_panel'))
+
 
 #--------------
 
