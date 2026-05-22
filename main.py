@@ -2154,10 +2154,19 @@ def create_tables():
     print('Seed data added to database.')
 
 
-if __name__ == '__main__':
+def initialize_database():
+    if os.environ.get('SKIP_DB_INIT') == '1':
+        return
+
     with app.app_context():
         db.create_all()
         create_tables()
+
+
+initialize_database()
+
+
+if __name__ == '__main__':
     app.run(
         debug=os.environ.get('FLASK_DEBUG') == '1',
         port=int(os.environ.get('PORT', 5000)),
