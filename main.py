@@ -14,6 +14,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 import subprocess
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import CheckConstraint, Index, UniqueConstraint
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 KNOWLEDGE_JSON_DIR = os.path.join(BASE_DIR, 'static', 'json', 'knowledge_json')
@@ -164,14 +165,22 @@ class User(db.Model, UserMixin):
     id_user = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
-    characters = db.relationship('Character', backref='user', lazy=True)
+    password = db.Column(db.String(255), nullable=False)
+    characters = db.relationship('Character', backref='user', lazy=True, cascade='all, delete-orphan')
 
     def get_id(self):
         return str(self.id_user)
 
 class Character(db.Model):
     __tablename__ = 'character'
+    __table_args__ = (
+        CheckConstraint('level BETWEEN 1 AND 20', name='ck_character_level_range'),
+        CheckConstraint('health_current >= 0', name='ck_character_health_current_nonnegative'),
+        CheckConstraint('health_max >= 1', name='ck_character_health_max_positive'),
+        CheckConstraint('armor_class >= 0', name='ck_character_armor_class_nonnegative'),
+        Index('ix_character_user', 'id_user'),
+    )
+
     id_character = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     level = db.Column(db.Integer, nullable=False)
@@ -188,25 +197,26 @@ class Character(db.Model):
     health_max = db.Column(db.Integer, nullable=False)
     proficiency_bonus = db.Column(db.Integer, nullable=False)
     inspiration = db.Column(db.Integer, nullable=False)
-    id_attack = db.Column(db.Integer, db.ForeignKey('attack.id_attack'), nullable=False)
-    id_note = db.Column(db.Integer, db.ForeignKey('note.id_note'), nullable=False)
+    note = db.Column(db.Text, nullable=False, default='')
     id_class = db.Column(db.Integer, db.ForeignKey('class.id_class'), nullable=False)
     id_racial_group = db.Column(db.Integer, db.ForeignKey('racial_group.id_racial_group'), nullable=False)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable=False)
+    attacks = db.relationship('Attack', backref='character', lazy=True, cascade='all, delete-orphan', order_by='Attack.sort_order')
 
 class Attack(db.Model):
     __tablename__ = 'attack'
+    __table_args__ = (
+        CheckConstraint('attack_bonus >= 0', name='ck_attack_bonus_nonnegative'),
+        Index('ix_attack_character', 'id_character'),
+    )
+
     id_attack = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     attack_bonus = db.Column(db.Integer, nullable=False)
-    damage_type = db.Column(db.String(80), nullable=False)
-    characters = db.relationship('Character', backref='attack', lazy=True)
-
-class Note(db.Model):
-    __tablename__ = 'note'
-    id_note = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.Text, nullable=False)
-    characters = db.relationship('Character', backref='note', lazy=True)
+    damage_type = db.Column(db.String(255), nullable=False, default='')
+    action_type = db.Column(db.String(20), nullable=False, default='attack')
+    sort_order = db.Column(db.Integer, nullable=False, default=0)
+    id_character = db.Column(db.Integer, db.ForeignKey('character.id_character'), nullable=False)
 
 class Class(db.Model):
     __tablename__ = 'class'
@@ -228,6 +238,12 @@ class Proficiency(db.Model):
 
 class CharacterProficiency(db.Model):
     __tablename__ = 'character_proficiency'
+    __table_args__ = (
+        UniqueConstraint('id_character', 'id_proficiency', name='uq_character_proficiency'),
+        Index('ix_character_proficiency_character', 'id_character'),
+        Index('ix_character_proficiency_proficiency', 'id_proficiency'),
+    )
+
     id_character_proficiency = db.Column(db.Integer, primary_key=True)
     checker = db.Column(db.Boolean, nullable=False)
     value = db.Column(db.Integer, nullable=False)
@@ -242,6 +258,12 @@ class Equipment(db.Model):
 
 class CharacterEquipment(db.Model):
     __tablename__ = 'character_equipment'
+    __table_args__ = (
+        UniqueConstraint('id_character', 'id_equipment', name='uq_character_equipment'),
+        Index('ix_character_equipment_character', 'id_character'),
+        Index('ix_character_equipment_equipment', 'id_equipment'),
+    )
+
     id_character_equipment = db.Column(db.Integer, primary_key=True)
     checker = db.Column(db.Boolean, nullable=False)
     id_equipment = db.Column(db.Integer, db.ForeignKey('equipment.id_equipment'), nullable=False)
@@ -249,25 +271,36 @@ class CharacterEquipment(db.Model):
 
 class Campaign(db.Model):
     __tablename__ = 'campaign'
+    __table_args__ = (
+        Index('ix_campaign_owner', 'id_user'),
+    )
+
     id_campaign = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.Text, nullable=False)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable=False)
     owner = db.relationship('User', backref='campaigns', lazy=True)
-    members = db.relationship('CampaignMember', backref='campaign', lazy=True)
+    members = db.relationship('CampaignMember', backref='campaign', lazy=True, cascade='all, delete-orphan')
 
 class CampaignMember(db.Model):
     __tablename__ = 'campaign_member'
+    __table_args__ = (
+        UniqueConstraint('id_campaign', 'id_user', name='uq_campaign_member_user'),
+        CheckConstraint("status IN ('invited', 'member')", name='ck_campaign_member_status'),
+        Index('ix_campaign_member_campaign', 'id_campaign'),
+        Index('ix_campaign_member_user', 'id_user'),
+    )
+
     id_campaign_member = db.Column(db.Integer, primary_key=True)
     status = db.Column(db.String(20), nullable=False)  # 'invited' або 'member'
     id_campaign = db.Column(db.Integer, db.ForeignKey('campaign.id_campaign'), nullable=False)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable=False)
-    id_character = db.Column(db.Integer, db.ForeignKey('character.id_character'), nullable=True)
     user = db.relationship('User', backref='campaign_memberships', lazy=True)
-    character = db.relationship('Character', backref='campaign_memberships', lazy=True)
 
 class NPC(db.Model):
     __tablename__ = 'npc'
+    __table_args__ = (Index('ix_npc_campaign', 'id_campaign'),)
+
     id_npc = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.Text, nullable=False)
@@ -276,6 +309,8 @@ class NPC(db.Model):
 
 class Event(db.Model):
     __tablename__ = 'event'
+    __table_args__ = (Index('ix_event_campaign', 'id_campaign'),)
+
     id_event = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.Text, nullable=False)
@@ -285,6 +320,8 @@ class Event(db.Model):
 
 class Location(db.Model):
     __tablename__ = 'location'
+    __table_args__ = (Index('ix_location_campaign', 'id_campaign'),)
+
     id_location = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.Text, nullable=False)
@@ -293,6 +330,12 @@ class Location(db.Model):
 
 class CampaignCharacter(db.Model):
     __tablename__ = 'campaign_character'
+    __table_args__ = (
+        UniqueConstraint('id_campaign', 'id_character', name='uq_campaign_character'),
+        Index('ix_campaign_character_campaign', 'id_campaign'),
+        Index('ix_campaign_character_character', 'id_character'),
+    )
+
     id_campaign_character = db.Column(db.Integer, primary_key=True)
     id_campaign = db.Column(db.Integer, db.ForeignKey('campaign.id_campaign'), nullable=False)
     id_character = db.Column(db.Integer, db.ForeignKey('character.id_character'), nullable=False)
@@ -301,11 +344,16 @@ class CampaignCharacter(db.Model):
 
 class GameSession(db.Model):
     __tablename__ = 'game_session'
+    __table_args__ = (
+        Index('ix_game_session_campaign', 'id_campaign'),
+        Index('ix_game_session_user', 'id_user'),
+    )
+
     id_session = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.Text, nullable=False)
     created_date = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
-    session_data = db.Column(db.Text, nullable=True)  # JSON для збереження стану сесії
+    session_data = db.Column(db.JSON, nullable=True)  # JSON для збереження стану сесії
     id_campaign = db.Column(db.Integer, db.ForeignKey('campaign.id_campaign'), nullable=False)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable=False)
     campaign = db.relationship('Campaign', backref='game_sessions', lazy=True)
@@ -346,6 +394,62 @@ def current_user_is_campaign_member(campaign):
 
 def current_user_can_view_campaign(campaign):
     return current_user_owns_campaign(campaign) or current_user_is_campaign_member(campaign)
+
+
+EQUIPMENT_GROUPS = [
+    {
+        'title': 'Оберіть зброю',
+        'items': ['Спис', 'Лук', 'Полуторний меч', 'Проста зброя'],
+    },
+    {
+        'title': 'Оберіть обладунок',
+        'items': [
+            'Лускатий обладунок (17)',
+            'Кольчужний обладунок (16)',
+            'Клепаний шкіряний обладунок (14)',
+            'Шкіряний обладунок (12)',
+        ],
+    },
+    {
+        'title': 'Оберіть спорядження',
+        'items': ['Молитовник', 'Святий символ', 'Набір дослідника', 'Ремісничі інструменти'],
+    },
+]
+
+
+def standard_equipment_names():
+    return [item for group in EQUIPMENT_GROUPS for item in group['items']]
+
+
+def sync_character_equipments(character_id, selected_equipments, custom_equipment_text=''):
+    custom_equipments = [
+        item.strip()
+        for item in (custom_equipment_text or '').replace('\r\n', '\n').split('\n')
+        if item.strip()
+    ]
+
+    equipment_names = []
+    seen_names = set()
+    for equipment_name in [*selected_equipments, *custom_equipments]:
+        if equipment_name in seen_names:
+            continue
+        seen_names.add(equipment_name)
+        equipment_names.append(equipment_name)
+
+    CharacterEquipment.query.filter_by(id_character=character_id).delete()
+
+    for equipment_name in equipment_names:
+        equipment = Equipment.query.filter_by(equipment=equipment_name).first()
+        if equipment is None:
+            equipment = Equipment(equipment=equipment_name)
+            db.session.add(equipment)
+            db.session.flush()
+
+        db.session.add(CharacterEquipment(
+            checker=True,
+            id_equipment=equipment.id_equipment,
+            id_character=character_id,
+        ))
 
 
 def all_monsters():
@@ -774,7 +878,7 @@ def get_invites():
         invites_data = [{
             'id': invite.id_campaign_member,
             'campaign_name': invite.campaign.name,
-            'character_name': invite.character.name if invite.character else None
+            'status': invite.status
         } for invite in invites]
         
         return jsonify(invites_data)
@@ -1106,6 +1210,7 @@ def get_user_characters(campaign_id, username):
         try:
             character_data = {
                 'id': char.id_character,
+                'id_character': char.id_character,
                 'name': char.name,
                 'level': char.level,
                 'class': char.class_name.class_name if char.class_name else None,
@@ -1159,15 +1264,7 @@ def manage_campaign_character(campaign_id, character_id):
             id_character=character_id
         ).first_or_404()
         
-        # Видаляємо також запис з campaign_member
-        campaign_member = CampaignMember.query.filter_by(
-            id_campaign=campaign_id,
-            id_character=character_id
-        ).first()
-        
         try:
-            if campaign_member:
-                db.session.delete(campaign_member)
             db.session.delete(campaign_character)
             db.session.commit()
             return jsonify({'message': 'Character removed from campaign successfully'}), 200
@@ -1196,28 +1293,17 @@ def manage_campaign_character(campaign_id, character_id):
         id_character=character_id
     )
     
-    # Створюємо запис в campaign_member для власника персонажа
     campaign_member = CampaignMember.query.filter_by(
         id_campaign=campaign_id,
-        id_user=character.id_user,
-        id_character=character_id
+        id_user=character.id_user
     ).first()
 
-    if not campaign_member:
-        campaign_member = CampaignMember.query.filter_by(
-            id_campaign=campaign_id,
-            id_user=character.id_user,
-            id_character=None
-        ).first()
-
     if campaign_member:
-        campaign_member.id_character = character_id
         campaign_member.status = 'member'
     else:
         campaign_member = CampaignMember(
             id_campaign=campaign_id,
             id_user=character.id_user,
-            id_character=character_id,
             status='member'
         )
         db.session.add(campaign_member)
@@ -1341,16 +1427,15 @@ def charlist():
         proficiencies = CharacterProficiency.query.filter_by(
             id_character=character_obj.id_character
         ).all()
+        equipments = CharacterEquipment.query.filter_by(
+            id_character=character_obj.id_character
+        ).all()
 
         class_name = character_obj.class_name.class_name if character_obj.class_name else ''
         racial_group = character_obj.racial_group.racial_group if character_obj.racial_group else ''
-        clean_note, attack_entries = split_attack_note_section(character_obj.note.text if character_obj.note else '')
-        if not attack_entries and character_obj.attack and (character_obj.attack.name or character_obj.attack.damage_type):
-            attack_entries = [{
-                'name': character_obj.attack.name,
-                'bonus': character_obj.attack.attack_bonus,
-                'damage': character_obj.attack.damage_type,
-            }]
+        clean_note = character_obj.note or ''
+        attack_entries = character_attack_entries(character_obj)
+        primary_attack_entry = attack_entries[0] if attack_entries else {'name': '', 'bonus': '', 'damage': ''}
 
         characters_data.append({
             'id': character_obj.id_character,
@@ -1372,11 +1457,16 @@ def charlist():
             'health_max': character_obj.health_max,
             'proficiency_bonus': character_obj.proficiency_bonus,
             'inspiration': character_obj.inspiration,
-            'attack_name': character_obj.attack.name if character_obj.attack else '',
-            'attack_bonus': character_obj.attack.attack_bonus if character_obj.attack else '',
-            'attack_damage': character_obj.attack.damage_type if character_obj.attack else '',
+            'attack_name': primary_attack_entry['name'],
+            'attack_bonus': primary_attack_entry['bonus'],
+            'attack_damage': primary_attack_entry['damage'],
             'attack_entries': attack_entries,
             'note': clean_note,
+            'equipments': [
+                character_equipment.equipment.equipment
+                for character_equipment in equipments
+                if character_equipment.checker
+            ],
             'proficiencies': [
                 {
                     'name': proficiency.proficiency.proficiency,
@@ -1393,6 +1483,25 @@ def charlist():
         characters=characters_data,
         selected_character_id=selected_character_id,
     )
+
+
+@app.route('/delete_character/<int:character_id>', methods=['POST'])
+@login_required
+def delete_character(character_id):
+    character_obj = Character.query.get_or_404(character_id)
+
+    if character_obj.id_user != current_user.id_user:
+        abort(403)
+
+    CharacterProficiency.query.filter_by(id_character=character_id).delete()
+    CharacterEquipment.query.filter_by(id_character=character_id).delete()
+    CampaignCharacter.query.filter_by(id_character=character_id).delete()
+
+    db.session.delete(character_obj)
+    db.session.commit()
+
+    flash('Персонажа видалено.', 'success')
+    return redirect(url_for('charlist'))
 
 
 @app.route("/create-char.html", methods=("POST", "GET"))
@@ -1420,6 +1529,7 @@ def create_char():
         note_text = request.form.get('note', '').strip()
         answers = request.form.getlist('answer1')
         equipments = request.form.getlist('answer2')
+        custom_equipment = request.form.get('custom_equipment', '')
         health_max = 7 + int(constitution) * 3
 
         attack_entries = []
@@ -1435,42 +1545,17 @@ def create_char():
                     'damage': damage_type,
                 })
 
-        primary_attack = attack_entries[0] if attack_entries else {'name': '', 'bonus': '1', 'damage': ''}
-        note_parts = []
-        if attack_entries:
-            note_parts.append(
-                'Атаки та чари:\n' +
-                '\n'.join(
-                    f"- {entry['name'] or 'Без назви'} | бонус {entry['bonus']} | {entry['damage'] or 'без опису'}"
-                    for entry in attack_entries
-                )
-            )
-        if equipments:
-            note_parts.append('Спорядження:\n' + '\n'.join(equipments))
-        if note_text:
-            note_parts.append('Примітки:\n' + note_text)
-        text = '\n\n'.join(note_parts)
-
-        new_attack = Attack(name=primary_attack['name'], attack_bonus=primary_attack['bonus'], damage_type=primary_attack['damage'])
-        db.session.add(new_attack)
-        db.session.flush()
-        attack_id = new_attack.id_attack
-
-        new_note = Note(text=text)
-        db.session.add(new_note)
-        db.session.flush()
-        note_id = new_note.id_note
-
         new_character = Character(name=name_ch, level=level, strength=strength, dexterity=dexterity, constitution=constitution,
                                   intelligence=intelect, wisdom=wisdom, charisma=charisma, armor_class=10, speed=30,
                                   initiative=dexterity, health_current=health_max, health_max=health_max,
-                                  proficiency_bonus=0, inspiration=0, id_attack=attack_id, id_note=note_id, id_class=id_class,
+                                  proficiency_bonus=0, inspiration=0, note=note_text, id_class=id_class,
                                   id_racial_group=id_racial_group, id_user=current_user.id_user)
         db.session.add(new_character)
         db.session.flush()
 
 
         id_character = new_character.id_character
+        replace_character_attacks(new_character, attack_entries)
         # Отримуємо всі профіцієнції з бази даних
         all_proficiencies = Proficiency.query.all()
         
@@ -1501,14 +1586,7 @@ def create_char():
             db.session.add(new_ch_proficiency)
             db.session.flush()
 
-        if (equipments != []):
-            for equipment in equipments:
-                result4 = Equipment.query.filter_by(equipment=equipment).first()
-                id_equipment = result4.id_equipment
-                new_ch_equipment = CharacterEquipment(
-                    checker=True, id_equipment=id_equipment, id_character=id_character)
-                db.session.add(new_ch_equipment)
-                db.session.flush()
+        sync_character_equipments(id_character, equipments, custom_equipment)
         
         db.session.commit()
         return redirect(url_for("charlist"))
@@ -1521,6 +1599,41 @@ def dice():
 
 
 ATTACKS_NOTE_HEADING = 'Атаки та чари:'
+
+
+def attack_entry_dict(attack):
+    return {
+        'name': attack.name,
+        'bonus': attack.attack_bonus,
+        'damage': attack.damage_type,
+        'type': attack.action_type,
+    }
+
+
+def safe_int(value, default=0):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def character_attack_entries(character_obj):
+    return [attack_entry_dict(attack) for attack in character_obj.attacks]
+
+
+def replace_character_attacks(character_obj, attack_entries):
+    for attack in list(character_obj.attacks):
+        db.session.delete(attack)
+
+    db.session.flush()
+    for index, entry in enumerate(attack_entries):
+        character_obj.attacks.append(Attack(
+            name=entry['name'] or 'Без назви',
+            attack_bonus=safe_int(entry['bonus'], 0),
+            damage_type=entry['damage'],
+            action_type=entry.get('type') or 'attack',
+            sort_order=index,
+        ))
 
 
 def split_attack_note_section(note_text):
@@ -1613,13 +1726,20 @@ def character(id_class_f):
         
     # Перевіряємо, чи поточний користувач є власником персонажа
     is_owner = character_obj.id_user == current_user.id_user
-    clean_note, stored_attack_entries = split_attack_note_section(character_obj.note.text if character_obj.note else '')
-    primary_attack_entry = {
-        'name': character_obj.attack.name if character_obj.attack else '',
-        'bonus': character_obj.attack.attack_bonus if character_obj.attack else 1,
-        'damage': character_obj.attack.damage_type if character_obj.attack else '',
-    }
-    attack_entries = stored_attack_entries or [primary_attack_entry]
+    clean_note = character_obj.note or ''
+    attack_entries = character_attack_entries(character_obj)
+    primary_attack_entry = attack_entries[0] if attack_entries else {'name': '', 'bonus': 1, 'damage': ''}
+    attack_form_entries = attack_entries or [primary_attack_entry]
+    equipment_names = [
+        character_equipment.equipment.equipment
+        for character_equipment in CharacterEquipment.query.filter_by(id_character=id_class_f).all()
+        if character_equipment.checker
+    ]
+    standard_equipment = set(standard_equipment_names())
+    custom_equipment_text = '\n'.join(
+        equipment_name for equipment_name in equipment_names
+        if equipment_name not in standard_equipment
+    )
 
     # Створюємо словник з основними характеристиками персонажа
     character_dict = {
@@ -1643,13 +1763,14 @@ def character(id_class_f):
         'attack_name': primary_attack_entry['name'],  # Назва атаки
         'attack_bonus': primary_attack_entry['bonus'],  # Бонус атаки
         'attack_damage': primary_attack_entry['damage'],  # Тип пошкодження
-        'attack_entries': attack_entries,
+        'attack_entries': attack_form_entries,
         'note': clean_note,  # Нотатки
+        'equipments': equipment_names,
+        'custom_equipment': custom_equipment_text,
     }
 
     # Отримуємо всі підхарактеристики персонажа
     proficiency_ch_obj = CharacterProficiency.query.filter_by(id_character=id_class_f).all()
-    print(proficiency_ch_obj)
     # Створюємо список активних підхарактеристик
     proficiencies_list = [cp.proficiency.proficiency for cp in proficiency_ch_obj if cp.checker]
 
@@ -1658,7 +1779,6 @@ def character(id_class_f):
     proficiency_values = {}
     for cp in proficiency_ch_obj:
         proficiency_values[cp.proficiency.proficiency] = cp.value 
-    print(proficiency_values)
     
     # Отримуємо об'єкт персонажа для оновлення
     char_to_update = Character.query.get_or_404(id_class_f)
@@ -1668,34 +1788,6 @@ def character(id_class_f):
             flash("Ви не можете редагувати персонажа іншого користувача", "error")
             return redirect(url_for("character", id_class_f=id_class_f))
         # Виводимо отримані дані форми для відладки
-        print("\n=== Form Data ===")
-        print(f"Name: {request.form.get('name_ch')}")
-        print(f"Level: {request.form.get('level')}")
-        print(f"Armor Class: {request.form.get('armor_class')}")
-        print(f"Speed: {request.form.get('speed')}")
-        print(f"Initiative: {request.form.get('initiative')}")
-        print(f"Health Current: {request.form.get('health_current')}")
-        print(f"Health Max: {request.form.get('health_max')}")
-        print(f"Proficiency Bonus: {request.form.get('proficiency_bonus')}")
-        print(f"Inspiration: {request.form.get('inspiration')}")
-        print(f"Strength: {request.form.get('strength')}")
-        print(f"Dexterity: {request.form.get('dexterity')}")
-        print(f"Constitution: {request.form.get('constitution')}")
-        print(f"Intelligence: {request.form.get('intelligence')}")
-        print(f"Wisdom: {request.form.get('wisdom')}")
-        print(f"Charisma: {request.form.get('charisma')}")
-        print(f"Attack Name: {request.form.getlist('attack_name')}")
-        print(f"Attack Bonus: {request.form.getlist('attack_bonus')}")
-        print(f"Damage Type: {request.form.getlist('damage_type')}")
-        print(f"Note: {request.form.get('note')}")
-        print("\n=== Proficiency Values ===")
-        all_proficiencies = Proficiency.query.all()
-        for prof in all_proficiencies:
-            prof_name = prof.proficiency
-            prof_value = request.form.get(prof_name + '_value', '0')
-            print(f"{prof_name}: {prof_value}")
-        print("=== End Form Data ===\n")
-        
         # Оновлюємо основні характеристики персонажа
         char_to_update.name = request.form.get('name_ch')
         char_to_update.level = request.form.get('level')
@@ -1714,10 +1806,16 @@ def character(id_class_f):
         char_to_update.charisma = request.form.get('charisma')
         attack_entries = build_attack_entries(request.form)
         primary_attack_entry = attack_entries[0] if attack_entries else {'name': '', 'bonus': '1', 'damage': ''}
-        char_to_update.attack.name = primary_attack_entry['name']
-        char_to_update.attack.attack_bonus = primary_attack_entry['bonus']
-        char_to_update.attack.damage_type = primary_attack_entry['damage']
-        char_to_update.note.text = compose_note_with_attacks(request.form.get('note', ''), attack_entries)
+        replace_character_attacks(char_to_update, attack_entries)
+        selected_equipments = request.form.getlist('answer2')
+        custom_equipment_text = request.form.get('custom_equipment', '').strip()
+        sync_character_equipments(id_class_f, selected_equipments, custom_equipment_text)
+        equipment_names = [*selected_equipments, *[
+            item.strip()
+            for item in custom_equipment_text.replace('\r\n', '\n').split('\n')
+            if item.strip()
+        ]]
+        char_to_update.note = request.form.get('note', '').strip()
         
         # Зберігаємо зміни в базі даних
         db.session.commit()
@@ -1739,16 +1837,17 @@ def character(id_class_f):
             'intelligence': char_to_update.intelligence,
             'wisdom': char_to_update.wisdom,
             'charisma': char_to_update.charisma,
-            'attack_name': char_to_update.attack.name,
-            'attack_bonus': char_to_update.attack.attack_bonus,
-            'attack_damage': char_to_update.attack.damage_type,
+            'attack_name': primary_attack_entry['name'],
+            'attack_bonus': primary_attack_entry['bonus'],
+            'attack_damage': primary_attack_entry['damage'],
             'attack_entries': attack_entries or [primary_attack_entry],
-            'note': split_attack_note_section(char_to_update.note.text)[0]
+            'note': char_to_update.note,
+            'equipments': equipment_names,
+            'custom_equipment': custom_equipment_text
         })
         
         # Отримуємо всі поточні підхарактеристики персонажа
         current_proficiencies = CharacterProficiency.query.filter_by(id_character=id_class_f).all()
-        print(CharacterProficiency.query.filter_by(id_character=id_class_f).all())
 
 
         
@@ -1777,7 +1876,6 @@ def character(id_class_f):
                 
             # Оновлюємо або створюємо запис підхарактеристики
             if prof_name in current_prof_dict:
-                print(f"Оновлюємо {prof_name}: value={prof_value}, checked={is_checked}")
                 cp = current_prof_dict[prof_name]
                 cp.checker = is_checked
                 cp.value = prof_value
@@ -1789,7 +1887,6 @@ def character(id_class_f):
                 elif not is_checked and prof_name in proficiencies_list:
                     proficiencies_list.remove(prof_name)
             else:
-                print(f"Створюємо новий запис для {prof_name}: value={prof_value}, checked={is_checked}")
                 new_ch_proficiency = CharacterProficiency(
                     checker=is_checked,
                     value=prof_value,
@@ -1821,23 +1918,24 @@ def character(id_class_f):
                 'intelligence': char_to_update.intelligence,
                 'wisdom': char_to_update.wisdom,
                 'charisma': char_to_update.charisma,
-                'attack_name': char_to_update.attack.name,
-                'attack_bonus': char_to_update.attack.attack_bonus,
-                'attack_damage': char_to_update.attack.damage_type,
+                'attack_name': primary_attack_entry['name'],
+                'attack_bonus': primary_attack_entry['bonus'],
+                'attack_damage': primary_attack_entry['damage'],
                 'attack_entries': attack_entries or [primary_attack_entry],
-                'note': split_attack_note_section(char_to_update.note.text)[0]
+                'note': char_to_update.note,
+                'equipments': equipment_names,
+                'custom_equipment': custom_equipment_text
             })
-            return render_template("character.html", character=character_dict, name=current_user.username, proficiencies_list=proficiencies_list, proficiency_values=proficiency_values, is_owner=is_owner)
+            return render_template("character.html", character=character_dict, name=current_user.username, proficiencies_list=proficiencies_list, proficiency_values=proficiency_values, is_owner=is_owner, equipment_groups=EQUIPMENT_GROUPS)
         except Exception as e:
             # Відкатуємо зміни у випадку помилки
             db.session.rollback()
-            print("Помилка оновлення в БД:", e)
+            app.logger.error("Character update failed: %s", e)
         
     # Виводимо список активних підхарактеристик
-    print(proficiencies_list)
     
     # Відображаємо сторінку персонажа
-    return render_template("character.html", character=character_dict, name=current_user.username, proficiencies_list=proficiencies_list, proficiency_values=proficiency_values, is_owner=is_owner)
+    return render_template("character.html", character=character_dict, name=current_user.username, proficiencies_list=proficiencies_list, proficiency_values=proficiency_values, is_owner=is_owner, equipment_groups=EQUIPMENT_GROUPS)
 
 
 
@@ -2011,10 +2109,20 @@ def create_tables():
         'Важкий арбалет',
         'Лук',
         'Спис',
+        'Полуторний меч',
+        'Проста зброя',
         'Щит',
         'Шкіряна броня',
         'Кольчуга',
-        'Латна броня'
+        'Латна броня',
+        'Лускатий обладунок (17)',
+        'Кольчужний обладунок (16)',
+        'Клепаний шкіряний обладунок (14)',
+        'Шкіряний обладунок (12)',
+        'Молитовник',
+        'Святий символ',
+        'Набір дослідника',
+        'Ремісничі інструменти'
     ]
 
     # Додавання класів
@@ -2043,7 +2151,7 @@ def create_tables():
 
     # Збереження змін
     db.session.commit()
-    print('Класи, раси, профіцієнції та обладнання успішно додані до бази даних!')
+    print('Seed data added to database.')
 
 
 if __name__ == '__main__':

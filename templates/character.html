@@ -214,6 +214,24 @@
                         <p>Нотатки</p>
                         <h2>Спорядження та примітки</h2>
                     </div>
+                    <div class="character-equipment-grid">
+                        {% for group in equipment_groups %}
+                        <div class="equipment-card">
+                            <h3>{{ group.title }}</h3>
+                            <div class="equipment-checkbox-list">
+                                {% for equipment in group['items'] %}
+                                {% set equipment_id = 'equipment-' ~ loop.index0 ~ '-' ~ equipment|replace(' ', '-')|replace('(', '')|replace(')', '') %}
+                                <input type="checkbox" id="{{ equipment_id }}" name="answer2" value="{{ equipment }}" {% if equipment in character['equipments'] %}checked{% endif %} {% if not is_owner %}disabled{% endif %}>
+                                <label for="{{ equipment_id }}"><span></span>{{ equipment }}</label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <label class="field custom-equipment-field">
+                        <span>Власне спорядження</span>
+                        <textarea class="name-input custom-equipment-input" maxlength="800" placeholder="Кожен предмет з нового рядка" name="custom_equipment" {% if not is_owner %}readonly{% endif %}>{{ character['custom_equipment'] }}</textarea>
+                    </label>
                     <textarea class="name-input textarea-style" maxlength="2000" placeholder="Записи персонажа" name="note" {% if not is_owner %}readonly{% endif %}>{{character['note']}}</textarea>
                 </div>
             </section>
@@ -248,7 +266,9 @@
         }
 
         addAttackButton.addEventListener('click', () => {
-            const row = attackList.querySelector('.attack-row').cloneNode(true);
+            const sourceRow = attackList.querySelector('.attack-row');
+            if (!sourceRow) return;
+            const row = sourceRow.cloneNode(true);
             row.querySelectorAll('input').forEach((input) => {
                 input.value = input.type === 'number' ? '1' : '';
             });

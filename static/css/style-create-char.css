@@ -458,14 +458,16 @@ header {
 }
 
 .notes-field {
-    height: calc(100% - 39px);
+    height: auto;
 }
 
 .notes-input {
+    height: 138px;
     min-height: 138px;
-    height: 100%;
+    max-height: 138px;
+    overflow-y: auto;
     padding: 12px 13px;
-    resize: vertical;
+    resize: none;
     text-align: left;
 }
 

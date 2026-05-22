@@ -221,7 +221,20 @@ body {
     margin-bottom: 24px;
 }
 
-.character-edit-link {
+.character-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.character-actions form {
+    margin: 0;
+}
+
+.character-edit-link,
+.character-delete-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -239,7 +252,19 @@ body {
     transition: 0.25s;
 }
 
-.character-edit-link:hover {
+.character-edit-link {
+    border-color: rgba(214, 179, 106, 0.78);
+    background: rgba(214, 179, 106, 0.14);
+}
+
+.character-delete-button {
+    border-color: rgba(185, 28, 28, 0.76);
+    background: rgba(159, 21, 21, 0.82);
+    cursor: pointer;
+}
+
+.character-edit-link:hover,
+.character-delete-button:hover {
     background: #000;
     border-color: #fff;
 }
@@ -390,13 +415,31 @@ body {
     line-height: 22px;
 }
 
-.proficiency-list {
+.equipment-note-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 20px;
+}
+
+.equipment-note-grid h4 {
+    margin: 0 0 10px;
+    color: rgba(255, 255, 255, 0.76);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 18px;
+    text-transform: uppercase;
+}
+
+.proficiency-list,
+.equipment-list {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
 }
 
-.proficiency-list span {
+.proficiency-list span,
+.equipment-list span {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -409,6 +452,11 @@ body {
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     line-height: 18px;
+}
+
+.equipment-list span {
+    border-color: rgba(214, 179, 106, 0.28);
+    background: rgba(214, 179, 106, 0.12);
 }
 
 .character-note,
@@ -462,6 +510,10 @@ body {
         grid-template-columns: 1fr;
     }
 
+    .equipment-note-grid {
+        grid-template-columns: 1fr;
+    }
+
     .ability-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -476,6 +528,17 @@ body {
     .character-preview-header {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    .character-actions {
+        justify-content: stretch;
+    }
+
+    .character-actions > *,
+    .character-actions form,
+    .character-actions button,
+    .character-actions a {
+        width: 100%;
     }
 
     .charlist-element {

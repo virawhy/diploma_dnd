@@ -91,7 +91,7 @@
                 {% for membership in member_campaigns %}
                 <a class="profile-list-item" href="/campaign/{{ membership.campaign.id_campaign }}">
                     <strong>{{ membership.campaign.name }}</strong>
-                    <span>{{ membership.character.name if membership.character else '-' }}</span>
+                    <span>{% if membership.status == 'member' %}&#1059;&#1095;&#1072;&#1089;&#1085;&#1080;&#1082;{% else %}&#1047;&#1072;&#1087;&#1088;&#1086;&#1096;&#1077;&#1085;&#1085;&#1103;{% endif %}</span>
                 </a>
                 {% endfor %}
             {% else %}

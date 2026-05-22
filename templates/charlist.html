@@ -64,7 +64,12 @@
                                 <p class="character-preview-kicker">{{ character.class_name }} · {{ character.racial_group }}</p>
                                 <h2>{{ character.name }}</h2>
                             </div>
-                            <a class="character-edit-link" href="{{ url_for('character', id_class_f=character.id) }}">Редагувати</a>
+                            <div class="character-actions">
+                                <a class="character-edit-link" href="{{ url_for('character', id_class_f=character.id) }}">Редагувати</a>
+                                <form method="post" action="{{ url_for('delete_character', character_id=character.id) }}" onsubmit="return confirm('Видалити персонажа {{ character.name }}?');">
+                                    <button class="character-delete-button" type="submit">Видалити</button>
+                                </form>
+                            </div>
                         </div>
 
                         <div class="character-summary-grid">
@@ -141,7 +146,24 @@
 
                         <div class="character-section">
                             <h3>Спорядження та примітки</h3>
-                            <p class="character-note">{{ character.note or 'Приміток немає.' }}</p>
+                            <div class="equipment-note-grid">
+                                <div>
+                                    <h4>Спорядження</h4>
+                                    {% if character.equipments %}
+                                    <div class="equipment-list">
+                                        {% for equipment in character.equipments %}
+                                        <span>{{ equipment }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% else %}
+                                    <p class="muted-text">Спорядження не вибране.</p>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <h4>Примітки</h4>
+                                    <p class="character-note">{{ character.note or 'Приміток немає.' }}</p>
+                                </div>
+                            </div>
                         </div>
                     </article>
                     {% else %}
