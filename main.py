@@ -31,7 +31,11 @@ if is_production and not secret_key:
     raise RuntimeError('SECRET_KEY must be set in production')
 
 app.config['SECRET_KEY'] = secret_key or secrets.token_hex(32)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///dnd.db')
+database_url = os.environ.get('DATABASE_URL', 'sqlite:///dnd.db')
+if database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
