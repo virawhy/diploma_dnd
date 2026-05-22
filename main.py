@@ -2,7 +2,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, Blueprint, render_template, url_for, send_file, request, flash, redirect, session, abort, current_app, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_user, login_required, current_user, UserMixin, LoginManager, logout_user
-from flask_session import Session
 from werkzeug.exceptions import HTTPException
 import json
 from markdown import markdown
@@ -26,7 +25,8 @@ class Base(DeclarativeBase):
 
 app = Flask(__name__, static_folder='static')
 secret_key = os.environ.get('SECRET_KEY')
-if os.environ.get('FLASK_ENV') == 'production' and not secret_key:
+is_production = os.environ.get('FLASK_ENV') == 'production' or os.environ.get('RENDER') == 'true'
+if is_production and not secret_key:
     raise RuntimeError('SECRET_KEY must be set in production')
 
 app.config['SECRET_KEY'] = secret_key or secrets.token_hex(32)
@@ -35,22 +35,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
-# Налаштування сесій для забезпечення окремих сесій для кожного користувача
-app.config['SESSION_TYPE'] = 'filesystem'
+# Налаштування cookie-сесій для окремого логіну кожного користувача
+app.config['SESSION_COOKIE_NAME'] = 'dnd_session'
 app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_USE_SIGNER'] = False
-# Вимикаємо безпечні cookie для розробки (в продакшені має бути True)
-app.config['SESSION_COOKIE_SECURE'] = os.environ.get('FLASK_ENV') == 'production'
+app.config['SESSION_COOKIE_SECURE'] = is_production
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['SESSION_FILE_DIR'] = os.path.join(BASE_DIR, 'flask_session')
 app.config['SESSION_SAVE_DIR'] = os.path.join(BASE_DIR, 'session_saves')
-
-# Створюємо директорію для зберігання сесій, якщо вона не існує
-os.makedirs(app.config['SESSION_FILE_DIR'], exist_ok=True)
-
-# Ініціалізуємо Flask-Session
-Session(app)
 
 # Створюємо планувальник
 scheduler = BackgroundScheduler()
@@ -158,7 +149,6 @@ def add_csrf_helper(response):
 
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
-app.app_context().push()
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
