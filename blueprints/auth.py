@@ -24,6 +24,7 @@ def auth():
         if not check_password_hash(user.password, password):
             flash('Пароль введено невірно.', 'error')
             return redirect(url_for('auth'))
+        session.clear()
         login_user(user)
         return redirect(url_for("profile"))
 
@@ -34,6 +35,7 @@ def auth():
 @login_required
 def logout():
     logout_user()
+    session.clear()
     return redirect(url_for('auth'))
 
 

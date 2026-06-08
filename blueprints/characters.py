@@ -336,6 +336,9 @@ def character(id_class_f):
         
     # Перевіряємо, чи поточний користувач є власником персонажа
     is_owner = character_obj.id_user == current_user.id_user
+    if not is_owner:
+        abort(403)
+
     clean_note = character_obj.note or ''
     attack_entries = character_attack_entries(character_obj)
     primary_attack_entry = attack_entries[0] if attack_entries else {'name': '', 'bonus': 1, 'damage': ''}

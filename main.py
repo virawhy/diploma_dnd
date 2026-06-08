@@ -442,7 +442,18 @@ def get_owned_game_session_or_404(session_id):
     return game_session
 
 
-def session_save_path(session_id):
+def session_save_path(session_id, user_id=None):
+    owner_id = user_id
+    if owner_id is None and current_user.is_authenticated:
+        owner_id = current_user.id_user
+
+    if owner_id is None:
+        abort(403)
+
+    return os.path.join(app.config['SESSION_SAVE_DIR'], f"user_{owner_id}_session_{session_id}.json")
+
+
+def legacy_session_save_path(session_id):
     return os.path.join(app.config['SESSION_SAVE_DIR'], f"session_{session_id}.json")
 
 

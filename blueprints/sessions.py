@@ -143,7 +143,7 @@ def save_session(session_id):
         
         # Зберігаємо у JSON файл
         os.makedirs(app.config['SESSION_SAVE_DIR'], exist_ok=True)
-        save_path = session_save_path(session_id)
+        save_path = session_save_path(game_session.id_session, game_session.id_user)
         with open(save_path, 'w', encoding='utf-8') as f:
             json.dump(save_data, f, ensure_ascii=False, indent=2)
         
@@ -158,8 +158,8 @@ def save_session(session_id):
 @login_required
 def load_session(session_id):
     try:
-        get_owned_game_session_or_404(session_id)
-        save_path = session_save_path(session_id)
+        game_session = get_owned_game_session_or_404(session_id)
+        save_path = session_save_path(game_session.id_session, game_session.id_user)
         
         if not os.path.exists(save_path):
             return jsonify({"has_save": False})
@@ -203,12 +203,17 @@ def delete_session(session_id):
     game_session = get_owned_game_session_or_404(session_id)
     
     # Видаляємо файл збереження сесії, якщо він існує
-    save_path = session_save_path(session_id)
-    if os.path.exists(save_path):
-        os.remove(save_path)
+    save_paths = [
+        session_save_path(game_session.id_session, game_session.id_user),
+        legacy_session_save_path(game_session.id_session),
+    ]
+    for save_path in save_paths:
+        if os.path.exists(save_path):
+            os.remove(save_path)
     
     # Видаляємо сесію з бази даних
     db.session.delete(game_session)
     db.session.commit()
     
     flash('Сесію успішно видалено!', 'success')
+    return redirect(url_for('sessions'))
