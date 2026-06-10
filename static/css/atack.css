@@ -280,15 +280,17 @@ input[type="checkbox"] {
 .attack-dialog-content {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr) auto;
     gap: 16px;
     padding: 24px;
 }
 
 .attack-close {
-    position: absolute;
-    top: 12px;
-    right: 12px;
+    position: static;
+    grid-column: 3;
+    grid-row: 1;
+    align-self: start;
+    justify-self: end;
     width: 34px;
     height: 34px;
     padding: 0;
@@ -300,8 +302,9 @@ input[type="checkbox"] {
 }
 
 .attack-dialog-header {
-    grid-column: 1 / -1;
-    padding-right: 42px;
+    grid-column: 1 / 3;
+    grid-row: 1;
+    padding-right: 0;
     border-bottom: 1px solid #333;
     padding-bottom: 12px;
 }
@@ -371,7 +374,7 @@ input[type="checkbox"] {
 }
 
 .damage-roll {
-    grid-column: 1 / -1;
+    grid-column: 1 / 4;
 }
 
 .attack-roll h4,
@@ -468,6 +471,16 @@ input[type="checkbox"] {
 @media (max-width: 720px) {
     .attack-dialog-content {
         grid-template-columns: 1fr;
+    }
+
+    .attack-close {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .attack-dialog-header {
+        grid-column: 1;
+        grid-row: 2;
     }
 
     .damage-roll {

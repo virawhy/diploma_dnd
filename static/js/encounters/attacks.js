@@ -1,5 +1,6 @@
 export function startAttack(attacker) {
     if (!attacker || !attacker.dataset) return;
+    if (!attacker.closest('.grid-cell')) return;
 
     const gameField = document.querySelector('.game-field');
     if (!gameField) return;

@@ -232,6 +232,7 @@ export function createTokenInfo(token) {
     title.title = tokenName; // Додаємо повну назву як підказку
 
     const isBackground = selectedSprite.src.includes('/environment/');
+    const isOnGrid = Boolean(selectedSprite.closest('.grid-cell'));
 
     // Емітуємо подію додавання нового токену
     if (!isBackground) {
@@ -356,7 +357,10 @@ export function createTokenInfo(token) {
             }
         };
 
-        attackBtn.onclick = () => startAttack(selectedSprite);
+        attackBtn.disabled = !isOnGrid;
+        attackBtn.title = isOnGrid ? '' : 'Спочатку розмістіть токен на полі';
+        attackBtn.textContent = isOnGrid ? 'Атакувати' : 'Поза полем';
+        attackBtn.onclick = isOnGrid ? () => startAttack(selectedSprite) : null;
         
         // Додаємо обробник для кнопки видалення токена
         if (removeTokenBtn) {
