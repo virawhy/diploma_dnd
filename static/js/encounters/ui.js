@@ -548,6 +548,20 @@ export function initializeDragAndDrop() {
         }
 
         // Оновлюємо інформацію про спрайти в клітинці
+        if (sourceType === 'panel' && newSprite.src.includes('/tokens/')) {
+            document.dispatchEvent(new CustomEvent('token-added', {
+                detail: {
+                    id: `${newSprite.alt}-${newSprite.src}`,
+                    name: newSprite.alt.replace('.png', ''),
+                    sprite: newSprite.src,
+                    hp: parseInt(newSprite.dataset.health) || 7,
+                    maxHp: parseInt(newSprite.dataset.maxHealth) || 20,
+                    ac: parseInt(newSprite.dataset.ac) || 12,
+                    speed: parseInt(newSprite.dataset.speed) || 30
+                }
+            }));
+        }
+
         const sprites = targetCell.querySelectorAll('.sprite');
         sprites.forEach(sprite => {
             sprite.addEventListener('click', function() {

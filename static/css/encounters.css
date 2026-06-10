@@ -4,6 +4,16 @@
     height: calc(100vh - 80px);
     position: relative;
     overflow: hidden;
+    font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif;
+}
+
+.encounter-container *,
+.modal,
+.modal *,
+.attack-dialog,
+.attack-dialog * {
+    font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif;
+    box-sizing: border-box;
 }
 
 /* Стилі для кнопок приховування сайдбарів */
@@ -86,6 +96,10 @@
     overflow-y: auto; /* Додаємо можливість скролінгу по вертикалі */
     max-height: calc(100vh - 80px); /* Обмежуємо висоту сайдбарів */
     transition: margin 0.3s ease;
+}
+
+.left-sidebar {
+    overflow-y: hidden;
 }
 
 /* Стилі для нижнього бару */
@@ -324,6 +338,11 @@
     cursor: move;
 }
 
+.grid-container.is-panning,
+.game-field:has(.grid-container.is-panning) {
+    cursor: grabbing;
+}
+
 .grid-cell {
     border: 1px solid #bdc3c7;
     width: 50px;
@@ -449,6 +468,25 @@
     text-align: center;
     max-width: 1200px;
     margin: 0 auto;
+    color: #ecf0f1;
+}
+
+.modal-content input,
+.modal-content select,
+.modal-content textarea,
+.attack-dialog input,
+.attack-dialog select,
+.attack-dialog textarea {
+    background: #242424;
+    border: 1px solid #555;
+    color: #f4f4f4;
+    border-radius: 5px;
+}
+
+.modal-content select option,
+.attack-dialog select option {
+    background: #242424;
+    color: #f4f4f4;
 }
 
 .modal-content h2 {

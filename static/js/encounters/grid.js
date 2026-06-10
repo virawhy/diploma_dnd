@@ -41,6 +41,9 @@ export function initializeDragging() {
     gameField.addEventListener('mousemove', drag);
     gameField.addEventListener('mouseup', dragEnd);
     gameField.addEventListener('mouseleave', dragEnd);
+    gameField.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
 
     function dragStart(e) {
         // Перевіряємо, чи активний режим множинного заповнення
@@ -50,11 +53,17 @@ export function initializeDragging() {
             return;
         }
         
+        if (e.button !== 0 && e.button !== 2) {
+            return;
+        }
+
         initialX = e.clientX - xOffset;
         initialY = e.clientY - yOffset;
 
-        if (e.target === gridContainer || e.target.classList.contains('grid-cell')) {
+        if (e.button === 2 || e.target === gridContainer || e.target.classList.contains('grid-cell')) {
+            e.preventDefault();
             isDragging = true;
+            gridContainer.classList.add('is-panning');
         }
     }
 
@@ -80,5 +89,6 @@ export function initializeDragging() {
 
     function dragEnd() {
         isDragging = false;
+        gridContainer.classList.remove('is-panning');
     }
 }

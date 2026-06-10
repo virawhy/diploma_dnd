@@ -245,7 +245,9 @@ export function createTokenInfo(token) {
             ac: parseInt(selectedSprite.dataset.ac) || 12,
             speed: parseInt(selectedSprite.dataset.speed) || 30
         };
-        document.dispatchEvent(new CustomEvent('token-added', { detail: tokenData }));
+        if (selectedSprite.closest('.grid-cell')) {
+            document.dispatchEvent(new CustomEvent('token-added', { detail: tokenData }));
+        }
     }
 
     if (!isBackground) {
